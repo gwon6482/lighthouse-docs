@@ -1,41 +1,68 @@
 # Admin 프로젝트 진행상황
 
 **프로젝트**: lighthouse_admin
-**기술스택**: Next.js 권장 (미정)
-**상태**: 🔴 미시작
+**레포**: https://github.com/gwon6482/lightHouse_admin
+**스택**: Next.js 16 + TypeScript + Tailwind CSS + NextAuth v5
+**상태**: 🟡 개발 중
 
-## 구현 예정 기능
+## 완성된 기능 ✅
 
-| 기능 | 설명 | 우선순위 |
-|------|------|---------|
-| 유저 관리 | 설문 응답자 목록/상세 조회 | 높음 |
-| 설문지 관리 | 설문 응답 결과 조회/관리 | 높음 |
-| 설문 문항 관리 | 질문 CRUD (5개 영역) | 높음 |
-| 참조데이터 관리 | survey_elements / career_attributes CRUD | 중간 |
-| 로그 조회 | 설문 통계, 응답 로그 확인 | 중간 |
+### 프로젝트 초기 세팅
+- Next.js 16 (App Router) + TypeScript + Tailwind CSS
+- NextAuth v5 JWT 기반 인증 (Credentials Provider)
+- 환경변수: ADMIN_EMAIL, ADMIN_PASSWORD, NEXTAUTH_SECRET
 
-## 연동할 주요 API (DB API 서버)
+### 인증
+| 경로 | 설명 | 상태 |
+|------|------|------|
+| `/login` | 로그인 페이지 (이메일/비밀번호) | ✅ 완료 |
+| `/api/auth/[...nextauth]` | NextAuth 핸들러 | ✅ 완료 |
+
+### 라우트 구조
+| 경로 | 설명 | 상태 |
+|------|------|------|
+| `/` | → `/dashboard` 리다이렉트 | ✅ |
+| `/dashboard` | 메인 대시보드 (통계 카드) | ✅ 완료 |
+| `/dashboard/questions` | 설문 문항 관리 | 🔴 뼈대만 |
+| `/dashboard/responses` | 응답 / 통계 조회 | 🔴 뼈대만 |
+| `/dashboard/reference` | 참조데이터 관리 | 🔴 뼈대만 |
+| `/dashboard/jobs` | 직업 정보 검색 | 🔴 뼈대만 |
+
+### 공통 모듈
+| 파일 | 역할 |
+|------|------|
+| `src/lib/api.ts` | DB API axios 클라이언트 (questionsApi, surveyApi, referenceApi, jobApi) |
+| `src/lib/auth.ts` | NextAuth v5 설정 |
+| `src/types/index.ts` | 전체 타입 정의 (설문 5종, 응답/통계, 참조데이터, 직업) |
+| `src/components/layout/Sidebar.tsx` | 사이드바 네비게이션 |
+
+## 미완성 기능 ⚠️
+
+| 기능 | 경로 | 비고 |
+|------|------|------|
+| 설문 문항 CRUD | `/dashboard/questions` | 뼈대만 존재 |
+| 응답/통계 조회 | `/dashboard/responses` | 뼈대만 존재 |
+| 참조데이터 CRUD | `/dashboard/reference` | 뼈대만 존재, 수정 API도 없음 |
+| 직업 정보 검색 | `/dashboard/jobs` | 뼈대만 존재 |
+
+## 연동 중인 API
 
 ```
-# 질문 관리
-GET    /api/admin/questions/:collection_type
-POST   /api/admin/questions/:collection_type
-PUT    /api/admin/questions/:collection_type/:id
-DELETE /api/admin/questions/:collection_type/:id
-
-# 설문 응답
-GET /api/survey/result/list
-GET /api/survey/statistics
-
-# 참조데이터
-GET /api/reference/survey-elements
-GET /api/reference/career-attributes
-
-# 직업 정보
-GET /api/job/search?name=
-GET /api/job/:jobCode
+GET    /api/admin/questions/stats                    ← 대시보드 통계 카드
+GET    /api/admin/questions/:collection_type         ← 문항 목록 (구현 예정)
+POST   /api/admin/questions/:collection_type         ← 문항 생성 (구현 예정)
+PUT    /api/admin/questions/:collection_type/:id     ← 문항 수정 (구현 예정)
+DELETE /api/admin/questions/:collection_type/:id     ← 문항 삭제 (구현 예정)
+GET    /api/survey/result/list                       ← 응답 목록 (구현 예정)
+GET    /api/survey/statistics                        ← 전체 통계 (구현 예정)
+GET    /api/reference/survey-elements                ← 참조데이터 (구현 예정)
+GET    /api/reference/career-attributes              ← 참조데이터 (구현 예정)
+GET    /api/job/search?name=                         ← 직업 검색 (구현 예정)
 ```
 
-## 선행 필요 작업
+## 남은 작업
 
-- `/api/admin` 인증 미들웨어 구현 (현재 전체 오픈 상태)
+- [ ] 설문 문항 관리 페이지 구현 (목록/상세/CRUD)
+- [ ] 응답/통계 조회 페이지 구현
+- [ ] 참조데이터 관리 페이지 구현 (DB API에 수정 API 추가 필요)
+- [ ] 직업 정보 검색/상세 페이지 구현
