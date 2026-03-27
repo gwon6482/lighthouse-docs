@@ -13,6 +13,7 @@
 2. DB API 현황: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/db-api/progress.md
 3. Frontend 현황: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/frontend/progress.md
 4. Admin 현황: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/admin/progress.md
+5. 최근 개발일지: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/devlog/2026-03-27.md
 
 문서를 읽고 나서:
 - 현재 각 프로젝트의 완성/미완성 상태를 요약해줘
@@ -54,5 +55,17 @@ DB API 서버는 이미 구현되어 있으니 API 명세를 참고해서 작업
 ```
 오늘 작업한 내용을 lighthouse-docs에 반영해줘.
 레포: https://github.com/gwon6482/lighthouse-docs
-담당 파일: [db-api/progress.md | frontend/progress.md | admin/progress.md]
+
+1. progress.md 업데이트: [db-api/progress.md | frontend/progress.md | admin/progress.md]
+2. 개발일지 작성/추가: devlog/YYYY-MM-DD.md
 ```
+
+---
+
+## 📅 개발일지 안내
+
+개발일지는 `devlog/` 폴더에 날짜별로 저장됩니다.
+
+- 형식: `devlog/YYYY-MM-DD.md`
+- 하루에 여러 파트(DB API, Frontend, Admin)가 작업한 경우 **같은 파일에 섹션을 추가**
+- 목록: https://github.com/gwon6482/lighthouse-docs/tree/main/devlog
