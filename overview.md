@@ -9,7 +9,7 @@
 |---------|------|------|------|
 | **DB API** | lighthouse_DB_API | 백엔드 REST API (Express + MongoDB) | 🟡 개발 중 |
 | **Frontend** | lighthouse_FE | 사용자 설문 및 결과 페이지 | 🟡 개발 중 |
-| **Admin** | lighthouse_admin | 어드민 대시보드 | 🔴 미시작 |
+| **Admin** | lighthouse_admin | 어드민 대시보드 | 🟡 개발 중 |
 
 ## 서비스 목적
 
