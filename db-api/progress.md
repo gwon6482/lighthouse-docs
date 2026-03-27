@@ -39,6 +39,10 @@
 | 항목 | 파일 | 비고 |
 |------|------|------|
 | `GET /api/survey/analysis/:survey_id` | `controllers/surveyController.js` | TODO 주석만 있음 |
+| `GET /api/job/recommend` | - | Frontend 연동 목록에 있으나 미구현 |
+| `GET /api/job/:jobCode/review` | - | Frontend 연동 목록에 있으나 미구현 |
+| `GET /api/job/:jobCode/preparation` | - | Frontend 연동 목록에 있으나 미구현 |
+| `GET /api/job/:jobCode/recruitment` | - | Frontend 연동 목록에 있으나 미구현 |
 | 인증 미들웨어 | `/api/admin` 전체 오픈 상태 | 구현 필요 |
 | 테스트 코드 | - | 없음 |
 
@@ -68,9 +72,54 @@
 | interest | R,I,A,S,E,C | 6건 |
 | value | VA01~VA13 | 13건 |
 
-### job_data.job_info (538건)
-워크넷 전체 직업 정보.
-필드: `jobCode`, `title`, `overview`, `duties`, `salary`, `jobSatisfaction`, `details`
+### job_data.job_info (537건) — 2026-03-18 완성
+워크넷 진로백과 전체 직업 정보. 한국표준직업분류(KSCO) 6자리 코드 기반.
+
+**도큐먼트 필드:**
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `jobCode` | String | 6자리 직업 코드 (예: `011102`) |
+| `classification` | Object | `{ primary: 대분류명, secondary: 소분류명 }` |
+| `title` | String | 직업명 |
+| `overview` | String | 직업 개요 |
+| `duties` | Array | 수행직무 목록 |
+| `relatedMajors` | Array | 관련학과 목록 (없으면 `[]`) |
+| `relatedCertifications` | Array | 관련자격 목록 (없으면 `[]`) |
+| `salary` | Object | `{ lower, median, upper }` (만원 단위, 25%·중위·75%) |
+| `jobSatisfaction` | Number | 직업만족도 (백점 기준, 예: `80.3`) |
+| `details` | Object | 능력/지식/환경, 성격/흥미/가치관, 업무활동 (상위 5개 항목) |
+| `lastUpdated` | String | 마지막 크롤링 일시 |
+
+**details 구조:**
+```json
+{
+  "능력/지식/환경": {
+    "업무수행능력": { "업무수행능력 > 중요도 > 직업 간 비교": { "item_1st": { "name": "...", "score": 100 }, ... } },
+    "지식": { "지식 > 중요도 > 직업 내 비교": { ... }, "지식 > 중요도 > 직업 간 비교": { ... }, ... },
+    "업무환경": { ... }
+  },
+  "성격/흥미/가치관": {
+    "성격": { "성격 > 중요도 > 직업 내 비교": { ... }, "성격 > 중요도 > 직업 간 비교": { ... } },
+    "흥미": { ... },
+    "가치관": { ... }
+  },
+  "업무활동": {
+    "업무활동 중요도": {
+      "업무활동 > 중요도 > 직업 내 비교": { ... },
+      "업무활동 > 중요도 > 직업 간 비교": { ... },
+      "업무활동 > 수준 > 직업 내 비교": { ... },
+      "업무활동 > 수준 > 직업 간 비교": { ... }
+    }
+  }
+}
+```
+
+**크롤링 스크립트:**
+- `temp/crawl_missing_jobs.js --all` : 전체 재크롤링 (overview, duties, details, salary, jobSatisfaction)
+- `temp/crawl_path_info.js` : relatedMajors, relatedCertifications 추가
+- `temp/build_job_code_list.js` : 워크넷 전체 직업코드 목록 수집 → `temp/job_code_list.json`
+- `temp/sync_check.js` : DB vs 워크넷 diff 체크 (신규 직업 감지용)
 
 ## 응답 타입 정규화 (0~1 스케일)
 - **type_2** (OX): O=0.75, X=0.25
