@@ -8,7 +8,7 @@
 | 프로젝트 | 레포 | 역할 | 상태 |
 |---------|------|------|------|
 | **DB API** | lighthouse_DB_API | 백엔드 REST API (Express + MongoDB) | 🟡 개발 중 |
-| **Frontend** | lighthouse_FE | 사용자 설문 및 결과 페이지 | 🔴 미시작 |
+| **Frontend** | lighthouse_FE | 사용자 설문 및 결과 페이지 | 🟡 개발 중 |
 | **Admin** | lighthouse_admin | 어드민 대시보드 | 🔴 미시작 |
 
 ## 서비스 목적
@@ -23,9 +23,9 @@
 |--------|------|
 | Backend | Node.js, Express, Mongoose |
 | Database | MongoDB Atlas |
-| Frontend | (미정) |
+| Frontend | Vue 3 + TypeScript + Vite (Capacitor 하이브리드) |
 | Admin | (미정, Next.js 권장) |
-| 배포 | Vercel (DB API), TBD |
+| 배포 | Vercel (DB API, Frontend) |
 
 ## DB 구성 (MongoDB Atlas)
 
