@@ -13,7 +13,7 @@
 2. DB API 현황: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/db-api/progress.md
 3. Frontend 현황: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/frontend/progress.md
 4. Admin 현황: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/admin/progress.md
-5. 최근 개발일지: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/devlog/2026-03-27.md
+5. 최근 개발일지: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/devlog/2026-04-01.md
 
 문서를 읽고 나서:
 - 현재 각 프로젝트의 완성/미완성 상태를 요약해줘

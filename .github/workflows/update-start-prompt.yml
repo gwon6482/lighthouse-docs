@@ -1,0 +1,38 @@
+name: Update START_PROMPT devlog date
+
+on:
+  push:
+    paths:
+      - 'devlog/**.md'
+
+jobs:
+  update-prompt:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get latest devlog filename
+        id: latest
+        run: |
+          LATEST=$(ls devlog/*.md | sort | tail -1 | xargs basename)
+          echo "file=${LATEST}" >> $GITHUB_OUTPUT
+
+      - name: Update START_PROMPT.md
+        run: |
+          LATEST="${{ steps.latest.outputs.file }}"
+          sed -i "s|devlog/[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\.md|devlog/${LATEST}|g" START_PROMPT.md
+          echo "Updated to: ${LATEST}"
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git diff --quiet START_PROMPT.md || (
+            git add START_PROMPT.md &&
+            git commit -m "auto: START_PROMPT 최신 개발일지 날짜 업데이트 (${{ steps.latest.outputs.file }})"
+          )
+          git push
