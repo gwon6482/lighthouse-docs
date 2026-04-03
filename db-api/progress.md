@@ -19,8 +19,13 @@
 | 엔드포인트 | 설명 |
 |-----------|------|
 | `GET /api/job/list` | 전체 직업 목록 조회 (페이지네이션, 대분류/소분류/학과 필터) |
-| `GET /api/job/:jobCode` | 직업 단건 조회 |
+| `GET /api/job/classifications` | 대분류→소분류 트리 조회 (필터 드롭다운용) |
+| `GET /api/job/majors` | 관련학과 전체 고유 목록 조회 (130개) |
 | `GET /api/job/search?name=` | 직업명 검색 |
+| `GET /api/job/:jobCode` | 직업 단건 상세 조회 |
+| `POST /api/job` | 직업 생성 (jobCode 중복 시 409) |
+| `PUT /api/job/:jobCode` | 직업 정보 수정 (jobCode 변경 불가) |
+| `DELETE /api/job/:jobCode` | 직업 삭제 |
 
 #### GET /api/job/list — Query Parameters
 | 파라미터 | 타입 | 필수 | 기본값 | 설명 |
@@ -33,6 +38,17 @@
 
 **Response 필드**: `jobCode`, `title`, `classification`, `salary`, `jobSatisfaction`, `relatedMajors`, `relatedCertifications`  
 **미포함 필드**: `overview`, `duties`, `details` (무거운 필드는 단건 조회에서만 제공)
+
+#### GET /api/job/classifications — Response 구조
+```json
+{ "대분류명": ["소분류명", ...] }
+```
+대분류 10개, 소분류 387개. Admin 필터 드롭다운 구성에 사용.
+
+#### GET /api/job/majors — Response 구조
+```json
+{ "success": true, "count": 130, "data": ["학과명", ...] }
+```
 
 ### 참조 데이터 (Reference)
 | 엔드포인트 | 설명 |
