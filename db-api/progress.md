@@ -22,6 +22,18 @@
 | `GET /api/job/:jobCode` | 직업 단건 조회 |
 | `GET /api/job/search?name=` | 직업명 검색 |
 
+#### GET /api/job/list — Query Parameters
+| 파라미터 | 타입 | 필수 | 기본값 | 설명 |
+|---------|------|------|--------|------|
+| `page` | integer | N | 1 | 페이지 번호 |
+| `limit` | integer | N | 50 | 페이지당 항목 수 (최대 100) |
+| `primary` | string | N | - | 대분류 필터 (`classification.primary` 일치) |
+| `secondary` | string | N | - | 소분류 필터 (`classification.secondary` 일치) |
+| `major` | string | N | - | 관련학과 필터 (`relatedMajors` 배열에 포함) |
+
+**Response 필드**: `jobCode`, `title`, `classification`, `salary`, `jobSatisfaction`, `relatedMajors`, `relatedCertifications`  
+**미포함 필드**: `overview`, `duties`, `details` (무거운 필드는 단건 조회에서만 제공)
+
 ### 참조 데이터 (Reference)
 | 엔드포인트 | 설명 |
 |-----------|------|
