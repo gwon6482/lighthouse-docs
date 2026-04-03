@@ -53,10 +53,16 @@
 ### 참조 데이터 (Reference)
 | 엔드포인트 | 설명 |
 |-----------|------|
-| `GET /api/reference/survey-elements` | 설문 요소 정의 (test_code, area, level 필터) |
-| `GET /api/reference/survey-elements/:code` | 설문 요소 단건 |
-| `GET /api/reference/career-attributes` | 진로백과 속성 (category 필터) |
+| `GET /api/reference/survey-elements` | 설문 요소 정의 목록 (test_code, area, level, parent_code 필터) |
+| `POST /api/reference/survey-elements` | 설문 요소 생성 (code 중복 시 409) |
+| `GET /api/reference/survey-elements/:code` | 설문 요소 단건 (sub이면 parent도 반환) |
+| `PUT /api/reference/survey-elements/:code` | 설문 요소 수정 (code 변경 불가) |
+| `DELETE /api/reference/survey-elements/:code` | 설문 요소 삭제 |
+| `GET /api/reference/career-attributes` | 진로백과 속성 목록 (category 필터) |
+| `POST /api/reference/career-attributes` | 진로백과 속성 생성 (code 중복 시 409) |
 | `GET /api/reference/career-attributes/:code` | 진로백과 속성 단건 |
+| `PUT /api/reference/career-attributes/:code` | 진로백과 속성 수정 (code 변경 불가) |
+| `DELETE /api/reference/career-attributes/:code` | 진로백과 속성 삭제 |
 
 ### 관리자 (Admin)
 | 엔드포인트 | 설명 |
