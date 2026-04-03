@@ -13,7 +13,8 @@
 | `POST /api/survey/response` | 응답 제출 + 통계 자동 업데이트 |
 | `POST /api/survey/report` | 결과 보고서 (정규화/그룹통계/상위%) |
 | `GET /api/survey/statistics` | 전체 통계 조회 |
-| `GET /api/survey/result/list` | 응답 목록 (최근 20건) |
+| `GET /api/survey/result/list` | 응답 목록 (페이지네이션, page/limit 파라미터 지원) |
+| `GET /api/survey/analysis/:survey_id` | 설문 분석 결과 (성격·재능 Top3/전체, 관심분야, 가치관, 환경 선호도) |
 
 ### 직업 (Job)
 | 엔드포인트 | 설명 |
@@ -73,7 +74,6 @@
 
 | 항목 | 파일 | 비고 |
 |------|------|------|
-| `GET /api/survey/analysis/:survey_id` | `controllers/surveyController.js` | TODO 주석만 있음 |
 | `GET /api/job/recommend` | - | Frontend 연동 목록에 있으나 미구현 |
 | `GET /api/job/:jobCode/review` | - | Frontend 연동 목록에 있으나 미구현 |
 | `GET /api/job/:jobCode/preparation` | - | Frontend 연동 목록에 있으나 미구현 |
