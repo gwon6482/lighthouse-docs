@@ -81,6 +81,22 @@
 | 인증 미들웨어 | `/api/admin` 전체 오픈 상태 | 구현 필요 |
 | 테스트 코드 | - | 없음 |
 
+## DB 현황 (2026-04-08 기준 실측)
+
+| DB | 컬렉션 | 건수 |
+|----|--------|------|
+| job_data | job_info | 537건 |
+| reference_data | survey_elements | 239건 |
+| reference_data | career_attributes | 202건 |
+| survey_data | survey_questionnaire | 148건 |
+| survey_data | survey_results | 42건 |
+| survey_data | survey_statistics | 2건 |
+| survey_questions | T1_personality | 43건 |
+| survey_questions | T2_1_talent | 61건 |
+| survey_questions | T2_2_interest | 33건 |
+| survey_questions | T2_3_values | 13건 |
+| survey_questions | T3_environmental | 49건 |
+
 ## DB 컬렉션 상세
 
 ### reference_data.survey_elements (239건)
