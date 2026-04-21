@@ -62,137 +62,7 @@
 
 ---
 
-## 5. 답변 타입 코드
-
-| 코드 | 의미 |
-|------|------|
-| type_2 | 이진(O/X) 선택 |
-| type_5 | 5점(A/B/C/D/E) 척도 |
-| type_10 | 10점 척도 |
-| multiple_choice | 다중 선택 |
-| priority_choice | 우선순위 선택 (priority_1 / priority_2 / priority_3) |
-
-응답값: `O`=긍정, `X`=부정, `M`=중립(T3 전용), `A/B/C/D/E`=5점 척도
-
----
-
-## 6. 직업 코드 구조
-
-- **형식**: 6자리 숫자 `[중분류 2자리][소분류 2자리][세분류 순번 2자리]`
-- **예시**: `011102` = 행정부고위공무원
-- **Holland 흥미 코드**: R / I / A / S / E / C
-
----
-
-## 7. 직업 속성 카테고리 코드 (CareerAttribute.category)
-
-| 코드 | 의미 |
-|------|------|
-| work_activity | 업무활동 |
-| ability | 업무수행능력 |
-| knowledge | 지식 |
-| work_environment | 업무환경 |
-| personality | 성격 |
-| interest | 흥미 (Holland 코드) |
-| value | 가치관 |
-
----
-
-## 8. SurveyElement 계층 코드 (level)
-
-| 코드 | 의미 |
-|------|------|
-| upper | 상위 그룹 |
-| sub | 중간 그룹 |
-| item | 개별 항목 |
-
----
-
-## 9. survey_id 포맷
-
-```
-SURVyyyyMMddD_HHmmssT
-예: SURV20260305D_120000T
-```
-
----
-
-## 10. 주요 DB 필드명 약어
-
-| 필드 | 의미 |
-|------|------|
-| test_code | 설문 영역 코드 (T1/T21/T22/T23/T3) |
-| upper_element | 상위 그룹 |
-| lower_element | 하위 항목 |
-| collection_type | 설문 영역 전체명 (T1_personality 등) |
-| is_active | 활성 여부 플래그 |
-| client_info | IP + user_agent 메타 |
-| type2_score | 이진(O/X) 통계 |
-| type5_score | 5점 척도 통계 |
-| group_stats | 그룹별 통계 |
-| overall_stats | 전체 완료 통계 |
-| top_percent | 백분위 |
-| adoption_rate | 선택률 (T22 전용) |
-
----
-
-## 11. API 경로 요약
-
-### Survey
-```
-GET  /api/survey/form              설문지 조회
-POST /api/survey/response          응답 제출
-POST /api/survey/report            결과 보고서 생성
-GET  /api/survey/analysis/:id      분석 조회
-GET  /api/survey/statistics        전체 통계
-GET  /api/survey/result/list       결과 목록
-```
-
-### Job
-```
-GET  /api/job/list                 직업 목록 (페이지네이션)
-GET  /api/job/classifications      분류 트리
-GET  /api/job/majors               관련 학과
-GET  /api/job/search               직업 검색
-GET  /api/job/:jobCode             직업 상세
-```
-
-### Reference
-```
-GET  /api/reference/survey-elements
-GET  /api/reference/survey-elements/:code
-GET  /api/reference/career-attributes
-GET  /api/reference/career-attributes/:code
-```
-
-### Admin
-```
-GET/POST/PUT/DELETE /api/admin/questions/:collection_type
-GET /api/admin/questions/stats
-```
-
----
-
-## 12. Frontend TypeScript 주요 타입명
-
-| 타입명 | 설명 |
-|--------|------|
-| SurveyFormResponse | 전체 설문지 응답 |
-| PageInfo | 페이지 단위 정보 |
-| SurveyQuestion | 단일 질문 데이터 |
-| SurveyItem | 설문 항목 (T22/T23/T3) |
-| QuestionT1T21 | 2계층 구조 질문 (T1/T21) |
-| QuestionT22 | 흥미 분야 질문 |
-| QuestionT23 | 가치관 질문 |
-| QuestionT3 | 3계층 구조 질문 |
-| MultiSelectItem | 다중 선택 항목 |
-| PriorityItem | 우선순위 선택 항목 |
-| ThreeChoiceItem | O/M/X 3지선다 항목 |
-| GroupScore | 그룹 통계 (user / average / top_percent) |
-
----
-
-## 13. WE 코드 — 업무환경 항목 (WE01~WE49)
+## 5. WE 코드 — 업무환경 항목 (WE01~WE49)
 
 직업 DB의 업무환경 특성 코드. `career_attributes.work_environment` 카테고리에 저장되며, T3 검사의 `related_WE` 가중치 매핑에 사용됨.
 
@@ -247,3 +117,133 @@ GET /api/admin/questions/stats
 | WE47 | 질병 혹은 감염 위험 노출 | 질병 혹은 병균에 노출되는 빈도 |
 | WE48 | 고지대 작업 | 높은 곳에서(높은 철골구조 위, 타워 크레인 위, 혹은 고층 빌딩 위 등) 작업하는 빈도 |
 | WE49 | 규칙적인 근무 | 근무 일정의 규칙성 |
+
+---
+
+## 6. 답변 타입 코드
+
+| 코드 | 의미 |
+|------|------|
+| type_2 | 이진(O/X) 선택 |
+| type_5 | 5점(A/B/C/D/E) 척도 |
+| type_10 | 10점 척도 |
+| multiple_choice | 다중 선택 |
+| priority_choice | 우선순위 선택 (priority_1 / priority_2 / priority_3) |
+
+응답값: `O`=긍정, `X`=부정, `M`=중립(T3 전용), `A/B/C/D/E`=5점 척도
+
+---
+
+## 7. 직업 코드 구조
+
+- **형식**: 6자리 숫자 `[중분류 2자리][소분류 2자리][세분류 순번 2자리]`
+- **예시**: `011102` = 행정부고위공무원
+- **Holland 흥미 코드**: R / I / A / S / E / C
+
+---
+
+## 8. 직업 속성 카테고리 코드 (CareerAttribute.category)
+
+| 코드 | 의미 |
+|------|------|
+| work_activity | 업무활동 |
+| ability | 업무수행능력 |
+| knowledge | 지식 |
+| work_environment | 업무환경 |
+| personality | 성격 |
+| interest | 흥미 (Holland 코드) |
+| value | 가치관 |
+
+---
+
+## 9. SurveyElement 계층 코드 (level)
+
+| 코드 | 의미 |
+|------|------|
+| upper | 상위 그룹 |
+| sub | 중간 그룹 |
+| item | 개별 항목 |
+
+---
+
+## 10. survey_id 포맷
+
+```
+SURVyyyyMMddD_HHmmssT
+예: SURV20260305D_120000T
+```
+
+---
+
+## 11. 주요 DB 필드명 약어
+
+| 필드 | 의미 |
+|------|------|
+| test_code | 설문 영역 코드 (T1/T21/T22/T23/T3) |
+| upper_element | 상위 그룹 |
+| lower_element | 하위 항목 |
+| collection_type | 설문 영역 전체명 (T1_personality 등) |
+| is_active | 활성 여부 플래그 |
+| client_info | IP + user_agent 메타 |
+| type2_score | 이진(O/X) 통계 |
+| type5_score | 5점 척도 통계 |
+| group_stats | 그룹별 통계 |
+| overall_stats | 전체 완료 통계 |
+| top_percent | 백분위 |
+| adoption_rate | 선택률 (T22 전용) |
+
+---
+
+## 12. API 경로 요약
+
+### Survey
+```
+GET  /api/survey/form              설문지 조회
+POST /api/survey/response          응답 제출
+POST /api/survey/report            결과 보고서 생성
+GET  /api/survey/analysis/:id      분석 조회
+GET  /api/survey/statistics        전체 통계
+GET  /api/survey/result/list       결과 목록
+```
+
+### Job
+```
+GET  /api/job/list                 직업 목록 (페이지네이션)
+GET  /api/job/classifications      분류 트리
+GET  /api/job/majors               관련 학과
+GET  /api/job/search               직업 검색
+GET  /api/job/:jobCode             직업 상세
+```
+
+### Reference
+```
+GET  /api/reference/survey-elements
+GET  /api/reference/survey-elements/:code
+GET  /api/reference/career-attributes
+GET  /api/reference/career-attributes/:code
+```
+
+### Admin
+```
+GET/POST/PUT/DELETE /api/admin/questions/:collection_type
+GET /api/admin/questions/stats
+```
+
+---
+
+## 13. Frontend TypeScript 주요 타입명
+
+| 타입명 | 설명 |
+|--------|------|
+| SurveyFormResponse | 전체 설문지 응답 |
+| PageInfo | 페이지 단위 정보 |
+| SurveyQuestion | 단일 질문 데이터 |
+| SurveyItem | 설문 항목 (T22/T23/T3) |
+| QuestionT1T21 | 2계층 구조 질문 (T1/T21) |
+| QuestionT22 | 흥미 분야 질문 |
+| QuestionT23 | 가치관 질문 |
+| QuestionT3 | 3계층 구조 질문 |
+| MultiSelectItem | 다중 선택 항목 |
+| PriorityItem | 우선순위 선택 항목 |
+| ThreeChoiceItem | O/M/X 3지선다 항목 |
+| GroupScore | 그룹 통계 (user / average / top_percent) |
