@@ -95,7 +95,7 @@
 | survey_questions | T2_1_talent | 61건 |
 | survey_questions | T2_2_interest | 33건 |
 | survey_questions | T2_3_values | 13건 |
-| survey_questions | T3_environmental | 49건 |
+| survey_questions | T3_environmental | 6건 (파트 도큐먼트로 교체) |
 
 ## DB 컬렉션 상세
 
@@ -163,13 +163,42 @@
 - `temp/build_job_code_list.js` : 워크넷 전체 직업코드 목록 수집 → `temp/job_code_list.json`
 - `temp/sync_check.js` : DB vs 워크넷 diff 체크 (신규 직업 감지용)
 
+## T3 업무환경 검사 구조 (2026-04-22 교체)
+
+기존 49개 개별 항목(O/M/X) 방식에서 6개 파트 슬라이더(1~5) 방식으로 전면 교체.
+
+### survey_questions.T3_environmental — 6개 파트 도큐먼트
+```json
+{
+  "part_code": "T3_PHY",
+  "part_name": "근무환경 강도",
+  "part_question": "...",
+  "levels": [{ "level": 1, "description": "..." }, ...],
+  "related_WE": {
+    "up":   [{ "code": "WE24", "weight": 1.5 }],
+    "down": [{ "code": "WE01", "weight": 1.5 }]
+  }
+}
+```
+파트 코드: `T3_PHY`, `T3_PEO`, `T3_COM`, `T3_RES`, `T3_STR`, `T3_FLX`
+
+### survey_results T3 응답 형식
+```json
+"T3": { "T3_PHY": 3, "T3_PEO": 2, "T3_COM": 4, "T3_RES": 3, "T3_STR": 2, "T3_FLX": 5 }
+```
+
+### T3 통계/분석
+- `question_stats`에 파트 코드(T3_PHY 등) 키로 Welford 누적 (값 1~5)
+- `getSurveyReport` T3: 파트별 레벨값 그대로 반환
+- `getSurveyAnalysis` T3: 파트별 레벨 + 이름 + 모집단 평균 + 상위% + 레벨 설명 반환
+
 ## 응답 타입 정규화 (0~1 스케일)
 - **type_2** (OX): O=0.75, X=0.25
 - **type_5** (ABCDE): A=0, B=0.25, C=0.5, D=0.75, E=1.0
-- **type_10** (0~9): raw / 9
+- **type_10** (1~10): (raw - 1) / 9
 
 ## 통계 구조 (Welford 알고리즘)
-- `question_stats`: 개별 질문별 누적 (mean, stddev, count, M2)
+- `question_stats`: 개별 질문별 누적 (mean, stddev, count, M2) — T3 파트도 포함
 - `group_stats`: 그룹별 누적
   - T1 그룹: T1_E, T1_C, T1_S, T1_A, T1_I, T1_R, T1_G, T1_U, T1_T
   - T21 그룹: T21_T, T21_L, T21_M, T21_B, T21_S, T21_I, T21_N, T21_A
