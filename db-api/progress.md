@@ -14,7 +14,8 @@
 | `POST /api/survey/report` | 결과 보고서 (정규화/그룹통계/상위%) |
 | `GET /api/survey/statistics` | 전체 통계 조회 |
 | `GET /api/survey/result/list` | 응답 목록 (페이지네이션, page/limit 파라미터 지원) |
-| `GET /api/survey/analysis/:survey_id` | 설문 분석 결과 (성격·재능 Top3/전체, 관심분야, 가치관, 환경 선호도) |
+| `GET /api/survey/analysis/:survey_id` | 설문 분석 결과 (personality_type 포함, 성격·재능 Top3/전체, 관심분야, 가치관, 환경 선호도) |
+| `GET /api/survey/t1-result/:survey_id` | T1 성격 유형 결과 (type_code, full_name, description, group_scores, percentiles) |
 
 ### 직업 (Job)
 | 엔드포인트 | 설명 |
@@ -64,11 +65,15 @@
 | `GET /api/reference/career-attributes/:code` | 진로백과 속성 단건 |
 | `PUT /api/reference/career-attributes/:code` | 진로백과 속성 수정 (code 변경 불가) |
 | `DELETE /api/reference/career-attributes/:code` | 진로백과 속성 삭제 |
+| `GET /api/reference/t1-types` | T1 성격 유형 목록 (base_type, modifier_type 필터) |
+| `GET /api/reference/t1-types/:type_code` | T1 성격 유형 단건 (예: T1EUC) |
 
 ### 관리자 (Admin)
 | 엔드포인트 | 설명 |
 |-----------|------|
 | `GET/POST/PUT/DELETE /api/admin/questions/:collection_type` | 질문 CRUD |
+| `GET /api/admin/t1-types` | T1 유형 목록 조회 (base_type, modifier_type 필터) |
+| `PUT /api/admin/t1-types/:type_code` | T1 유형 텍스트 수정 (modifier, full_name, description) |
 
 ## 미완성 기능 ⚠️
 
@@ -81,13 +86,14 @@
 | 인증 미들웨어 | `/api/admin` 전체 오픈 상태 | 구현 필요 |
 | 테스트 코드 | - | 없음 |
 
-## DB 현황 (2026-04-22 기준)
+## DB 현황 (2026-04-23 기준)
 
 | DB | 컬렉션 | 건수 | 비고 |
 |----|--------|------|------|
 | job_data | job_info | 537건 | details 정규화 완료 (name→code) |
 | reference_data | survey_elements | 239건 | |
 | reference_data | career_attributes | 202건 | |
+| reference_data | t1_types | 145건 | T1 성격 유형 (2026-04-23 추가) |
 | survey_data | survey_questionnaire | 148건+ | |
 | survey_data | survey_results | 42건+ | |
 | survey_data | survey_statistics | 2건+ | |
@@ -215,3 +221,56 @@
 - `group_stats`: 그룹별 누적
   - T1 그룹: T1_E, T1_C, T1_S, T1_A, T1_I, T1_R, T1_G, T1_U, T1_T
   - T21 그룹: T21_T, T21_L, T21_M, T21_B, T21_S, T21_I, T21_N, T21_A
+
+## T1 성격 유형 시스템 (2026-04-23 구현)
+
+T1 검사 9개 그룹(E,C,S,A,I,R,G,U,T) 점수로 성격 유형 코드를 산출합니다.
+
+### 유형 코드 계산 로직
+1. 각 그룹 정규화 점수 평균 계산 (`calcT1GroupScores`)
+2. 내림차순 정렬 → TOP1(대유형), TOP2, BOTTOM1 결정
+3. TOP1 - TOP2 점수 차 ≤ 0.15 → modifier_type = "TOP2" (indicator `U`)
+4. TOP1 - TOP2 점수 차 > 0.15 → modifier_type = "BOTTOM1" (indicator `B`)
+5. type_code = `T1` + TOP1코드 + `U`/`B` + modifier코드
+
+**예시**: E=0.7, C=0.68(차=0.02 ≤ 0.15) → `T1EUC` (창의적인 리더)
+**예시**: A=0.8, I=0.5(차=0.3 > 0.15), T=0.2(BOTTOM1) → `T1ABT`
+
+### reference_data.t1_types (145건) 구조
+```json
+{
+  "type_code": "T1EUC",
+  "base_type": "E",
+  "base_name": "리더",
+  "modifier_type": "TOP2",
+  "modifier_element": "C",
+  "modifier": "창의적인",
+  "full_name": "창의적인 리더",
+  "description": "새로운 아이디어로 사람들을 설레게 하는 사람이에요..."
+}
+```
+
+### survey_results T1_result 필드 (응답 제출 시 자동 저장)
+```json
+"T1_result": {
+  "type_code": "T1EUC",
+  "base_type": "E",
+  "modifier_type": "TOP2",
+  "modifier_element": "C",
+  "group_scores": { "E": 0.7, "C": 0.68, ... },
+  "base_name": "리더",
+  "modifier": "창의적인",
+  "full_name": "창의적인 리더",
+  "description": "..."
+}
+```
+구버전 응답(T1_result 미저장)은 `GET /api/survey/t1-result/:survey_id` 호출 시 실시간 계산.
+
+### getSurveyAnalysis 응답 추가 필드
+```json
+"analysis": {
+  "personality_type": { ...T1_result, "percentiles": { "E": 23.5, "C": 18.2, ... } },
+  "personality": { "top3": [...], "all": [...] },
+  ...
+}
+```
