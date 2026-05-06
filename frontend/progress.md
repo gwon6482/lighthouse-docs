@@ -30,22 +30,24 @@
 | 직업 검색 홈 | `/career-encyclopedia` | ✅ 완료 |
 | 추천 직업 목록 | `/career-encyclopedia/recommended` | ✅ 완료 |
 | 직업 상세 | `/career-encyclopedia/job/:jobCode` | ✅ 완료 |
-| 결과 보고서 | `/result/:survey_id` | 🔴 미구현 |
+| 결과 보고서 | `/result/:survey_id` | ✅ 완료 |
 
 ## API 연동 현황
 
 ```
-GET  /api/survey/form                  ✅ 연동됨
-POST /api/survey/response              ✅ 연동됨
-POST /api/survey/report                🔴 미연동 (결과 보고서 페이지 미구현)
-GET  /api/job/:jobCode                 ✅ 연동됨
-GET  /api/job/search?name=             ✅ 연동됨
-GET  /api/job/recommend                ✅ 연동됨
-GET  /api/job/:jobCode/review          ✅ 연동됨
-GET  /api/job/:jobCode/preparation     ✅ 연동됨
-GET  /api/job/:jobCode/recruitment     ✅ 연동됨
-GET  /api/reference/survey-elements    🔴 미연동
-GET  /api/reference/career-attributes  🔴 미연동
+GET  /api/survey/form                       ✅ 연동됨 (survey.api.ts)
+POST /api/survey/response                   ✅ 연동됨 (survey.api.ts)
+GET  /api/survey/analysis/:survey_id        ✅ 연동됨 (결과 보고서 페이지, survey.api.ts)
+POST /api/survey/report                     🔴 미연동 (현재 /analysis 사용 중)
+GET  /api/job/:jobCode                      ✅ 연동됨 (encyclopedia.api.ts)
+GET  /api/job/search?name=                  ✅ 연동됨 (encyclopedia.api.ts)
+GET  /api/job/recommend                     ⚠️ 함수 정의됨, 백엔드 경로 불일치
+                                               (FE: /recommend, BE: /recommend/:survey_id)
+GET  /api/job/:jobCode/review               ⚠️ 함수 정의됨, 백엔드 미구현
+GET  /api/job/:jobCode/preparation          ⚠️ 함수 정의됨, 백엔드 미구현
+GET  /api/job/:jobCode/recruitment          ⚠️ 함수 정의됨, 백엔드 미구현
+GET  /api/reference/survey-elements         🔴 미연동
+GET  /api/reference/career-attributes       🔴 미연동
 ```
 
 ## 모듈 구조
@@ -87,8 +89,21 @@ src/modules/
 }
 ```
 
+## 결과 보고서 페이지 구현 내용 (완료)
+
+`SelfUnderstandingResultPage.vue` — `GET /api/survey/analysis/:survey_id` 연동
+
+- T1 성격 유형 카드 (base_type별 이미지, full_name, description, 태그)
+- 성격 분포 바차트 (9요소 전체, 상위% 표시)
+- 재능 Top3 (bar + definition)
+- 관심분야 카테고리별 목록 (T22)
+- 가치관 우선순위 Top3 (definition + valueQuestion)
+- 업무환경 파트별 도트 레벨 + level_description (T3)
+- 카카오 로그인 "준비 중" 버튼, 진로백과 링크
+
 ## 남은 작업
 
-- [ ] 결과 보고서 페이지 (`/result/:survey_id`) 구현
-- [ ] `/api/survey/report` API 연동
+- [ ] `fetchRecommendedJobs()` → `/api/job/recommend/:survey_id` 경로 수정 + survey_id 전달
+- [ ] `/api/job/:jobCode/review`, `/preparation`, `/recruitment` 백엔드 구현 대기
 - [ ] `/api/reference/survey-elements`, `/api/reference/career-attributes` 연동
+- [ ] 카카오 로그인 / 결과 저장 기능

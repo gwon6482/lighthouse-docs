@@ -29,6 +29,26 @@
 | `PUT /api/job/:jobCode` | 직업 정보 수정 (jobCode 변경 불가) |
 | `DELETE /api/job/:jobCode` | 직업 삭제 |
 
+### 직업 추천 / 매칭 (Recommend)
+> `controllers/recommendController.js` + `config/matchingMaps.js` 구현 완료
+
+| 엔드포인트 | 설명 |
+|-----------|------|
+| `GET /api/job/recommend/:survey_id` | survey_id 기반 직업 추천 (limit/primary/min_score 파라미터, 최대 30건) |
+| `POST /api/job/recommend` | 그룹 점수 직접 전달로 직업 추천 (테스트/프리뷰용) |
+| `GET /api/job/:jobCode/match?survey_id=xxx` | 특정 직업과의 매칭 점수 조회 |
+| `POST /api/job/:jobCode/match` | 점수 직접 전달로 특정 직업 매칭 (프리뷰용) |
+
+**매칭 알고리즘**: T1×0.20 + T21×0.25 + T22×0.25 + T23×0.20 + T3×0.10
+
+**매핑 테이블** (`config/matchingMaps.js`):
+- `T1_PS_MAP`: T1 성격 9요소 → PS 코드 (PS11은 R그룹과 역방향, w 음수)
+- `T21_AB_MAP`: T21 재능 8요소 → AB(업무수행능력) 코드
+- `T21_A_MAP`: T21 재능 8요소 → A(업무활동) 코드
+- `T22_HOLLAND_MAP`: T22 대분류(BUS/COM/EDU/SAF/SCI/SOC/TEC) → Holland 유형
+- `T23_VA_MAP`: T23_1~T23_13 → VA 코드 1:1 매핑
+- `T23_WEIGHTS`: priority_1=1.5, priority_2=1.0, priority_3=0.7
+
 #### GET /api/job/list — Query Parameters
 | 파라미터 | 타입 | 필수 | 기본값 | 설명 |
 |---------|------|------|--------|------|
@@ -79,12 +99,13 @@
 
 | 항목 | 파일 | 비고 |
 |------|------|------|
-| `GET /api/job/recommend` | - | Frontend 연동 목록에 있으나 미구현 |
-| `GET /api/job/:jobCode/review` | - | Frontend 연동 목록에 있으나 미구현 |
-| `GET /api/job/:jobCode/preparation` | - | Frontend 연동 목록에 있으나 미구현 |
-| `GET /api/job/:jobCode/recruitment` | - | Frontend 연동 목록에 있으나 미구현 |
+| `GET /api/job/:jobCode/review` | - | FE UI 탭 존재, 백엔드 미구현 |
+| `GET /api/job/:jobCode/preparation` | - | FE UI 탭 존재, 백엔드 미구현 |
+| `GET /api/job/:jobCode/recruitment` | - | FE UI 탭 존재, 백엔드 미구현 |
 | 인증 미들웨어 | `/api/admin` 전체 오픈 상태 | 구현 필요 |
 | 테스트 코드 | - | 없음 |
+
+> **주의**: FE `encyclopedia.api.ts`의 `fetchRecommendedJobs()`는 `GET /api/job/recommend`로 호출 중이나, 백엔드는 `GET /api/job/recommend/:survey_id`로 변경됨 → FE 수정 필요
 
 ## DB 현황 (2026-04-23 기준)
 
