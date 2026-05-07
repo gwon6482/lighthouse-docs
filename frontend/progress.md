@@ -4,7 +4,7 @@
 **스택**: Vue 3 + TypeScript + Vite
 **상태**: 🟡 개발 중
 
-## 기술 스택 (확정)
+## 기술 스택
 
 | 항목 | 기술 |
 |------|------|
@@ -17,93 +17,88 @@
 | 스타일 | SCSS (Pretendard 폰트) |
 | PWA | vite-plugin-pwa |
 | 모바일 | Capacitor 8 (iOS / Android 하이브리드) |
-| 배포 | Vercel (API 프록시 포함) |
+| 배포 | S3 + CloudFront → lighthouse.career |
 
 ## 구현된 페이지
 
 | 페이지 | 경로 | 상태 |
 |--------|------|------|
-| 홈 | `/` | ✅ 완료 |
-| 설문 소개 | `/self-understanding` | ✅ 완료 |
-| 설문 유형 선택 | `/self-understanding/select` | ✅ 완료 |
-| 설문 진행 | `/self-understanding/test` | ✅ 완료 |
-| 직업 검색 홈 | `/career-encyclopedia` | ✅ 완료 |
-| 추천 직업 목록 | `/career-encyclopedia/recommended` | ✅ 완료 |
-| 직업 상세 | `/career-encyclopedia/job/:jobCode` | ✅ 완료 |
-| 결과 보고서 | `/result/:survey_id` | ✅ 완료 |
+| 홈 | `/` | ✅ |
+| 설문 소개 | `/self-understanding` | ✅ |
+| 설문 유형 선택 | `/self-understanding/select` | ✅ |
+| 설문 진행 | `/self-understanding/test` | ✅ |
+| 직업 검색 홈 | `/career-encyclopedia` | ✅ |
+| 추천 직업 목록 | `/career-encyclopedia/recommended` | ✅ |
+| 직업 상세 | `/career-encyclopedia/job/:jobCode` | ✅ |
+| 결과 보고서 | `/result/:survey_id` | ✅ |
 
 ## API 연동 현황
 
 ```
-GET  /api/survey/form                       ✅ 연동됨 (survey.api.ts)
-POST /api/survey/response                   ✅ 연동됨 (survey.api.ts)
-GET  /api/survey/analysis/:survey_id        ✅ 연동됨 (결과 보고서 페이지, survey.api.ts)
+GET  /api/survey/form                       ✅ 연동됨
+POST /api/survey/response                   ✅ 연동됨
+GET  /api/survey/analysis/:survey_id        ✅ 연동됨 (결과 보고서)
 POST /api/survey/report                     🔴 미연동 (현재 /analysis 사용 중)
-GET  /api/job/:jobCode                      ✅ 연동됨 (encyclopedia.api.ts)
-GET  /api/job/search?name=                  ✅ 연동됨 (encyclopedia.api.ts)
-GET  /api/job/recommend                     ⚠️ 함수 정의됨, 백엔드 경로 불일치
-                                               (FE: /recommend, BE: /recommend/:survey_id)
-GET  /api/job/:jobCode/review               ⚠️ 함수 정의됨, 백엔드 미구현
-GET  /api/job/:jobCode/preparation          ⚠️ 함수 정의됨, 백엔드 미구현
-GET  /api/job/:jobCode/recruitment          ⚠️ 함수 정의됨, 백엔드 미구현
+GET  /api/job/:jobCode                      ✅ 연동됨
+GET  /api/job/search?name=                  ✅ 연동됨
+GET  /api/job/recommend                     ⚠️ 경로 불일치 (FE: /recommend, BE: /recommend/:survey_id)
+GET  /api/job/:jobCode/reviews              ✅ 연동됨 (ReviewTab, 조회 전용)
+GET  /api/job/:jobCode/preparation          🔴 백엔드 미구현
+GET  /api/job/:jobCode/recruitment          🔴 백엔드 미구현
 GET  /api/reference/survey-elements         🔴 미연동
 GET  /api/reference/career-attributes       🔴 미연동
+```
+
+## 진로백과 후기 탭 (2026-05-07 구현)
+
+`ReviewTab.vue` — 직업 상세 페이지 후기 탭
+
+- 마운트 시 `GET /api/job/:jobCode/reviews` 로컬 상태로 조회 (전역 isLoading 미사용)
+- 후기 카드: 만족도 그라데이션 바, 요약, 장점/단점(색상 뱃지), 추천 의견, T1 성격 태그
+- **후기 작성 버튼 없음** — 후기는 Admin에서만 등록 가능
+
+### 주의: isLoading 격리
+`useEncyclopedia`의 `isLoading`은 전역 공유 상태이므로, ReviewTab은 composable을 거치지 않고
+`fetchJobReviews`를 직접 호출하며 로컬 ref를 사용함.
+(전역 isLoading을 건드리면 부모 페이지 탭 UI가 사라지는 버그 발생)
+
+### encyclopedia.ts 타입 (2026-05-07 업데이트)
+```ts
+export type T1GroupCode = 'E' | 'C' | 'S' | 'A' | 'I' | 'R' | 'G' | 'U' | 'T'
+
+export interface JobReview {
+  _id: string
+  jobCode: string
+  summary: string
+  satisfaction: number   // 0~100
+  pros: string
+  cons: string
+  recommendation: string
+  personalityTags: T1GroupCode[]
+  status: 'pending' | 'approved' | 'rejected'
+  submittedBy: 'user' | 'admin'
+  submitterEmail: string
+  adminNote: string
+  createdAt: string
+  updatedAt: string
+}
 ```
 
 ## 모듈 구조
 
 ```
 src/modules/
-├── survey/           # 자기이해(설문) 모듈
-│   ├── pages/        # 4개 페이지
-│   ├── components/   # 14개 컴포넌트 (질문 유형별)
-│   ├── composables/  # useSurvey.ts
-│   ├── types/        # survey.ts
-│   └── survey.api.ts
-└── encyclopedia/     # 진로백과 모듈
-    ├── pages/        # 3개 페이지
-    ├── components/   # 10개 컴포넌트
-    ├── composables/  # useEncyclopedia.ts
-    ├── types/        # encyclopedia.ts
+├── survey/
+│   ├── pages/, components/, composables/useSurvey.ts, types/survey.ts, survey.api.ts
+└── encyclopedia/
+    ├── pages/, components/, composables/useEncyclopedia.ts
+    ├── types/encyclopedia.ts
     └── encyclopedia.api.ts
 ```
-
-## 지원 질문 유형 (설문)
-
-- 2지선다 / 5지선다 / 10지선다 (ScaleQuestion)
-- 다중선택 (MultiSelectQuestion)
-- 우선순위 (PriorityQuestion)
-- 3지선다 (ThreeChoiceQuestion)
-
-## 결과 보고서 응답 구조 (연동 예정)
-
-```json
-{
-  "survey_id": "...",
-  "answer_type": "type_10",
-  "T1": { "E": { "user": 0.533, "average": 0.521, "top_percent": 48.2 } },
-  "T21": { "L": { "user": 0.611, "average": 0.498, "top_percent": 32.1 } },
-  "T22": { "checked": ["T22_BUS_1", "..."] },
-  "T23": { "priority_1": "T3_1", "priority_2": "T3_2", "priority_3": "T3_3" },
-  "T3": { "O": [...], "M": [...], "X": [...] }
-}
-```
-
-## 결과 보고서 페이지 구현 내용 (완료)
-
-`SelfUnderstandingResultPage.vue` — `GET /api/survey/analysis/:survey_id` 연동
-
-- T1 성격 유형 카드 (base_type별 이미지, full_name, description, 태그)
-- 성격 분포 바차트 (9요소 전체, 상위% 표시)
-- 재능 Top3 (bar + definition)
-- 관심분야 카테고리별 목록 (T22)
-- 가치관 우선순위 Top3 (definition + valueQuestion)
-- 업무환경 파트별 도트 레벨 + level_description (T3)
-- 카카오 로그인 "준비 중" 버튼, 진로백과 링크
 
 ## 남은 작업
 
 - [ ] `fetchRecommendedJobs()` → `/api/job/recommend/:survey_id` 경로 수정 + survey_id 전달
-- [ ] `/api/job/:jobCode/review`, `/preparation`, `/recruitment` 백엔드 구현 대기
+- [ ] `/api/job/:jobCode/preparation`, `/recruitment` 백엔드 구현 대기
 - [ ] `/api/reference/survey-elements`, `/api/reference/career-attributes` 연동
 - [ ] 카카오 로그인 / 결과 저장 기능
