@@ -34,10 +34,12 @@
 |-----------|------|
 | `GET /api/job/recommend/:survey_id` | survey_id 기반 직업 추천 (최대 30건) |
 | `POST /api/job/recommend` | 점수 직접 전달 추천 (테스트용) |
+| `GET /api/job/recommend-t2/:survey_id` | T2 전용 직업 추천 (상위 5건) — 2026-05-15 추가 |
 | `GET /api/job/:jobCode/match?survey_id=` | 특정 직업 매칭 점수 |
 | `POST /api/job/:jobCode/match` | 점수 직접 전달 매칭 |
 
-**매칭 알고리즘**: T1×0.20 + T21×0.25 + T22×0.25 + T23×0.20 + T3×0.10
+**종합 매칭 알고리즘**: T1×0.20 + T21×0.25 + T22×0.25 + T23×0.20 + T3×0.10
+**T2 전용 알고리즘**: T21(재능)×0.36 + T22(흥미)×0.36 + T23(가치관)×0.28
 
 ### 직업 후기 (Review) — 2026-05-07 구현
 | 엔드포인트 | 설명 |
