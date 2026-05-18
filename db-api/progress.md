@@ -6,6 +6,35 @@
 
 ## 완성된 기능 ✅
 
+### 인증 (Auth) — 2026-05-19 구현
+| 엔드포인트 | 설명 |
+|-----------|------|
+| `POST /api/auth/register` | 회원가입 (이메일+비밀번호, JWT 발급) |
+| `POST /api/auth/login` | 로그인 (JWT 발급, lastLoginAt 갱신) |
+| `POST /api/auth/logout` | 로그아웃 (클라이언트 토큰 삭제 안내) |
+| `GET /api/auth/me` | 현재 유저 정보 조회 (토큰 검증) |
+
+**인증 방식**: JWT Bearer Token (7일 유효, `process.env.JWT_SECRET`)
+**구현 파일**: `middleware/auth.js`, `controllers/authController.js`, `routes/auth.js`
+**테스트 계정**: email: `test`, password: `test`
+
+### 유저 (User) — 2026-05-19 구현
+| 엔드포인트 | 설명 |
+|-----------|------|
+| `GET /api/user/profile` | 내 프로필 조회 |
+| `PUT /api/user/profile` | 설정 수정 (settings — theme/language/notifications) |
+| `DELETE /api/user` | 계정 탈퇴 (isActive: false 소프트 삭제) |
+| `POST /api/user/survey-results` | 설문 결과를 유저에 연결 |
+| `GET /api/user/survey-results` | 내 설문 결과 목록 조회 |
+| `GET /api/user/bookmarks` | 북마크 직업 목록 조회 (job_data join) |
+| `POST /api/user/bookmarks/:jobCode` | 직업 북마크 추가 |
+| `DELETE /api/user/bookmarks/:jobCode` | 직업 북마크 삭제 |
+| `POST /api/user/devices` | FCM 기기 토큰 등록/갱신 (deviceId 기준) |
+| `DELETE /api/user/devices/:deviceId` | FCM 기기 토큰 제거 |
+
+**구현 파일**: `controllers/userController.js`, `routes/user.js`
+**User 스키마**: `models/User.js` → `user_data.users` 컬렉션
+
 ### 설문 (Survey)
 | 엔드포인트 | 설명 |
 |-----------|------|
@@ -76,6 +105,7 @@
 | `GET /api/job/:jobCode/preparation` | 미구현 |
 | `GET /api/job/:jobCode/recruitment` | 미구현 |
 | Admin 인증 미들웨어 | `/api/admin` 전체 오픈 상태 |
+| OAuth 로그인 | Google/Kakao provider 스키마는 준비됨, 구현 미완 |
 | 테스트 코드 | 없음 |
 
 ## 인프라 / 서버 설정
@@ -92,10 +122,11 @@ GitHub Actions → 홈서버 자동 배포 완료.
 - GitHub `main` 브랜치 push → `.github/workflows/deploy.yml` 자동 실행
 - 홈서버: `git pull` → `npm install --production` → `pm2 reload lighthouse-db-api`
 
-## DB 현황 (2026-05-07 기준)
+## DB 현황 (2026-05-19 기준)
 
 | DB | 컬렉션 | 건수 | 비고 |
 |----|--------|------|------|
+| user_data | users | 2건+ | User 스키마 구현, 테스트 계정 포함 |
 | job_data | job_info | 537건 | details 정규화 완료 |
 | job_data | job_reviews | 4건 | 013601 테스트 더미 |
 | reference_data | survey_elements | 239건 | |
@@ -108,3 +139,9 @@ GitHub Actions → 홈서버 자동 배포 완료.
 | survey_questions | T3_environmental | 6건 | 파트 도큐먼트 |
 | survey_data | survey_results | 42건+ | |
 | survey_data | survey_statistics | 2건+ | |
+
+## Swagger API 문서
+
+- **로컬**: `http://localhost:3000/api-docs`
+- **프로덕션**: `https://api.lighthouse.career/api-docs`
+- **Bearer 인증**: Swagger UI 우상단 `Authorize` 버튼에 토큰 입력
