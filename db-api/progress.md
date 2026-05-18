@@ -120,7 +120,8 @@ GitHub Actions → 홈서버 자동 배포 완료.
 
 ### 배포
 - GitHub `main` 브랜치 push → `.github/workflows/deploy.yml` 자동 실행
-- 홈서버: `git pull` → `npm install --production` → `pm2 reload lighthouse-db-api`
+- 홈서버: `git pull` → `npm install --omit=dev` → `pm2 reload lighthouse-db-api --update-env`
+- SSH 인증: 패스워드 인증 (`SSH_HOST`, `SSH_USER=root`, `SSH_PASSWORD`)
 
 ## DB 현황 (2026-05-19 기준)
 
