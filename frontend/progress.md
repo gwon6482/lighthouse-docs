@@ -12,7 +12,7 @@
 | 빌드 도구 | Vite 7.3 |
 | 언어 | TypeScript 5.9 |
 | 라우터 | Vue Router 4.6 |
-| 상태 관리 | Composable 패턴 (Pinia 설치됨) |
+| 상태 관리 | Pinia (useAuthStore 운영 중) |
 | HTTP | Axios 1.13 |
 | 스타일 | SCSS (Pretendard 폰트) |
 | PWA | vite-plugin-pwa |
@@ -31,6 +31,9 @@
 | 추천 직업 목록 | `/career-encyclopedia/recommended` | ✅ |
 | 직업 상세 | `/career-encyclopedia/job/:jobCode` | ✅ |
 | 결과 보고서 | `/result/:survey_id` | ✅ |
+| 마이페이지 | `/mypage` | ✅ |
+| 진로계획 | `/career-design` | 🟡 개발 중 |
+| 진로달성 | `/career-achievement` | 🔴 준비 중 |
 
 ## API 연동 현황
 
@@ -96,9 +99,24 @@ src/modules/
     └── encyclopedia.api.ts
 ```
 
+## 인증 / 회원 기능 (2026-05-19)
+
+- JWT 인증: `localStorage('lh_token')` + Axios `Authorization` 헤더 자동 주입
+- `useAuthStore` (Pinia): `token`, `user`, `isLoggedIn`, `setAuth`, `fetchMe`, `logout`
+- `App.vue`: 앱 마운트 시 `fetchMe()` 자동 호출 (토큰 있을 때만)
+- `HomePage.vue`: 로그인 전/후 분기 UI (user-panel 카드, 로그아웃 버튼)
+- `SignUpModal.vue`: 회원가입 완료 후 `@registered` 이벤트로 토큰/유저 전달
+- 비회원 검사 완료 후 회원가입 → 검사 결과 자동 연결 (tryLinkSurvey)
+- 마이페이지: 내 검사 결과 목록 (T1 유형 뱃지 포함)
+
+## 공통 컴포넌트 (2026-05-19)
+
+- `AppHeader.vue`: 스티키 로고 헤더 (로고 클릭 → 메인 이동, slot으로 CTA 버튼 주입)
+- `JourneyIntro.vue`: 4단계 진로 breadcrumb + 소개 박스 (step prop 0~3으로 상태 자동 계산)
+
 ## 남은 작업
 
 - [ ] `fetchRecommendedJobs()` → `/api/job/recommend/:survey_id` 경로 수정 + survey_id 전달
 - [ ] `/api/job/:jobCode/preparation`, `/recruitment` 백엔드 구현 대기
 - [ ] `/api/reference/survey-elements`, `/api/reference/career-attributes` 연동
-- [ ] 카카오 로그인 / 결과 저장 기능
+- [ ] 카카오 소셜 로그인
