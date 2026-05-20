@@ -18,7 +18,7 @@
 **구현 파일**: `middleware/auth.js`, `controllers/authController.js`, `routes/auth.js`
 **테스트 계정**: email: `test`, password: `test`
 
-### 유저 (User) — 2026-05-19 구현
+### 유저 (User)
 | 엔드포인트 | 설명 |
 |-----------|------|
 | `GET /api/user/profile` | 내 프로필 조회 |
@@ -29,13 +29,35 @@
 | `GET /api/user/bookmarks` | 북마크 직업 목록 조회 (job_data join) |
 | `POST /api/user/bookmarks/:jobCode` | 직업 북마크 추가 |
 | `DELETE /api/user/bookmarks/:jobCode` | 직업 북마크 삭제 |
+| `POST /api/user/recommended-jobs` | 종합 추천 직업 저장 (jobCodes 배열, 최대 30) |
 | `POST /api/user/devices` | FCM 기기 토큰 등록/갱신 (deviceId 기준) |
 | `DELETE /api/user/devices/:deviceId` | FCM 기기 토큰 제거 |
-| `POST /api/user/recommended-jobs` | 종합 추천 직업 저장 (jobCodes 배열, 최대 30) |
+| `GET /api/user/target-career` | 목표 진로 조회 (2026-05-21) |
+| `PUT /api/user/target-career` | 목표 진로 설정/변경/삭제 (2026-05-21) |
 
 **구현 파일**: `controllers/userController.js`, `routes/user.js`
 **User 스키마**: `models/User.js` → `user_data.users` 컬렉션
-**추가 필드 (2026-05-20)**: `recommendedJobs: [String]` — 종합 추천 직업 jobCode 목록
+
+#### User 스키마 주요 필드 (2026-05-21 기준)
+```js
+surveyResults:     [String]          // survey_id 참조
+bookmarkedJobs:    [String]          // jobCode 참조
+recommendedJobs:   [String]          // jobCode 참조 (최대 30)
+targetCareer: {                      // 목표 진로 (2026-05-21 추가)
+  refType: 'jobCode' | 'custom',     // 진로백과 직업 or 사용자 지정
+  ref:     String                    // jobCode 또는 custom UID/이름
+}
+careerDesigns:     [String]          // 추후 careerDesign 컬렉션 UID
+careerAchievements:[String]          // 추후 careerAchievement 컬렉션 UID
+settings:          SettingsSchema
+devices:           [DeviceSchema]
+```
+
+#### targetCareer API 동작 규칙
+- `GET`: refType이 'jobCode'이면 job_info에서 title·classification 함께 반환
+- `PUT body null 또는 ref 없음`: targetCareer 삭제
+- `PUT refType='jobCode'`: jobCode 존재 여부 검증 후 저장
+- `PUT refType='custom'`: 진로백과에 없는 직업명 자유 입력, 검증 없음
 
 ### 설문 (Survey)
 | 엔드포인트 | 설명 |
@@ -47,6 +69,12 @@
 | `GET /api/survey/result/list` | 응답 목록 (페이지네이션) |
 | `GET /api/survey/analysis/:survey_id` | 설문 분석 결과 (personality_type 포함) |
 | `GET /api/survey/t1-result/:survey_id` | T1 성격 유형 결과 |
+
+#### T23 survey/form 응답 추가 필드 (2026-05-21)
+T23 items에 `value_code`, `value_name` 필드 추가됨:
+```js
+{ item_id, value_code, value_name, item_text, item_definition }
+```
 
 ### 직업 (Job)
 | 엔드포인트 | 설명 |
@@ -65,7 +93,7 @@
 |-----------|------|
 | `GET /api/job/recommend/:survey_id` | survey_id 기반 직업 추천 (최대 30건) |
 | `POST /api/job/recommend` | 점수 직접 전달 추천 (테스트용) |
-| `GET /api/job/recommend-t2/:survey_id` | T2 전용 직업 추천 (상위 5건) — 2026-05-15 추가 |
+| `GET /api/job/recommend-t2/:survey_id` | T2 전용 직업 추천 (상위 5건) |
 | `GET /api/job/:jobCode/match?survey_id=` | 특정 직업 매칭 점수 |
 | `POST /api/job/:jobCode/match` | 점수 직접 전달 매칭 |
 
@@ -76,14 +104,11 @@
 | 엔드포인트 | 설명 |
 |-----------|------|
 | `GET /api/job/:jobCode/reviews` | 승인된 후기 목록 (FE 조회용) |
-| `POST /api/job/:jobCode/reviews` | 사용자 후기 제출 (pending 상태, 현재 미노출) |
-| `GET /api/admin/reviews` | 전체 후기 목록 (status/jobCode 필터, 페이지네이션) |
-| `POST /api/admin/reviews` | 어드민 직접 후기 등록 (approved 자동) |
-| `PUT /api/admin/reviews/:id` | 후기 승인/반려/내용 수정 |
+| `POST /api/job/:jobCode/reviews` | 사용자 후기 제출 (pending 상태) |
+| `GET /api/admin/reviews` | 전체 후기 목록 (Admin) |
+| `POST /api/admin/reviews` | 어드민 직접 후기 등록 |
+| `PUT /api/admin/reviews/:id` | 후기 승인/반려/수정 |
 | `DELETE /api/admin/reviews/:id` | 후기 삭제 |
-
-> FE에서는 후기 작성 버튼 제거 — 후기는 Admin에서만 등록/관리
-> `job_data.job_reviews` 컬렉션 생성 완료, 테스트 더미 4건(013601) 삽입됨
 
 ### 참조 데이터 (Reference)
 | 엔드포인트 | 설명 |
@@ -100,36 +125,40 @@
 | `GET /api/admin/t1-types` | T1 유형 목록 |
 | `PUT /api/admin/t1-types/:type_code` | T1 유형 텍스트 수정 |
 
+---
+
 ## 미완성 기능 ⚠️
 
 | 항목 | 비고 |
 |------|------|
+| `GET /api/job/:jobCode/recruitment` | 워크넷 공식 API 연동 예정 |
 | `GET /api/job/:jobCode/preparation` | 미구현 |
-| `GET /api/job/:jobCode/recruitment` | 미구현 |
 | Admin 인증 미들웨어 | `/api/admin` 전체 오픈 상태 |
-| OAuth 로그인 | Google/Kakao provider 스키마는 준비됨, 구현 미완 |
+| OAuth 로그인 | Google/Kakao provider 스키마 준비됨, 구현 미완 |
 | 테스트 코드 | 없음 |
 
-## 인프라 / 서버 설정
+---
 
-### CORS (2026-05-07 수정)
-```js
-app.use(cors());
-app.options('*', cors());  // OPTIONS preflight 명시적 처리 추가
-```
-**배경**: 브라우저의 cross-origin 요청 시 preflight OPTIONS 요청이 CloudFront를 통해 504를 반환하던 문제 수정.
-GitHub Actions → 홈서버 자동 배포 완료.
+## 인프라 / 배포
 
-### 배포
+### 배포 방식
 - GitHub `main` 브랜치 push → `.github/workflows/deploy.yml` 자동 실행
 - 홈서버: `git pull` → `npm install --omit=dev` → `pm2 reload lighthouse-db-api --update-env`
-- SSH 인증: 패스워드 인증 (`SSH_HOST`, `SSH_USER=root`, `SSH_PASSWORD`)
+- SSH 인증: `SSH_HOST`, `SSH_USER=root`, `SSH_PASSWORD`
 
-## DB 현황 (2026-05-19 기준)
+### CORS
+```js
+app.use(cors());
+app.options('*', cors());  // OPTIONS preflight 처리
+```
+
+---
+
+## DB 현황 (2026-05-21 기준)
 
 | DB | 컬렉션 | 건수 | 비고 |
 |----|--------|------|------|
-| user_data | users | 2건+ | User 스키마 구현, 테스트 계정 포함 |
+| user_data | users | 2건+ | targetCareer 필드 추가됨 |
 | job_data | job_info | 537건 | details 정규화 완료 |
 | job_data | job_reviews | 4건 | 013601 테스트 더미 |
 | reference_data | survey_elements | 239건 | |
@@ -139,7 +168,7 @@ GitHub Actions → 홈서버 자동 배포 완료.
 | survey_questions | T2_1_talent | 61건 | |
 | survey_questions | T2_2_interest | 33건 | |
 | survey_questions | T2_3_values | 13건 | |
-| survey_questions | T3_environmental | 6건 | 파트 도큐먼트 |
+| survey_questions | T3_environmental | 6건 | |
 | survey_data | survey_results | 42건+ | |
 | survey_data | survey_statistics | 2건+ | |
 
@@ -147,4 +176,3 @@ GitHub Actions → 홈서버 자동 배포 완료.
 
 - **로컬**: `http://localhost:3000/api-docs`
 - **프로덕션**: `https://api.lighthouse.career/api-docs`
-- **Bearer 인증**: Swagger UI 우상단 `Authorize` 버튼에 토큰 입력
