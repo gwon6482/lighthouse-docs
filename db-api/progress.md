@@ -31,9 +31,11 @@
 | `DELETE /api/user/bookmarks/:jobCode` | 직업 북마크 삭제 |
 | `POST /api/user/devices` | FCM 기기 토큰 등록/갱신 (deviceId 기준) |
 | `DELETE /api/user/devices/:deviceId` | FCM 기기 토큰 제거 |
+| `POST /api/user/recommended-jobs` | 종합 추천 직업 저장 (jobCodes 배열, 최대 30) |
 
 **구현 파일**: `controllers/userController.js`, `routes/user.js`
 **User 스키마**: `models/User.js` → `user_data.users` 컬렉션
+**추가 필드 (2026-05-20)**: `recommendedJobs: [String]` — 종합 추천 직업 jobCode 목록
 
 ### 설문 (Survey)
 | 엔드포인트 | 설명 |
