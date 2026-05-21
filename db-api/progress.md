@@ -130,9 +130,11 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 | `PUT /api/career-plan/:planId/projects/:projId` | 프로젝트 수정 |
 | `DELETE /api/career-plan/:planId/projects/:projId` | 프로젝트 삭제 |
 | `PUT /api/career-plan/:planId/timeline` | 타임라인 저장 (STEP3) |
+| `GET /api/career-plan/templates?q=` | 공개 진로계획 템플릿 목록 (인증 불필요, 2026-05-21) |
 
-**구현 파일**: `models/CareerPlan.js`, `controllers/careerPlanController.js`, `routes/careerPlan.js`
+**구현 파일**: `models/CareerPlan.js`, `models/PublicCareerPlan.js`, `controllers/careerPlanController.js`, `routes/careerPlan.js`
 **DB**: `user_data.career_plans` — projects와 timeline은 CareerPlan에 embedded
+**공개 템플릿 DB**: `user_data.public_career_plans` — 시드 3건 (마케팅 기획자/퍼포먼스 마케터/신입 마케터)
 
 ### 직무 카탈로그 (Duties) — 2026-05-21 구현
 | 엔드포인트 | 설명 |
@@ -187,6 +189,7 @@ app.options('*', cors());  // OPTIONS preflight 처리
 |----|--------|------|------|
 | user_data | users | 2건+ | targetCareer 필드 추가됨 |
 | user_data | career_plans | 0건 | 2026-05-21 신규 생성 |
+| user_data | public_career_plans | 3건 | 2026-05-21 신규, 마케팅 직군 예시 3종 시드 |
 | user_data | duties | 0건 | 2026-05-21 신규 생성 |
 | job_data | job_info | 537건 | details 정규화 완료 |
 | job_data | job_reviews | 4건 | 013601 테스트 더미 |
