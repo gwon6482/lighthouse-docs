@@ -129,11 +129,15 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 | `POST /api/career-plan/:planId/projects` | 프로젝트 추가 (STEP2) |
 | `PUT /api/career-plan/:planId/projects/:projId` | 프로젝트 수정 |
 | `DELETE /api/career-plan/:planId/projects/:projId` | 프로젝트 삭제 |
+| `POST /api/career-plan/:planId/routines` | 루틴 추가 (2026-05-26) |
+| `PUT /api/career-plan/:planId/routines/:routineId` | 루틴 수정 (2026-05-26) |
+| `DELETE /api/career-plan/:planId/routines/:routineId` | 루틴 삭제 (2026-05-26) |
 | `PUT /api/career-plan/:planId/timeline` | 타임라인 저장 (STEP3) |
 | `GET /api/career-plan/templates?q=` | 공개 진로계획 템플릿 목록 (인증 불필요, 2026-05-21) |
 
 **구현 파일**: `models/CareerPlan.js`, `models/PublicCareerPlan.js`, `controllers/careerPlanController.js`, `routes/careerPlan.js`
-**DB**: `user_data.career_plans` — projects와 timeline은 CareerPlan에 embedded
+**DB**: `user_data.career_plans` — projects/routines/timeline은 CareerPlan에 embedded
+**Routine 스키마**: `name`(필수), `days[]`, `duration`(분), `notificationTime`("HH:MM"), `notification`(bool), `memo`
 **공개 템플릿 DB**: `user_data.public_career_plans` — 시드 3건 (마케팅 기획자/퍼포먼스 마케터/신입 마케터)
 
 ### 관리자 (Admin)

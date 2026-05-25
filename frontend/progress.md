@@ -63,6 +63,30 @@ GET  /api/reference/career-attributes       🔴 미연동
 
 ---
 
+## 2026-05-26 업데이트 — 진로계획에 "루틴 만들기" 단계 추가
+
+진로계획 = 프로젝트 + 루틴 도메인 정의 반영. 흐름 변경:
+**개요 → 프로젝트 구성 → 타임라인 배치 → 루틴 만들기 → 전체 확인**
+
+### FE
+- `types/career-design.ts`: `Routine` 인터페이스 + `DraftPlan.routines: Routine[]`
+- `composables/useCareerDesign.ts`: `draftRoutine`/`editingRoutineId`/`resetDraftRoutine`, `syncAddRoutine`/`syncUpdateRoutine`/`syncDeleteRoutine`, `loadPlanFromApi`에 routines 매핑
+- `pages/CareerDesignRoutinesPage.vue` (NEW): 루틴 카드 리스트 + 추가/편집/삭제, 완료 → `/career-design/result`
+- `pages/CareerDesignRoutineWritePage.vue` (NEW): 이름/요일(매일·평일·주말 프리셋)/소요시간 슬라이더(5~120분)/알림 토글+시간/메모
+- `career-design.routes.ts`: `/career-design/plan/routines`, `/career-design/routine/new` 추가
+- `pages/CareerDesignCompletePage.vue`: 완료 시 `/result` → `/plan/routines`로 이동
+
+### BE
+- `CareerPlan` 스키마에 `routines: [RoutineSchema]` embedded 추가
+- `POST/PUT/DELETE /api/career-plan/:planId/routines[/:routineId]` 엔드포인트 + Swagger
+- 이전 작업에서 빠뜨린 Swagger duties 잔재 정리
+
+### 커밋
+- FE: `ef82df5` (페이지/타입) + `4bc8e61` (sync 연동) — dev
+- BE: `8f6249d` — main
+
+---
+
 ## 2026-05-25 업데이트 — 진로계획에서 직무(duties) 제거
 
 진로계획 세우기 페이지에서 "직무" 입력 UI가 불필요하다고 판단, 관련 코드 일괄 정리:
