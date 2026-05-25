@@ -121,7 +121,7 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 ### 진로계획 (CareerPlan) — 2026-05-21 구현
 | 엔드포인트 | 설명 |
 |-----------|------|
-| `POST /api/career-plan` | 계획 생성 (STEP1 — name/targetJob/duties/startDate/endDate) |
+| `POST /api/career-plan` | 계획 생성 (STEP1 — name/targetJob/startDate/endDate) |
 | `GET /api/career-plan` | 내 계획 목록 |
 | `GET /api/career-plan/:planId` | 계획 상세 조회 |
 | `PUT /api/career-plan/:planId` | 계획 기본 정보 수정 |
@@ -135,17 +135,6 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 **구현 파일**: `models/CareerPlan.js`, `models/PublicCareerPlan.js`, `controllers/careerPlanController.js`, `routes/careerPlan.js`
 **DB**: `user_data.career_plans` — projects와 timeline은 CareerPlan에 embedded
 **공개 템플릿 DB**: `user_data.public_career_plans` — 시드 3건 (마케팅 기획자/퍼포먼스 마케터/신입 마케터)
-
-### 직무 카탈로그 (Duties) — 2026-05-21 구현
-| 엔드포인트 | 설명 |
-|-----------|------|
-| `GET /api/duties?q=&limit=` | 직무 검색 (직무명/키워드 기반) |
-| `POST /api/admin/duties` | 직무 등록 |
-| `PUT /api/admin/duties/:id` | 직무 수정 |
-| `DELETE /api/admin/duties/:id` | 직무 비활성화 (isActive: false) |
-
-**구현 파일**: `models/Duty.js`, `controllers/dutyController.js`, `routes/duties.js`
-**DB**: `user_data.duties` — 추후 직무 검색/추천 기능에 활용 예정
 
 ### 관리자 (Admin)
 | 엔드포인트 | 설명 |
@@ -190,7 +179,6 @@ app.options('*', cors());  // OPTIONS preflight 처리
 | user_data | users | 2건+ | targetCareer 필드 추가됨 |
 | user_data | career_plans | 0건 | 2026-05-21 신규 생성 |
 | user_data | public_career_plans | 3건 | 2026-05-21 신규, 마케팅 직군 예시 3종 시드 |
-| user_data | duties | 0건 | 2026-05-21 신규 생성 |
 | job_data | job_info | 537건 | details 정규화 완료 |
 | job_data | job_reviews | 4건 | 013601 테스트 더미 |
 | reference_data | survey_elements | 239건 | |

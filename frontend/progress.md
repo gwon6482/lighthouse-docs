@@ -63,6 +63,29 @@ GET  /api/reference/career-attributes       🔴 미연동
 
 ---
 
+## 2026-05-25 업데이트 — 진로계획에서 직무(duties) 제거
+
+진로계획 세우기 페이지에서 "직무" 입력 UI가 불필요하다고 판단, 관련 코드 일괄 정리:
+
+### FE
+- `CareerDesignPlanWritePage.vue`: 직무 태그/추가 UI 및 addDuty/deleteDuty/startEdit/confirmEdit/cancelEdit 함수·state 제거
+- `CareerDesignCompletePage.vue` / `CareerDesignResultPage.vue`: `draftPlan.duties` chip 렌더링 + SCSS 제거
+- `CareerDesignPage.vue`: STEP 1 미리보기 카드의 `g-duty-chip`/`g-add-chip` 데모 제거, 대신 계획명 미리보기로 대체
+- `types/career-design.ts`: `DraftPlan.duties` 제거
+- `composables/useCareerDesign.ts`: payload·loadPlanFromApi·resetDraftPlan에서 duties 제거
+
+### BE (별도 커밋)
+- `CareerPlan` 스키마 duties 필드 제거 + create/updatePlan 컨트롤러 처리 제거
+- Duty 카탈로그 시스템 전체 폐기 (FE에서 사용 안 함)
+
+### 커밋
+- FE: `7e24bbd` refactor: 진로계획에서 직무(duties) UI/타입 제거 (dev)
+- BE: `816ab3e` refactor: 진로계획에서 직무(duties) 필드 제거 + Duty 카탈로그 폐기 (main)
+
+> 진로백과 `Job.duties`(직업의 수행직무)는 **별개 도메인**이라 유지됨.
+
+---
+
 ## 2026-05-25 업데이트 — 진로계획 완료 페이지 주차별 상세 팝업
 
 ### CareerDesignCompletePage.vue
