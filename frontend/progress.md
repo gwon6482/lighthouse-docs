@@ -63,6 +63,26 @@ GET  /api/reference/career-attributes       🔴 미연동
 
 ---
 
+## 2026-05-25 업데이트 — 진로계획 완료 페이지 주차별 상세 팝업
+
+### CareerDesignCompletePage.vue
+- 타임라인 슬롯에 배치된 프로젝트 카드 클릭 시 **주차별 상세 팝업** 표시
+- 마크업/스타일은 ResultPage 팝업과 동일 (Teleport + Transition, 슬라이드업 바텀시트)
+- 슬롯의 `addToSlot` 클릭과 충돌 방지를 위해 `@click.stop` + 별도 `popupProject` ref 사용
+- 기존 `selectedProject`(배치 대상 선택용)와 분리
+
+### 5/21 세션 잔여 변경 정리 (같은 커밋에 포함)
+- 진로계획 작성 플로우 페이지 분리: `CareerDesignPlanWritePage` / `CareerDesignProjectsPage` / `CareerDesignProjectWritePage`
+- 라우트 `/career-design/plan/projects` 추가
+- `CdYellowHeader`에 `backTo` prop 추가 (지정 시 router.push, 미지정 시 back)
+- `DraftPlan.planId: string | null` 추가
+- `router.scrollBehavior: () => ({ top: 0 })` — 페이지 전환 시 항상 최상단
+
+### 커밋
+- `a1bd491` feat: 진로계획 완료 페이지 타임라인 프로젝트 클릭 시 주차별 상세 팝업 (dev)
+
+---
+
 ## 2026-05-21 업데이트 — 목표 진로 기능 + UI 개선
 
 ### 나의 추천 진로 페이지 리디자인 (`EncyclopediaRecommendedPage.vue`)
