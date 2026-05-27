@@ -94,8 +94,13 @@ GET  /api/reference/career-attributes       🔴 미연동
   - 가변 노드 수 대응 위해 path-row를 grid(7) → flex
 - FE: `9bd9395` feat: 주차 path 세로화 + 현재 주차 큰 카드 + 목표 list — dev
   - 가로 노드 → 세로 stack: prev / current(큰 카드) / next 3개만
-  - current는 흰 반투명 큰 카드 + 옐로우 48px 동그라미 + START 말풍선 + 그 주 unique 프로젝트 목표 list (그 주에 한 번이라도 완료 시 취소선)
+  - current는 흰 반투명 큰 카드 + 옐로우 48px 동그라미 + START 말풍선 + 그 주 unique 프로젝트 목표 list
   - `useAchievement.dateProjects` 헬퍼 추가 (todayProjects 일반화)
+- FE: `8858d07` feat: 주차 목표 N등분 바 + 모든 완료 시 축하 모달 — dev
+  - 주차 목표 list 취소선 제거(완료는 색만 살짝 흐리게)
+  - vcard 헤더 아래 N등분 progress bar(완료 segment만 옐로우 그라데이션)
+  - `CelebrationModal` 컴포넌트 신설: Teleport + 콘페티 18조각 CSS 낙하 애니메이션
+  - 오늘 프로젝트+루틴 모두 완료될 때 1회 자동 표시 (`lh_celebration_YYYY-MM-DD` localStorage 플래그)
 
 ---
 
