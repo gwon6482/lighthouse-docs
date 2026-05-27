@@ -92,6 +92,10 @@ GET  /api/reference/career-attributes       🔴 미연동
 - FE: `45688ba` feat: hero zigzag 노드를 일자 → 주차 단위로 변경 — dev
   - 현재 월을 7일씩 N개 주차로 파티션, 노드 라벨 `N주차 + 날짜범위`, 상태는 그 주 합산
   - 가변 노드 수 대응 위해 path-row를 grid(7) → flex
+- FE: `9bd9395` feat: 주차 path 세로화 + 현재 주차 큰 카드 + 목표 list — dev
+  - 가로 노드 → 세로 stack: prev / current(큰 카드) / next 3개만
+  - current는 흰 반투명 큰 카드 + 옐로우 48px 동그라미 + START 말풍선 + 그 주 unique 프로젝트 목표 list (그 주에 한 번이라도 완료 시 취소선)
+  - `useAchievement.dateProjects` 헬퍼 추가 (todayProjects 일반화)
 
 ---
 
