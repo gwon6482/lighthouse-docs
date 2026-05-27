@@ -65,6 +65,27 @@ GET  /api/reference/career-attributes       🔴 미연동
 
 ---
 
+## 2026-05-27 업데이트 — 진로달성 메인 UI 개편 (듀오링고 레퍼런스)
+
+진로달성 메인 페이지의 hero/카드 레이아웃을 듀오링고 학습 화면 레퍼런스로 다시 정리.
+
+### 주요 변경
+- 상단 "진로달성" 타이틀 + 부제 텍스트 제거
+- 새 `plan-hero` 추가: 옐로우 그라데이션 배경에 큰 `진로계획 N일차`(타이틀 급, 44px) + 타임라인 월 단위 단계 표시(`2026년 5월` + `M / Total 단계` + progress bar)
+- "오늘의 할일"(프로젝트) 섹션을 강조 카드(`ca__pcard`)로 교체:
+  - 카테고리 액센트 보더(왼쪽 4px)
+  - 카테고리 칩 + 우상단 체크 토글
+  - 큰 이름(17px) + goal 설명 + 큰 시작 버튼(`시작하기`, 14px 굵게 + 그림자)
+- "오늘의 루틴"은 시작 페이지 거치지 않고 메인에서 즉시 완료 토글되는 `완료` 버튼만 표시 (루틴은 짧고 반복적이라 타이머/기록 생략)
+
+### 데이터 헬퍼
+- `useAchievement.monthProgress(timeline)` 신규 — 현재 월에 매칭되는 timeline 슬롯 index + 전체 슬롯 수 + monthLabel 반환
+
+### 커밋
+- FE: `2c1dfc3` feat: 진로달성 메인 UI 개편 (plan-hero + 할일 강조 + 루틴 완료 토글) — dev
+
+---
+
 ## 2026-05-27 업데이트 — 누적 type-check 에러 14건 정리 + RecommendedJobCard 정돈
 
 - 누적된 `vue-tsc` 에러 14건 일괄 해결 (대부분 `noUncheckedIndexedAccess` 관련 배열 인덱싱). 의미 변화 없이 non-null 단언(`!`) 적용. `npm run type-check` 통과 상태로 복귀
