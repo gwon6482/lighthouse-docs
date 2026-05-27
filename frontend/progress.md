@@ -65,6 +65,18 @@ GET  /api/reference/career-attributes       🔴 미연동
 
 ---
 
+## 2026-05-27 업데이트 — 누적 type-check 에러 14건 정리 + RecommendedJobCard 정돈
+
+- 누적된 `vue-tsc` 에러 14건 일괄 해결 (대부분 `noUncheckedIndexedAccess` 관련 배열 인덱싱). 의미 변화 없이 non-null 단언(`!`) 적용. `npm run type-check` 통과 상태로 복귀
+- `RecommendedJobCard.vue`: `rank` prop을 optional로 바꾸고 순위 배지·왼쪽 액센트 컬러를 `v-if`로 조건부 렌더. 진로 둘러보기(`EncyclopediaHomePage`)에서는 rank를 안 넘겨 미니멀 카드로 표시. 추천 페이지(`EncyclopediaRecommendedPage`)는 1/2/3등 배지 유지
+- `EncyclopediaHomePage`: 이전엔 둘러보기 카드에 1/2/3등 배지가 잘못 노출되는 임시 상태였음 → 의미 맞춰 정리
+
+### 커밋
+- FE: `5c2bf6e` fix: 누적된 type-check 에러 14건 해결 (dev)
+- FE: `2e8685d` refactor: RecommendedJobCard rank prop optional 처리 (dev)
+
+---
+
 ## 2026-05-27 업데이트 — 진로달성 단계 2: 시작/완료 페이지
 
 자기이해 → 진로백과 → 진로설계 → **진로달성** 흐름의 시작/완료 페이지 추가.
