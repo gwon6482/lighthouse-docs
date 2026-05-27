@@ -89,6 +89,9 @@ GET  /api/reference/career-attributes       🔴 미연동
 ### 커밋
 - FE: `2c1dfc3` feat: 진로달성 메인 UI 개편 (plan-hero + 할일 강조 + 루틴 완료 토글) — dev
 - FE: `1ac3bab` feat: 진로달성 hero에 이번 주 path 흡수 + 듀오링고 zigzag 노드 — dev
+- FE: `45688ba` feat: hero zigzag 노드를 일자 → 주차 단위로 변경 — dev
+  - 현재 월을 7일씩 N개 주차로 파티션, 노드 라벨 `N주차 + 날짜범위`, 상태는 그 주 합산
+  - 가변 노드 수 대응 위해 path-row를 grid(7) → flex
 
 ---
 
