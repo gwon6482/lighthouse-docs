@@ -65,6 +65,25 @@ GET  /api/reference/career-attributes       🔴 미연동
 
 ---
 
+## 2026-05-28 업데이트 — 진로달성 hero 강조 + 연속 달성 + 체크 동기화
+
+진로달성 메인의 hero/할일 상호작용 보완.
+
+### 주요 변경
+- **N일차 강조**: `진로계획 N일차` 숫자 44px → 92px, 라벨/숫자/단위 세로 배치 + text-shadow로 hero 중심에 시각적 무게 부여
+- **연속 달성 N일차** hero에 🔥 칩으로 표시 (`achievementStreak` computed):
+  - 오늘부터 역행하며 planned===0 휴식일은 스킵, planned>0 ∧ done>=planned 인 날을 카운트
+  - 오늘이 아직 미완료여도 break 하지 않고 어제부터 계산 시작 (그레이스), streak===0 이면 칩 숨김
+- **오늘의 할일 체크 ↔ 스플릿 progress bar 동기화** (`toggleProjectFromCard`):
+  - 미완료 → 완료: 이번 주차 curriculum의 첫 미완료 item을 동시에 done 처리하여 split bar 1칸 자동 전진
+  - 완료 → 미완료: 마지막 done item을 undo
+  - 기존 일별 project done 플래그는 그대로 함께 토글
+
+### 파일
+- `LightHouse_app/src/modules/career-achievement/pages/CareerAchievementPage.vue`
+
+---
+
 ## 2026-05-27 업데이트 — 진로달성 메인 UI 개편 (듀오링고 레퍼런스)
 
 진로달성 메인 페이지의 hero/카드 레이아웃을 듀오링고 학습 화면 레퍼런스로 다시 정리.
