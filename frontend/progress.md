@@ -34,7 +34,9 @@
 | 직업 상세 | `/career-encyclopedia/job/:jobCode` | ✅ |
 | 진로계획 메인 | `/career-design` | 🟡 개발 중 |
 | 진로계획 작성 | `/career-design/plan/new` | 🟡 개발 중 |
-| 진로달성 | `/career-achievement` | 🔴 준비 중 |
+| 진로달성 메인 | `/career-achievement` | ✅ (단계 1) |
+| 진로달성 집중 모드 | `/career-achievement/start/:type/:id` | ✅ (단계 2) |
+| 진로달성 기록 작성 | `/career-achievement/complete/:type/:id` | ✅ (단계 2) |
 
 ## API 연동 현황
 
@@ -60,6 +62,44 @@ PUT  /api/user/target-career               ✅ 연동됨 (2026-05-21)
 GET  /api/reference/survey-elements         🔴 미연동
 GET  /api/reference/career-attributes       🔴 미연동
 ```
+
+---
+
+## 2026-05-27 업데이트 — 진로달성 단계 2: 시작/완료 페이지
+
+자기이해 → 진로백과 → 진로설계 → **진로달성** 흐름의 시작/완료 페이지 추가.
+
+### FE
+- `career-achievement.routes.ts`: `/career-achievement/start/:type/:id`, `/career-achievement/complete/:type/:id` 라우트 추가
+- `pages/CareerAchievementStartPage.vue` (NEW): **카운트업 타이머**(HH:MM:SS) — 작업 종료 시점이 불확정인 점을 고려해 카운트다운이 아닌 경과시간 누적 방식. 시작/일시정지/재개/완료 버튼, `onBeforeRouteLeave` 가드로 진행 중 이탈 시 confirm
+- `pages/CareerAchievementCompletePage.vue` (NEW): 인증사진(파일 picker → canvas 리사이즈 가로 1280px JPEG 0.82 dataURL, 1장), 체감난이도(★1~5), 메모(2000자), 저장 시 entry 저장 + 메인의 완료 토글
+- `composables/useAchievementEntries.ts` (NEW): `lh_achievement_entries_v1` key로 entry 저장/조회/제거/피드 정렬. 추후 BE 업로드 API + 피드 페이지로 교체 예정
+- `pages/CareerAchievementPage.vue`: '시작' 버튼이 alert placeholder 대신 라우터로 이동
+
+### 데이터 구조 (피드 대비 컨텍스트 스냅샷 포함)
+```ts
+interface AchievementEntry {
+  date: string                    // 'YYYY-MM-DD'
+  itemType: 'project' | 'routine'
+  itemId: string
+  itemName: string                // 스냅샷
+  itemCategory?: ProjectCategory  // 스냅샷 (project만)
+  duration: number                // 계획 duration(분)
+  elapsedSec: number              // 실제 소요시간(초)
+  doneAt: string                  // ISO timestamp
+  photo?: string                  // base64 dataURL (선택)
+  difficulty: 1|2|3|4|5
+  note: string
+  planId?: string
+}
+```
+
+### 미구현 (다음 작업)
+- 인증사진 BE 파일 업로드 API
+- 피드 페이지 (다른 사용자의 진로 인증 기록)
+
+### 커밋
+- FE: `5b62bbd` feat: 진로달성 시작/완료 페이지 (단계 2) — dev
 
 ---
 
@@ -224,7 +264,9 @@ src/modules/
 
 - [ ] 워크넷 공식 API 적용 — 채용정보 탭(`/api/job/:jobCode/recruitment`) 기능 구현
 - [ ] 진로계획 UI 및 기능 개선 (진로계획 작성/타임라인/완성 플로우)
-- [ ] 진로달성 페이지 생성
+- [x] 진로달성 페이지 생성 (단계 1 메인 + 단계 2 시작/완료 완료)
+- [ ] 진로달성 BE 연동 (entry 업로드 API + 인증사진 파일 업로드)
+- [ ] 진로달성 피드 페이지 (다른 사용자의 인증 기록 모아보기)
 - [ ] 목표진로 "진로백과에서 선택하기" 연동 (검색 선택 플로우)
 - [ ] 메인페이지 종합 (홈 화면에 각 섹션 요약 연결)
 - [ ] 랜딩페이지 연결 (www.lighthouse.career)
