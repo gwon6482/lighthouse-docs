@@ -111,6 +111,10 @@ GET  /api/reference/career-attributes       🔴 미연동
 - FE: `1b479ee` fix: curriculum 매핑을 인덱스 → week 번호 매칭으로 변경 — dev
   - sparse curriculum(예: 1/3/5주차만 입력) 케이스에서 배열 인덱스로 접근하면 진로계획 결과 페이지(week 필드 기반)와 표시 텍스트가 어긋남
   - `p.curriculum.find(c => c.week === wIdx)`로 통일
+- FE: `f288b2a` feat: 오늘의 할 일 카드 본문을 그 주차 첫 미완료 item으로 동적 표시 — dev
+  - 기존: `p.goal` (프로젝트당 한 줄, 안 변함) → 변경: 그 주차 curriculum.items 중 첫 미완료 item
+  - 모두 완료 시 "이번 주 모든 목표 완료!" (초록 강조)
+  - curriculum 없거나 주차 범위 밖이면 `goal`로 fallback
 
 ---
 
