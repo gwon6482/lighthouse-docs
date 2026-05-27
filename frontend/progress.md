@@ -101,6 +101,13 @@ GET  /api/reference/career-attributes       🔴 미연동
   - vcard 헤더 아래 N등분 progress bar(완료 segment만 옐로우 그라데이션)
   - `CelebrationModal` 컴포넌트 신설: Teleport + 콘페티 18조각 CSS 낙하 애니메이션
   - 오늘 프로젝트+루틴 모두 완료될 때 1회 자동 표시 (`lh_celebration_YYYY-MM-DD` localStorage 플래그)
+- FE: `ee85514` feat: 주차 카드에 프로젝트별 curriculum N등분 progress bar — dev
+  - 합산 bar 1개 → 프로젝트별 row N개로 분리
+  - 프로젝트가 timeline에 처음 배치된 달 1일을 1주차 시작으로 봄
+  - row = 점/이름/N주차/카운터/펼침 + `curriculum.items.length` 등분 bar (카테고리 색)
+  - 펼치면 items 체크리스트, 클릭 즉시 토글로 bar 한 칸 채움
+  - 신규 composable `useCurriculumCompletion` — `lh_curriculum_items_v1` localStorage, 인덱스 기반 완료 추적
+  - 한계: items가 `string[]`이라 순서 수정 시 완료 매핑 어긋날 수 있음 (BE 스키마 그대로 유지, 추후 `{id, text}[]`로 마이그레이션 고려)
 
 ---
 
