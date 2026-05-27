@@ -108,6 +108,9 @@ GET  /api/reference/career-attributes       🔴 미연동
   - 펼치면 items 체크리스트, 클릭 즉시 토글로 bar 한 칸 채움
   - 신규 composable `useCurriculumCompletion` — `lh_curriculum_items_v1` localStorage, 인덱스 기반 완료 추적
   - 한계: items가 `string[]`이라 순서 수정 시 완료 매핑 어긋날 수 있음 (BE 스키마 그대로 유지, 추후 `{id, text}[]`로 마이그레이션 고려)
+- FE: `1b479ee` fix: curriculum 매핑을 인덱스 → week 번호 매칭으로 변경 — dev
+  - sparse curriculum(예: 1/3/5주차만 입력) 케이스에서 배열 인덱스로 접근하면 진로계획 결과 페이지(week 필드 기반)와 표시 텍스트가 어긋남
+  - `p.curriculum.find(c => c.week === wIdx)`로 통일
 
 ---
 
