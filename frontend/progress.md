@@ -71,7 +71,12 @@ GET  /api/reference/career-attributes       🔴 미연동
 
 ### 주요 변경
 - 상단 "진로달성" 타이틀 + 부제 텍스트 제거
-- 새 `plan-hero` 추가: 옐로우 그라데이션 배경에 큰 `진로계획 N일차`(타이틀 급, 44px) + 타임라인 월 단위 단계 표시(`2026년 5월` + `M / Total 단계` + progress bar)
+- `plan-hero` 하나의 박스로 통합 (이전 plan-hero + week-card 두 박스 합침)
+  - 옐로우 그라데이션 배경
+  - 큰 `진로계획 N일차`(타이틀 급, 44px)
+  - 진행률 바는 타임라인 월 단계 하나로 통합 (이번 주 % 별도 카드 제거)
+  - **이번 주 path**: 듀오링고 학습 화면처럼 7일을 zigzag 위치한 동그란 노드로 표시
+    - done: 흰 채움 + ✓, today: 흰 채움 + 흰 링 + `START` 말풍선, past 미완료: 반투명 회색
 - "오늘의 할일"(프로젝트) 섹션을 강조 카드(`ca__pcard`)로 교체:
   - 카테고리 액센트 보더(왼쪽 4px)
   - 카테고리 칩 + 우상단 체크 토글
@@ -83,6 +88,7 @@ GET  /api/reference/career-attributes       🔴 미연동
 
 ### 커밋
 - FE: `2c1dfc3` feat: 진로달성 메인 UI 개편 (plan-hero + 할일 강조 + 루틴 완료 토글) — dev
+- FE: `1ac3bab` feat: 진로달성 hero에 이번 주 path 흡수 + 듀오링고 zigzag 노드 — dev
 
 ---
 
