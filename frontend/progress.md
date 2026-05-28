@@ -198,7 +198,26 @@ GET  /api/reference/career-attributes       🔴 미연동
   - **진행상황 초기화** 버튼 (danger 톤): localStorage 4종 키 + 모든 WeeklySchedule 일괄 삭제 후 reload
   - **이전날 / 다음날** 버튼 1:1 추가 — `shiftDevDate(delta)` 가 현재 devDate 기준 ±1일 적용 (테스트 효율 ↑)
 
-### Phase 9 — 랜딩페이지 통합 (lighthouse_landing Nuxt → LightHouse_app)
+### Phase 9.5 — 랜딩 통합 롤백 (Nuxt 본진 채택, SEO 우선)
+
+랜딩페이지는 www.lighthouse.career 의 유일한 SEO 노출 페이지이므로 SSG/SSR 가 표준.
+SPA 인 LightHouse_app(Vue+Vite) 에 통합하면 SEO 약함 → 원본 `lighthouse_landing` (Nuxt 3) 을
+production source 로 확정하고 LightHouse_app 의 통합 부분은 깔끔히 제거.
+
+**삭제**
+- `src/modules/landing/`, `src/assets/landing/`, `src/appearance/modules/landing/`
+- `appearance/styles.scss` 의 landing `@use` 한 줄
+- `shared/router/index.ts` 의 landingRoutes import + spread
+
+**남김**
+- HomePage 의 "랜딩페이지" 버튼: 외부 링크 `https://www.lighthouse.career` (target='_blank', 화살표 ↗)
+- `lighthouse_landing/` 디렉토리: production source 로 유지
+
+**향후**
+- www 도메인에 Nuxt SSG 빌드 배포 (별도 인프라 task)
+- 랜딩 디자인 변경은 Nuxt 쪽에서
+
+### Phase 9 — 랜딩페이지 통합 (lighthouse_landing Nuxt → LightHouse_app) [철회됨]
 
 기존 별도 Nuxt 3 프로젝트(`lighthouse_landing/`)의 랜딩 페이지를 우리 Vue+Vite 앱에 모듈로 흡수.
 
