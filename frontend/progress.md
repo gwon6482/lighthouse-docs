@@ -134,10 +134,33 @@ GET  /api/reference/career-attributes       🔴 미연동
   - day-card / add bottom sheet 모두 프로젝트만 노출
   - 회고 섹션의 루틴 달성률 / 놓친 루틴 chip 은 그대로 유지 (회고는 의미 있음)
 
+### Phase 5 — 일정 유연성 / 정합성 보완 (Gap 1·2·3)
+
+#### Gap 1 — 미완료 자동 이월 헬퍼
+- `missedProjects` computed: prevSchedule.items 중 project + `!isProjectDone`
+- 각 항목 `targetDate = origDate + 7일` (같은 요일로 다음 주)
+- 회고 섹션에 "놓친 프로젝트 N건" 박스 — 행마다 카테고리 칩 + 이름 + origDate→targetDate + **이월** 버튼
+- 우상단 **전부 다음 주로 이월** 버튼 (single PUT batch 추가)
+- `isCarriedOver(m)`: nextSchedule 에 동일 (itemId, targetDate) 존재 여부 — idempotent (재실행 시 중복 추가 안 함)
+- 이월된 행은 흐려지고 버튼이 '✓ 이월됨' 으로 변경
+
+#### Gap 2 — 집계도 schedule 우선 사용
+- AchievementPage 가 onMounted 에서 `fetchSchedules(planId)` 로 전체 schedule 로드 → `allSchedules`
+- `findScheduleForDate(date)`: weekStart ≤ date ≤ weekEnd 매칭
+- `effectivePlannedCount(date)`: schedule 있으면 그 날 items 수, 없으면 `Project.days × timeline` fallback
+- `effectiveDoneCount(date)`: schedule items 중 done 마킹된 것 수, 없으면 doneCount fallback
+- `achievementStreak` / `weekNodes` 모두 effective* 사용
+- 결과: 주간리뷰에서 항목 추가/삭제/이월 시 streak / 이번 달 zigzag X/Y 가 즉시 일관성 유지
+
+#### Gap 3 — 항목 제거 시 done 마킹 정리
+- WeeklyReviewPage.removeItem: schedule.items 에서 제거 전에 `isProjectDone` / `isRoutineDone` 확인
+- true 면 `toggleProject` / `toggleRoutine` 호출해 localStorage 해제
+- 같은 itemId 가 추후 다시 추가될 때 stale '완료' 표시 방지
+
 ### 다음 단계 후보
 - 메인에서 reviewDay 도래/통과 알림 (배지/모달)
-- "이동" 기능 (item 의 date 변경)
-- zigzag week panel / curriculum bar 도 schedule 기반으로 동기화
+- "이동" 기능 (item 의 date 변경 — 현재는 삭제 + 재추가로 우회)
+- currentWeekProjectBars / projectTodayFocus 도 schedule 기반으로 (현재 calendar-week 기반)
 - BE: 주간 리뷰 entry 별도 컬렉션 (선택)
 
 ---
