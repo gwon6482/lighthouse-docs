@@ -157,6 +157,16 @@ GET  /api/reference/career-attributes       🔴 미연동
 - true 면 `toggleProject` / `toggleRoutine` 호출해 localStorage 해제
 - 같은 itemId 가 추후 다시 추가될 때 stale '완료' 표시 방지
 
+### Phase 6 — 프로젝트 시작 = 주간 일정 배치 (페이지 재사용)
+사용자 의도: 프로젝트의 첫 시작도 사용자가 직접 일정을 배치하는 흐름이어야 함 (reviewDay 와 무관).
+
+- Result CTA `프로젝트 시작하기` → `주간 일정 배치하기` 로 변경, 라우트도 `/career-achievement` → `/career-achievement/weekly-review`
+- WeeklyReviewPage 가 `isFirstSetup` 으로 두 모드 자동 분기:
+  - 첫 진입 (planId 있고 prevRange 없음): 🚀 / FIRST WEEK SETUP / "이번 주 일정을 직접 그려보세요" / 안내문 + 데일리 화면 CTA
+  - 회고 모드: 기존 📝 / WEEKLY REVIEW / "한 주를 돌아보고..."
+- 첫 진입 안내 카드 + 이번 주 섹션 제목도 카피 정리
+- day 카드 / 추가 시트 / autosave / 이월 등 기존 흐름을 그대로 재사용 — 코드 중복 0
+
 ### 다음 단계 후보
 - 메인에서 reviewDay 도래/통과 알림 (배지/모달)
 - "이동" 기능 (item 의 date 변경 — 현재는 삭제 + 재추가로 우회)
