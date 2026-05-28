@@ -190,10 +190,53 @@ GET  /api/reference/career-attributes       🔴 미연동
 - 첫 진입: Result → schedule → 데일리
 - 회고 진입: HomePage 팝업 → review → schedule → 데일리
 
+### Phase 8 — 홈 진입 정비 + 개발자 기능 카드 + 진행상황 초기화
+- HomePage 에 "랜딩페이지" 진입 버튼 신설 (로그인/유저 패널 ↔ 6 grid 버튼 사이, 옐로우 그라데이션 + 우측 화살표)
+- button-container 와 동일 폭 (max-width 400/480px), 위·아래 24px 균등 간격
+- HomePage 의 "오늘 날짜 시뮬레이션" 카드를 "개발자 기능" 카드로 확장
+  - dev-tools__group 분리, sub-section 별 옐로우 group title
+  - **진행상황 초기화** 버튼 (danger 톤): localStorage 4종 키 + 모든 WeeklySchedule 일괄 삭제 후 reload
+  - **이전날 / 다음날** 버튼 1:1 추가 — `shiftDevDate(delta)` 가 현재 devDate 기준 ±1일 적용 (테스트 효율 ↑)
+
+### Phase 9 — 랜딩페이지 통합 (lighthouse_landing Nuxt → LightHouse_app)
+
+기존 별도 Nuxt 3 프로젝트(`lighthouse_landing/`)의 랜딩 페이지를 우리 Vue+Vite 앱에 모듈로 흡수.
+
+**신규 구조**
+- `src/modules/landing/`
+  - `pages/LandingPage.vue` — LandingAppHeader + Section1~8 + LandingAppFooter 조립
+  - `components/LandingAppHeader.vue` — 스크롤 시 자동 숨김, 로고 → `/` 라우트
+  - `components/LandingAppFooter.vue`
+  - `components/Section1.vue ~ Section8.vue` — 라이트하우스 5단계 소개
+  - `landing.routes.ts` — `/landing`
+- `src/assets/landing/` — 이미지 9 + .mov 1
+- `src/appearance/modules/landing/`
+  - `_variables.scss` / `_mixins.scss` / `_base.scss`
+  - `_section1.scss` ~ `_section8.scss` / `_app-header.scss`
+  - `Landing.scss` (모듈 진입점, partial 일괄 @import)
+- `appearance/styles.scss` 에 `@use './modules/landing/Landing.scss'` 추가 — **기존 앱 컨벤션과 동일**하게 글로벌 로드
+
+**Nuxt → Vue+Vite 어댑테이션 (학습 포인트)**
+| 원본 | 변환 |
+|---|---|
+| `~/components/...` | `@/...` (Vite alias) |
+| 자동 import | 명시적 import |
+| `~/assets/images/foo.png` (src 직접) | `import foo from '@/assets/landing/foo.png'` + `:src="foo"` (Vite asset 처리) |
+| `nuxt.config additionalData` (SCSS auto-prepend) | partial 마다 `@import './base'` 또는 글로벌 styles.scss 에서 통합 로드 |
+| `layouts/default.vue` 자동 적용 | LandingPage 가 Header/Footer 직접 포함 |
+
+**SCSS 로딩 시행착오 메모**
+- 처음에 각 Section.vue 의 `<style lang="scss">@import '@/appearance/modules/landing/sectionN'</style>` 로 import → **스타일 미적용**
+- 원인: Vite + sass-embedded 환경에서 `@/` 별칭이 SCSS @import 에서 자동 resolve 되지 않아 silent fail
+- 해결: 컴포넌트의 `<style>` 블록 제거, `Landing.scss` 한 장에 모아 `appearance/styles.scss` 에서 `@use` 로 글로벌 로드 — 다른 모듈들과 동일 패턴
+
+**중복 폰트 제거**
+- `index.html` 에 추가했던 Pretendard CDN 제거 — `main.ts` 가 npm `pretendard` 패키지를 이미 import 중
+
 ### 다음 단계 후보
-- 메인에서 reviewDay 도래/통과 알림 (배지/모달)
+- 랜딩 섹션 고정 width(1460/1620px) → 반응형 처리
+- 메인에서 reviewDay 도래/통과 알림
 - "이동" 기능 (item 의 date 변경)
-- currentWeekProjectBars / projectTodayFocus 도 schedule 기반으로
 - BE: 주간 리뷰 entry 별도 컬렉션 (선택)
 
 ---
