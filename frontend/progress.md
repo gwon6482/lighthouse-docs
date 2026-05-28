@@ -89,9 +89,16 @@ GET  /api/reference/career-attributes       🔴 미연동
 - 신규: `pages/CareerDesignReviewDayPage.vue`, `pages/CareerAchievementWeeklyReviewPage.vue`, `composables/useWeeklySchedule.ts`
 - 수정: `types/career-design.ts`, `composables/useCareerDesign.ts`, `pages/CareerDesign*.vue` (5개), `pages/CareerDesignResultPage.vue`, `components/page/HomeButtonContainer.vue`, `pages/HomePage.vue`, `*.routes.ts` (career-design / career-achievement)
 
+### Phase 2 — 첫 주 자동 생성
+- `useWeeklySchedule` 헬퍼 5개 추가
+  - `toDateKey`, `parseDateKey`, `dowOf`, `computeFirstWeekRange`, `generateItemsForWeek`
+  - `computeFirstWeekRange(startDate, reviewDay)`: 첫 주 [weekStart, weekEnd] 계산. startDate 가 reviewDay 면 다음 주 reviewDay 까지 7일, 아니면 startDate 부터 첫 reviewDay 까지
+  - `generateItemsForWeek(plan, timeline, weekStart, weekEnd)`: Project.days × timeline 활성 월 + Routine.days 를 곱해 일자별 items 생성. curriculumWeek 는 프로젝트의 첫 배치 월 1일 기준 계산
+- `ensureFirstWeekSchedule(planId, plan, timeline)`: idempotent — 첫 주 schedule 없으면 자동 생성
+- Result 페이지 `onMounted` 에서 호출 → 진로계획 완성 즉시 데일리 화면이 표시할 데이터 확보
+
 ### 다음 단계
-- Phase 2: 진로계획 완성 시 첫 주 WeeklySchedule 자동 생성 (Project.days 디폴트 기반)
-- Phase 3: 진로달성 메인을 WeeklySchedule 기반으로 마이그레이션
+- Phase 3: 진로달성 메인을 WeeklySchedule 기반으로 마이그레이션 (현재는 Project.days 직접 참조)
 - Phase 4: 주간 리뷰 페이지 본 구현 (회고 + 다음 주 schedule 편집)
 
 ---
