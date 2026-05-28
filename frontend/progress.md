@@ -105,9 +105,32 @@ GET  /api/reference/career-attributes       🔴 미연동
   - 새 plan = schedule 기반 / 옛 plan = 기존 로직 → 안전한 점진 마이그레이션
   - reviewDay 미설정 / 옛 startDate 포맷 / schedule 생성 실패 어떤 케이스도 빈 화면 없이 동작
 
-### 다음 단계
-- Phase 4: 주간 리뷰 페이지 본 구현 (지난 주 회고 + 다음 주 schedule 편집)
-- (선택) Phase 5: zigzag week panel / curriculum bar 도 schedule 기반으로 동기화
+### Phase 4 — 주간 리뷰 페이지 본 구현
+**페이지**: `CareerAchievementWeeklyReviewPage.vue` (`/career-achievement/weekly-review`) — stub → 완성
+
+#### 4a. 지난 주 회고
+- `prevRange`: 오늘 기준 직전 주 [start, end] (첫 주면 null → empty 상태)
+- 자동 요약: 루틴 달성 (X/Y, %) / 프로젝트 완료 (X/Y, %), 놓친 루틴 chip
+- 자유 회고 textarea (max 2000) + 회고 저장 → `PUT items` 의 reviewNote/status='reviewed' + reviewedAt 자동 기록
+- 빈 상태 UI: 계획 없음 / 첫 주 (직전 주 없음)
+
+#### 4b. 다음 주 일정 (read-only)
+- `nextRange`: 현재 주 다음 날부터 +6일
+- onMounted 에서 `ensureWeekSchedule` 로 다음 주 schedule 보장 (없으면 디폴트 생성)
+- 7일 요일별 카드: 요일 칩 + 날짜 + items 수, 각 item 은 카테고리 칩 + 이름 + 분
+- 빈 day 는 dashed 카드 + '예정된 일정 없음'
+
+#### 4c. 다음 주 일정 편집 (autosave)
+- 각 item 우측 ✕ → 즉시 `PUT items` 로 삭제
+- 각 day 헤더 '+ 추가' → 바닥시트(프로젝트/루틴 탭, 마스터 데이터 list) → 선택 시 즉시 `PUT items` 로 추가
+- optimistic local update + `저장 중...` 인디케이터
+- 신규 item: `crypto.randomUUID()` id + curriculumWeek:null (마스터 데이터로 충분, 표시 시점에서 계산 가능)
+
+### 다음 단계 후보
+- 메인에서 reviewDay 도래/통과 알림 (배지/모달)
+- "이동" 기능 (item 의 date 변경)
+- zigzag week panel / curriculum bar 도 schedule 기반으로 동기화
+- BE: 주간 리뷰 entry 별도 컬렉션 (선택)
 
 ---
 
