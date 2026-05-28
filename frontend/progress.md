@@ -167,10 +167,33 @@ GET  /api/reference/career-attributes       🔴 미연동
 - 첫 진입 안내 카드 + 이번 주 섹션 제목도 카피 정리
 - day 카드 / 추가 시트 / autosave / 이월 등 기존 흐름을 그대로 재사용 — 코드 중복 0
 
+### Phase 7 — 주간리뷰를 2 페이지로 분리
+
+기존 한 페이지(회고 + 이번 주 일정 편집)가 너무 무거워서 책임을 둘로 나눔.
+
+**페이지 1**: `CareerAchievementWeeklyReviewPage` (`/career-achievement/weekly-review`)
+- 회고 전담 — hero 📝 WEEKLY REVIEW
+- 지난 주 메트릭, 자동 이월된 프로젝트 목록, 놓친 루틴 chip, 자유 회고 메모, 회고 저장
+- 자동 이월 로직은 페이지 진입 시 처리 (회고 시점에 의례적)
+- **첫 진입(직전 주 없음) = 회고 대상 없음** → onMounted 에서 schedule 페이지로 `router.replace`
+- 하단 CTA: `이번 주 일정 조정하기 →` → schedule 페이지
+
+**페이지 2 (신규)**: `CareerAchievementSchedulePage` (`/career-achievement/weekly-schedule`)
+- 일정 편집 전담 — hero 🗓️ THIS WEEK (블루 그라데이션)
+- 이번 주 day cards + 추가 시트 + ✕ 삭제 + autosave (review 페이지에서 옮긴 로직)
+- 하단 CTA: `오늘의 계획 시작하기` → `/career-achievement` (데일리)
+
+**Result CTA 라우팅**:
+- 진로계획 완성 직후 → schedule 페이지로 직결 (회고할 게 없으므로 review 페이지 우회)
+
+**흐름**
+- 첫 진입: Result → schedule → 데일리
+- 회고 진입: HomePage 팝업 → review → schedule → 데일리
+
 ### 다음 단계 후보
 - 메인에서 reviewDay 도래/통과 알림 (배지/모달)
-- "이동" 기능 (item 의 date 변경 — 현재는 삭제 + 재추가로 우회)
-- currentWeekProjectBars / projectTodayFocus 도 schedule 기반으로 (현재 calendar-week 기반)
+- "이동" 기능 (item 의 date 변경)
+- currentWeekProjectBars / projectTodayFocus 도 schedule 기반으로
 - BE: 주간 리뷰 entry 별도 컬렉션 (선택)
 
 ---
