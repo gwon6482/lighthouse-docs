@@ -97,9 +97,17 @@ GET  /api/reference/career-attributes       🔴 미연동
 - `ensureFirstWeekSchedule(planId, plan, timeline)`: idempotent — 첫 주 schedule 없으면 자동 생성
 - Result 페이지 `onMounted` 에서 호출 → 진로계획 완성 즉시 데일리 화면이 표시할 데이터 확보
 
+### Phase 3 — 진로달성 메인을 WeeklySchedule 기반으로 마이그레이션
+- 헬퍼 추가: `computeWeekRangeContaining(date, startDate, reviewDay)` — 첫 주부터 forward 로 진행하며 date 가 속한 주의 범위 반환
+- `ensureWeekSchedule(planId, plan, timeline, weekStart, weekEnd)` generic 헬퍼 추가 (ensureFirstWeekSchedule 도 이를 사용하도록 리팩터)
+- AchievementPage onMounted: 이번 주 schedule 자동 로드/생성
+- **fallback 레이어**: `todayProjectsList` / `todayRoutinesList` 가 schedule 우선 사용 → 미존재(옛 plan 등) 시 기존 `Project.days × timeline` 계산으로 fallback
+  - 새 plan = schedule 기반 / 옛 plan = 기존 로직 → 안전한 점진 마이그레이션
+  - reviewDay 미설정 / 옛 startDate 포맷 / schedule 생성 실패 어떤 케이스도 빈 화면 없이 동작
+
 ### 다음 단계
-- Phase 3: 진로달성 메인을 WeeklySchedule 기반으로 마이그레이션 (현재는 Project.days 직접 참조)
-- Phase 4: 주간 리뷰 페이지 본 구현 (회고 + 다음 주 schedule 편집)
+- Phase 4: 주간 리뷰 페이지 본 구현 (지난 주 회고 + 다음 주 schedule 편집)
+- (선택) Phase 5: zigzag week panel / curriculum bar 도 schedule 기반으로 동기화
 
 ---
 
