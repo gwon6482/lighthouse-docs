@@ -139,6 +139,26 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 **DB**: `user_data.career_plans` — projects/routines/timeline은 CareerPlan에 embedded
 **Routine 스키마**: `name`(필수), `days[]`, `duration`(분), `notificationTime`("HH:MM"), `notification`(bool), `memo`
 **공개 템플릿 DB**: `user_data.public_career_plans` — 시드 3건 (마케팅 기획자/퍼포먼스 마케터/신입 마케터)
+**reviewDay 필드 (2026-05-28)**: `CareerPlan.reviewDay: String` 추가. 일주일의 끝이자 시작이 되는 요일 ('월'~'일'). create/update 모두 수용.
+
+### 주간 일정 (WeeklySchedule) — 2026-05-28 Phase 1
+진로계획 본체는 마스터 데이터로 가볍게 두고, 매주 한 번씩 그 주에 실제로 잡힌 일정만 별도 컬렉션에 저장한다.
+일정이 밀리거나 변경되면 그 주 schedule 1건만 수정 → 진로계획 본체 무변동 → 가벼움.
+
+| 엔드포인트 | 설명 |
+|-----------|------|
+| `GET /api/career-plan/:planId/weekly-schedule` | 그 plan 의 모든 주간 일정 (weekStart desc) |
+| `GET /api/career-plan/:planId/weekly-schedule/:weekStart` | 특정 주 1건 (없으면 schedule=null) |
+| `POST /api/career-plan/:planId/weekly-schedule` | 신규 생성 (body: weekStart, weekEnd, items?). 중복 weekStart 면 409 + 기존 schedule 반환 |
+| `PUT /api/career-plan/:planId/weekly-schedule/:weekStart` | 부분 업데이트 (items / weekEnd / reviewNote / status). status='reviewed' 면 reviewedAt 자동 기록 |
+| `DELETE /api/career-plan/:planId/weekly-schedule/:weekStart` | 삭제 |
+
+**스키마** (`user_data.weekly_schedules`, planId+weekStart 유니크 인덱스):
+- `scheduleId` (uuid), `planId`, `userUid`, `weekStart`/`weekEnd` ('YYYY-MM-DD')
+- `items: [{ id, itemType:'project'|'routine', itemId, date, curriculumWeek?, note }]`
+- `status:'pending'|'reviewed'`, `reviewedAt`, `reviewNote`
+
+**구현 파일**: `models/WeeklySchedule.js`, `controllers/weeklyScheduleController.js`, `routes/careerPlan.js` (기존 라우터에 endpoint 추가)
 
 ### 관리자 (Admin)
 | 엔드포인트 | 설명 |

@@ -65,6 +65,37 @@ GET  /api/reference/career-attributes       🔴 미연동
 
 ---
 
+## 2026-05-28 업데이트 — 주간리뷰 사전작업: reviewDay + WeeklySchedule 데이터 레이어 + 진입 팝업
+
+### 배경
+반년~1년 단위 진로계획은 그대로 흘러가지 않음. 매주 한 번씩 한 주를 돌아보고 다음 주 일정을 재배치하는 주간리뷰가 필요.
+이 과정에서 진로계획 본체를 매번 mutate 하면 DB 가 흔들리므로, 본체는 **러프 마스터**로 두고 매주의 확정된 일정만 `WeeklySchedule` 컬렉션에 저장하는 모델로 전환 중.
+
+### Phase 1 — 데이터 레이어
+- **CareerPlan.reviewDay** 필드 추가 (FE/BE) + ReviewDay 입력 페이지 신설 (`/career-design/plan/review-day`)
+- **WeeklySchedule REST API** 5종 (BE — db-api 문서 참조)
+- **useWeeklySchedule 컴포저블** (FE): WeeklySchedule/WeeklyScheduleItem 타입 + fetch/create/update/delete + itemsByDate 헬퍼
+
+### 흐름 / UI 정비
+- 진로계획 작성 흐름 확장: PlanWrite → Projects → Complete → Routines → **ReviewDay (신규)** → Result
+- 5개 작성/수정 페이지 푸터를 "이전으로 / 다음으로" 2버튼 (secondary/primary, flex 1:2) 으로 통일
+- Result 페이지 요약 카드에 reviewDay 안내 줄 추가
+- HomePage 진로달성 메뉴를 **데일리 / 주간리뷰 선택 팝업**으로 전환
+  - `HomeButtonContainer` 가 `route` 또는 `onClick` 둘 다 지원하도록 확장
+  - 📅 데일리 → `/career-achievement` (기존)
+  - 📝 주간 리뷰 → `/career-achievement/weekly-review` (stub, 본 구현 Phase 4)
+
+### 파일 (신규/수정)
+- 신규: `pages/CareerDesignReviewDayPage.vue`, `pages/CareerAchievementWeeklyReviewPage.vue`, `composables/useWeeklySchedule.ts`
+- 수정: `types/career-design.ts`, `composables/useCareerDesign.ts`, `pages/CareerDesign*.vue` (5개), `pages/CareerDesignResultPage.vue`, `components/page/HomeButtonContainer.vue`, `pages/HomePage.vue`, `*.routes.ts` (career-design / career-achievement)
+
+### 다음 단계
+- Phase 2: 진로계획 완성 시 첫 주 WeeklySchedule 자동 생성 (Project.days 디폴트 기반)
+- Phase 3: 진로달성 메인을 WeeklySchedule 기반으로 마이그레이션
+- Phase 4: 주간 리뷰 페이지 본 구현 (회고 + 다음 주 schedule 편집)
+
+---
+
 ## 2026-05-28 업데이트 — 진로달성 hero 강조 + 연속 달성 + 루틴 게이지 + 완료 트리거 단일화
 
 진로달성 메인 UI 보완 + 진로계획 시작일 제약 추가.
