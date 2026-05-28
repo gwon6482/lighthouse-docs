@@ -65,22 +65,40 @@ GET  /api/reference/career-attributes       🔴 미연동
 
 ---
 
-## 2026-05-28 업데이트 — 진로달성 hero 강조 + 연속 달성 + 체크 동기화
+## 2026-05-28 업데이트 — 진로달성 hero 강조 + 연속 달성 + 루틴 게이지 + 완료 트리거 단일화
 
-진로달성 메인의 hero/할일 상호작용 보완.
+진로달성 메인 UI 보완 + 진로계획 시작일 제약 추가.
 
-### 주요 변경
+### hero (CareerAchievementPage)
 - **N일차 강조**: `진로계획 N일차` 숫자 44px → 92px, 라벨/숫자/단위 세로 배치 + text-shadow로 hero 중심에 시각적 무게 부여
 - **연속 달성 N일차** hero에 🔥 칩으로 표시 (`achievementStreak` computed):
   - 오늘부터 역행하며 planned===0 휴식일은 스킵, planned>0 ∧ done>=planned 인 날을 카운트
   - 오늘이 아직 미완료여도 break 하지 않고 어제부터 계산 시작 (그레이스), streak===0 이면 칩 숨김
-- **오늘의 할일 체크 ↔ 스플릿 progress bar 동기화** (`toggleProjectFromCard`):
-  - 미완료 → 완료: 이번 주차 curriculum의 첫 미완료 item을 동시에 done 처리하여 split bar 1칸 자동 전진
-  - 완료 → 미완료: 마지막 done item을 undo
-  - 기존 일별 project done 플래그는 그대로 함께 토글
+- **이번 주 루틴 달성률 게이지** (`weeklyRoutineStat` computed):
+  - 분모는 이번 주(월~일) 계획된 루틴 횟수, 100%에서 시작
+  - 과거(오늘 이전) 날짜의 미완료 루틴마다 (1/planned)% 차감 — 오늘·미래는 미판정
+  - "🎯 이번 주 루틴 달성" 레이블 + 큰 % + 흰 진행바 + "놓친 루틴 N / planned" 메타 (놓친 게 0이면 "아직 놓친 루틴이 없어요")
+- **startDate 포맷 관용**: `parseStartDate` 헬퍼 추가 — `YYYY-MM-DD` / `YYYY-MM` / `YYYY.MM` / `YYYY년 M월` 모두 허용 (day 없으면 그 달 1일)
+
+### 진로계획 시작일 제약 (CdDatePicker / PlanWritePage)
+- `CdDatePicker`에 `min?: string` prop 추가 — min 이전 셀은 회색 + 취소선 + 비활성, "오늘" 빠른선택도 가드
+- `PlanWritePage`에서 `getToday()` 기준 todayKey를 startDate min으로, `draftPlan.startDate || todayKey`를 endDate min으로 전달
+- 사유: startDate가 미래로 잡혀 있던 옛 데이터에서 N일차가 항상 1로 표시되던 문제 해소 + 신규 작성 시 과거 시작일 차단
+
+### 완료 트리거 단일화 (CareerAchievementPage / CompletePage)
+- **카드 체크 버튼 제거**: 오늘의 할일 `ca__pcard-check` 삭제, 완료 시 head 우측에 "✓ 완료" 녹색 알약 배지(`ca__pcard-done-badge`)만 표시 (비-interactive)
+- **vcard 하위목표 클릭 토글 제거**: `ca__pgoal-item`의 `@click="toggleItem"` 삭제, hover/cursor 스타일도 제거 — 표시 전용
+- **저장 흐름에서 curriculum advance**: `CareerAchievementCompletePage.save()`에 `advanceProjectCurriculum(project, dateKey)` 추가
+  - 프로젝트의 첫 배치 월 1일 기준 dateKey가 속한 주차 wIdx 계산
+  - 해당 curriculum week의 첫 미완료 item을 `toggleItem`으로 done 처리 → split bar 1칸 자동 전진
+  - itemType==='project' && !alreadyDone 일 때만 (루틴은 curriculum 없음)
+- 결과: 프로젝트 완료/curriculum 전진은 **시작하기 → 기록작성 → 저장** 단일 흐름. 루틴 카드의 quick "완료" 토글은 의도된 설계라 그대로 유지
 
 ### 파일
 - `LightHouse_app/src/modules/career-achievement/pages/CareerAchievementPage.vue`
+- `LightHouse_app/src/modules/career-achievement/pages/CareerAchievementCompletePage.vue`
+- `LightHouse_app/src/modules/career-design/components/CdDatePicker.vue`
+- `LightHouse_app/src/modules/career-design/pages/CareerDesignPlanWritePage.vue`
 
 ---
 
