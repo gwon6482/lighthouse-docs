@@ -126,6 +126,14 @@ GET  /api/reference/career-attributes       🔴 미연동
 - optimistic local update + `저장 중...` 인디케이터
 - 신규 item: `crypto.randomUUID()` id + curriculumWeek:null (마스터 데이터로 충분, 표시 시점에서 계산 가능)
 
+#### 4d. 마무리 보완 (사용자 피드백)
+- 커스텀 헤더 제거 → `AppHeader` 로 통일 (다른 페이지와 동일 패턴)
+- 페이지 상단 intro 블록 (타이틀 + 한 줄 설명) 추가
+- 첫 주(직전 주 없음) UX 개선: empty-state 차단 대신 안내 카드 + 이번 주 일정 편집 섹션을 별도 노출
+- 루틴 주간 조정 UI 제거: 루틴은 마스터 days 로 자동 배치 → 주간 단계에서 조정 불필요
+  - day-card / add bottom sheet 모두 프로젝트만 노출
+  - 회고 섹션의 루틴 달성률 / 놓친 루틴 chip 은 그대로 유지 (회고는 의미 있음)
+
 ### 다음 단계 후보
 - 메인에서 reviewDay 도래/통과 알림 (배지/모달)
 - "이동" 기능 (item 의 date 변경)
