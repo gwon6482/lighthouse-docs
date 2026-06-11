@@ -541,6 +541,36 @@ export const updateTargetCareer = (data) => req.put('/api/user/target-career', d
 
 ---
 
+## 최근 업데이트 (2026-06-11) — 최초 진입 온보딩 + 설계 전 메인 스테퍼
+
+### 신규 온보딩 모듈 (`src/modules/onboarding/`)
+최초 진입 사용자 플로우를 신규 구현. 흐름:
+`/onboarding`(스플래시) → `/onboarding/auth`(로그인·회원가입) → `/onboarding/signup`(가입 위저드) → `/onboarding/intro`(서비스 소개 3슬라이드) → `/onboarding/welcome` → `/main/before`
+- **스플래시**: 로고(Symbol.svg) 인라인 SVG — 외곽선 그리기→색 채우기 애니메이션
+- **AuthPage**: 회원가입 기본, SNS 버튼(카카오/Apple/구글, OAuth 미구현=준비중) + 이메일 가입 + 로그인 토글
+- **가입 위저드**: 계정→이름→나이/성별→Q1(상황,단일)→Q2(고민,중복)→Q3(자기이해,단일). 이메일 단계에서 `GET /api/auth/check-email` 중복체크. 진로답변 Q1~Q3은 localStorage 임시 저장(백엔드 미반영)
+- **welcome**: 성공 애니메이션 + 이름 호명
+
+### 프로젝트 설계 전 메인 (`/main/before` = MainBeforePage)
+"클리어하고 다음 단계로 넘기는" 3단계 가로 박스 스테퍼:
+- ① 자기이해 검사 ② 목표 진로 결정 ③ 진로 프로젝트 설계
+- 순차 활성화(이전 done이어야 active), done/active/locked 상태 표시, 상단 진행바
+- 각 단계는 해당 플로우를 마치면 `/main/before`로 복귀(sessionStorage 컨텍스트 플래그)
+  - 1단계: 검사 결과 보고서 맨 아래 "다음으로"
+  - 2단계: 진로백과 직업상세 "목표진로로 설정하기" → 확인 후 설정·복귀
+  - 3단계: 진로계획 결과 페이지 "다음으로" → 계획 active 전환 후 복귀
+- 3단계 모두 완료 시 "진로달성 시작하기!" → `/career-achievement`
+
+### 진로계획/주간일정 개선·버그픽스
+- **신규 진로계획 시작일을 사용자 기준 "오늘"로 고정** (읽기전용) — 미래 시작일로 인한 빈 주간일정 방지
+- **주간일정/리뷰/데일리 빈 화면 버그 수정**: 주차 범위 계산이 reviewDay를 쓰지 않는데 가드가 reviewDay를 필수로 요구해 빈 화면이 되던 문제 → startDate만 있으면 계산. 시작 전이면 "아직 시작 전" 안내 표시
+- 진로계획 페이지 하단 "목표 진로 설정하기" 버튼 제거(목표진로는 진로백과에서 설정)
+
+### 백엔드 변경 (배포 완료)
+- `GET /api/auth/check-email?email=` → `{ available }` (회원가입 이메일 중복체크)
+
+---
+
 ## 모듈 구조
 
 ```
@@ -565,6 +595,9 @@ src/modules/
 - [ ] 진로달성 BE 연동 (entry 업로드 API + 인증사진 파일 업로드)
 - [ ] 진로달성 피드 페이지 (다른 사용자의 인증 기록 모아보기)
 - [ ] 목표진로 "진로백과에서 선택하기" 연동 (검색 선택 플로우)
+- [x] 최초 진입 온보딩 플로우 (스플래시~welcome) + 설계 전 메인 `/main/before` 3단계 스테퍼
+- [ ] 설계 후 메인 `/main` 구현 (현재 스텁)
+- [ ] 회원가입 진로답변(Q1/Q2/Q3) 백엔드 저장 (현재 localStorage 임시)
 - [ ] 메인페이지 종합 (홈 화면에 각 섹션 요약 연결)
 - [ ] 랜딩페이지 연결 (www.lighthouse.career)
-- [ ] 카카오 소셜 로그인
+- [ ] 카카오 소셜 로그인 / SNS OAuth
