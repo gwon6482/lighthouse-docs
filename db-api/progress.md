@@ -160,6 +160,29 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 
 **구현 파일**: `models/WeeklySchedule.js`, `controllers/weeklyScheduleController.js`, `routes/careerPlan.js` (기존 라우터에 endpoint 추가)
 
+### 진로달성 기록 (Achievement) — 2026-06-15 구현 ⚠️ 배포 대기
+진로달성 모듈의 실제 달성 행위(완료 토글 / 인증사진·난이도·메모 / 커리큘럼 체크)를 서버 영속화.
+이전에는 전부 브라우저 localStorage 에만 저장되어 기기 변경 시 소실되던 데이터. 인증사진은 base64 를 DB 에 넣지 않고 **S3 presigned 업로드 후 URL 만 저장**.
+
+> 상태: **코드 구현 + 로컬 검증 완료 / 미배포**. 운영 반영 전 AWS 버킷 CORS·운영 env(`S3_UPLOAD_PUBLIC_BASE`)·IAM PutObject 확인 필요.
+
+| 엔드포인트 | 설명 |
+|-----------|------|
+| `GET /api/career-plan/:planId/achievements?from=&to=` | 달성 기록 목록 (완료상태 복원 + 피드, date 범위) |
+| `PUT /api/career-plan/:planId/achievements/:date/:itemType/:itemId` | upsert (단순 완료 토글 ~ 전체 인증 기록) |
+| `DELETE /api/career-plan/:planId/achievements/:date/:itemType/:itemId` | 삭제 (완료 토글 off) |
+| `GET /api/career-plan/:planId/curriculum` | 커리큘럼 항목 완료 목록 |
+| `PUT /api/career-plan/:planId/curriculum/:projectId/:week/:idx` | 커리큘럼 항목 토글 (body.done=false 면 해제) |
+| `POST /api/career-plan/uploads/presign` | 인증사진 S3 presigned PUT URL 발급 (body: contentType → uploadUrl/fileUrl/key) |
+
+**스키마**:
+- `user_data.achievement_records` — `(userUid, planId, date, itemType, itemId)` 유니크 + `(userUid, planId, doneAt desc)` 피드 인덱스. 필드: `done`, `itemName`, `itemCategory`, `duration`, `elapsedSec`, `doneAt`, `photoUrl`, `difficulty`(1~5), `note`, `curriculumWeek`
+- `user_data.curriculum_completions` — `(userUid, planId, projectId, week, idx)` 유니크, `done`
+
+**S3**: `config/s3.js` (region `ap-northeast-2`, env 또는 ~/.aws 자격증명), key `uploads/achievements/{uid}/{uuid}.jpg`, presign 만료 5분. 의존성 `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`.
+
+**구현 파일**: `models/AchievementRecord.js`, `models/CurriculumCompletion.js`, `config/s3.js`, `controllers/achievementController.js`, `routes/careerPlan.js`. 소유권 검증은 weeklyScheduleController 의 `ensureOwnedPlan` 패턴 재사용.
+
 ### 관리자 (Admin)
 | 엔드포인트 | 설명 |
 |-----------|------|
@@ -203,6 +226,9 @@ app.options('*', cors());  // OPTIONS preflight 처리
 | user_data | users | 2건+ | targetCareer 필드 추가됨 |
 | user_data | career_plans | 0건 | 2026-05-21 신규 생성 |
 | user_data | public_career_plans | 3건 | 2026-05-21 신규, 마케팅 직군 예시 3종 시드 |
+| user_data | weekly_schedules | — | 2026-05-28 신규 |
+| user_data | achievement_records | — | 2026-06-15 신규 ⚠️ 배포 대기 |
+| user_data | curriculum_completions | — | 2026-06-15 신규 ⚠️ 배포 대기 |
 | job_data | job_info | 537건 | details 정규화 완료 |
 | job_data | job_reviews | 4건 | 013601 테스트 더미 |
 | reference_data | survey_elements | 239건 | |
