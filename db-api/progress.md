@@ -1,8 +1,10 @@
 # DB API 진행상황
 
-**프로젝트**: lighthouse_DB_API
-**스택**: Node.js + Express + MongoDB (Mongoose)
-**배포**: 홈서버(port 3000) → CloudFront → api.lighthouse.career
+**프로젝트**: lighthouse-api
+**스택**: Node.js + Express + MongoDB (Mongoose) + Docker
+**배포**: ~~홈서버(port 3000) → CloudFront~~ → **AWS Lightsail 컨테이너(서울, port 8080)** → api.lighthouse.career (2026-06-25 클라우드 이전)
+- 이미지: `ghcr.io/gwon6482/lighthouse-api`(public). CI: `main push → Docker 빌드 → ghcr push → Lightsail 자동 재배포`
+- DB는 MongoDB Atlas(클라우드), 파일 업로드는 S3. 상세는 `devlog/2026-06-25.md`
 
 ## 완성된 기능 ✅
 
