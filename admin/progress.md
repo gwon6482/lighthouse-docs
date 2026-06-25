@@ -1,8 +1,9 @@
 # Admin 프로젝트 진행상황
 
-**프로젝트**: lighthouse_admin
-**레포**: https://github.com/gwon6482/lightHouse_admin
+**프로젝트**: lighthouse-admin
+**레포**: https://github.com/gwon6482/lighthouse-admin
 **스택**: Next.js 16 + TypeScript + Tailwind CSS + NextAuth v5
+**배포**: ~~홈서버 pm2(port 3010) → CloudFront~~ → **Vercel** → admin.lighthouse.career (2026-06-25 이전). main push → Vercel Git 자동배포
 **상태**: 🟡 개발 중
 
 ## 프로젝트 구조
