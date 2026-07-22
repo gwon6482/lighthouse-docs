@@ -601,3 +601,28 @@ src/modules/
 - [ ] 메인페이지 종합 (홈 화면에 각 섹션 요약 연결)
 - [ ] 랜딩페이지 연결 (www.lighthouse.career)
 - [ ] 카카오 소셜 로그인 / SNS OAuth
+
+---
+
+## 네비게이션 / 뒤로가기 안전 기준 (2026-07-22 수립)
+
+모든 "나가기·뒤로" 처리는 아래 5개 규칙으로 판단한다. (감사 결과 기반)
+
+- **R1 — 백 목적지 결정성**: 화면이 딥링크·새로고침·`router.replace` 이후로 진입될 수 있으면
+  바(bare) `router.back()` 금지. `shared/utils/navigation.ts`의 `safeBack(router, fallback)`처럼
+  히스토리 없으면 명시적 목적지로 이동. `back()`은 "직전 화면이 반드시 존재"가 보장될 때만.
+- **R2 — 진행 중 데이터 보호**: 미저장 폼·타이머·멀티스텝은 `onBeforeRouteLeave` + confirm.
+  인페이지 back 버튼도 같은 confirm 공유, 정상 저장/완료 경로는 `bypass` 플래그로 통과.
+  (표준 예: `career-achievement/CareerAchievementStartPage.vue`)
+- **R3 — 자동저장 우선**: 가능하면 설문처럼 localStorage 자동저장으로 유실을 원천 제거.
+  (표준 예: `survey/composables/useSurvey.ts` persistProgress)
+- **R4 — 하드웨어 백 일원화**: Capacitor `@capacitor/app` backButton 리스너를 전역 1곳(App.vue).
+  루트/홈(`/`, `/main`, `/onboarding`)에서는 "한 번 더 누르면 종료", 그 외엔 라우터 뒤로.
+- **R5 — 인증 경계**: 로그인 페이지(`/onboarding/auth`) 진입 시 토큰 있으면 로그아웃 confirm.
+  (전역 가드 `shared/router/app.ts` beforeEach)
+
+### 감사에서 발견된 조치 대상
+- [x] R5 로그인 경계 로그아웃 확인 (app.ts 전역 가드)
+- [ ] R4 하드웨어 백버튼 전역 처리 (`@capacitor/app` 설치 필요)
+- [ ] R1 바 `router.back()` → safeBack: JobDetailHeader, CdProjectDetail, MyPage, CdYellowHeader fallback
+- [ ] R2 작성 폼 이탈 가드: CareerDesign Plan/Project/Routine Write
