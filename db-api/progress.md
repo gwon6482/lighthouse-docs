@@ -244,6 +244,15 @@ app.options('*', cors());  // OPTIONS preflight 처리
 | survey_data | survey_results | 42건+ | |
 | survey_data | survey_statistics | 2건+ | |
 
+## 설문 문항 카피 교정 (2026-07-23)
+
+`survey_questions` DB 문항 텍스트 22건 교정 (프로덕션 Atlas 직접 반영, 스키마·유저응답 무관):
+- T1(question_text) 오탈자 5 + 따옴표→자기서술 2 + 주어 "나는" 통일 10
+- T21(question_text) 유일한 질문형 → 서술형 1 (`편인가요?`→`편이다.`)
+- T23(value_question) 오탈자 2 (프로젝트를통해, 주변으로 부터)
+- T3(part_name) 파트명 2: 커뮤니케이션 강도→소통 강도, 업무 유동성→업무 변화 강도
+- 제외: T3 존댓말 질문 어투(part_question) 통일은 보류.
+
 ## Swagger API 문서
 
 - **로컬**: `http://localhost:3000/api-docs`
