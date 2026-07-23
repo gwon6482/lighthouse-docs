@@ -623,6 +623,7 @@ src/modules/
 
 ### 감사에서 발견된 조치 대상
 - [x] R5 로그인 경계 로그아웃 확인 (app.ts 전역 가드)
-- [ ] R4 하드웨어 백버튼 전역 처리 (`@capacitor/app` 설치 필요)
-- [ ] R1 바 `router.back()` → safeBack: JobDetailHeader, CdProjectDetail, MyPage, CdYellowHeader fallback
-- [ ] R2 작성 폼 이탈 가드: CareerDesign Plan/Project/Routine Write
+- [x] R4 하드웨어 백버튼 전역 처리 (`@capacitor/app` + `useHardwareBack.ts` + App.vue 토스트)
+- [x] R1 바 `router.back()` → `safeBack` (`shared/utils/navigation.ts`): JobDetailHeader, CdProjectDetail, MyPage, CdYellowHeader fallback, Project/RoutineWrite
+- [x] R2 작성 폼 이탈 가드 (`shared/composables/useUnsavedGuard.ts`): CareerDesign Plan/Project/Routine Write
+- [x] R3 career-design draft 자동저장/복원 (`useCareerDesign.ts` localStorage `lh_cd_draft` + deep watch) — 새로고침·앱종료 유실 방지
