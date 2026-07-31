@@ -627,3 +627,15 @@ src/modules/
 - [x] R1 바 `router.back()` → `safeBack` (`shared/utils/navigation.ts`): JobDetailHeader, CdProjectDetail, MyPage, CdYellowHeader fallback, Project/RoutineWrite
 - [x] R2 작성 폼 이탈 가드 (`shared/composables/useUnsavedGuard.ts`): CareerDesign Plan/Project/Routine Write
 - [x] R3 career-design draft 자동저장/복원 (`useCareerDesign.ts` localStorage `lh_cd_draft` + deep watch) — 새로고침·앱종료 유실 방지
+
+---
+
+## 하단 네비게이션 (베타 3탭, 2026-07-31)
+
+베타 기준 하단 탭을 5→3으로 축소. 핵심 루프(계획→실행→조정)에 집중.
+
+- **노출 3탭**: 로드맵 · **홈(중앙 FAB)** · 마이. (구 '일정' → **'로드맵'** 리네임: 라벨 + 지도 아이콘, 기능·라우트명 동일 `Career Achievement Weekly Schedule`)
+- **커뮤니티·커리어**: 나브에서 제거하되 **코드·라우트·아이콘 보존**. `packages/core/src/shared/config/features.ts`(`community:false, career:false`) 플래그로만 제어 → 재오픈 시 flip.
+- **딥링크 차단**: `stubRoutes.ts`의 `/career-hub`·`/community`에 `beforeEnter` 가드 → 플래그 off면 홈 리다이렉트.
+- 구현: `shared/components/BottomNav.vue`(navItems를 `visibleNavItems` computed로 필터). i18n 미도입이라 라벨은 인라인 문자열, Tabler 미사용이라 아이콘은 인라인 SVG.
+- 배포: 커밋 eafbcf1 → main push → 스테이징(test.lighthouse.career) 반영. prod(app)은 v* 태그 미발행.
