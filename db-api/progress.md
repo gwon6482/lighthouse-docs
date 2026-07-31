@@ -200,9 +200,23 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 |------|------|
 | `GET /api/job/:jobCode/recruitment` | 워크넷 공식 API 연동 예정 |
 | `GET /api/job/:jobCode/preparation` | 미구현 |
-| Admin 인증 미들웨어 | `/api/admin` 전체 오픈 상태 |
 | OAuth 로그인 | Google/Kakao provider 스키마 준비됨, 구현 미완 |
 | 테스트 코드 | 없음 |
+| CORS 오리진 화이트리스트 | 현재 전체 허용(`app.use(cors())`). 모바일 오리진 확정 후 예정 |
+
+---
+
+## 보안 (2026-07-31 강화) 🔒
+
+관리자/서비스 API 인증 감사 후 다음을 적용(배포·라이브 검증 완료).
+
+| 조치 | 내용 |
+|------|------|
+| `/api/admin/*` 인증 | `adminAuth` 미들웨어(`x-admin-key` 상수시간 비교, `ADMIN_API_KEY` 미설정 시 503 fail-closed). Admin은 Vercel 서버 프록시(`/api/proxy`)가 NextAuth 세션 검증 후 키를 서버사이드 주입 |
+| 공개 쓰기 차단 | `job` `POST/PUT/DELETE`, `reference` `POST/PUT/DELETE`(survey-elements·career-attributes), `survey` `POST /statistics/update`·`GET /result/list`에 `adminAuth`. GET 조회는 공개 유지 |
+| 검사결과 IDOR | `GET /analysis/:survey_id`·`/t1-result/:survey_id`에 `authenticate` + 소유권(`User.surveyResults`, 미소유 시 claim-on-read). `POST /report`는 관리자 전용(`adminAuth`) |
+| 레이트리밋 | `express-rate-limit` + `trust proxy 1`. `/login`(실패 10회/10분, 성공 제외), `/check-email`(30회/10분) |
+| env | `ADMIN_API_KEY`를 GitHub Secret(lighthouse-api)·Vercel(lighthouse-admin) 양쪽 동일값. 배포 순서 Admin→API |
 
 ---
 
