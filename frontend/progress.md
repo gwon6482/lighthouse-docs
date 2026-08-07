@@ -638,4 +638,26 @@ src/modules/
 - **커뮤니티·커리어**: 나브에서 제거하되 **코드·라우트·아이콘 보존**. `packages/core/src/shared/config/features.ts`(`community:false, career:false`) 플래그로만 제어 → 재오픈 시 flip.
 - **딥링크 차단**: `stubRoutes.ts`의 `/career-hub`·`/community`에 `beforeEnter` 가드 → 플래그 off면 홈 리다이렉트.
 - 구현: `shared/components/BottomNav.vue`(navItems를 `visibleNavItems` computed로 필터). i18n 미도입이라 라벨은 인라인 문자열, Tabler 미사용이라 아이콘은 인라인 SVG.
-- 배포: 커밋 eafbcf1 → main push → 스테이징(test.lighthouse.career) 반영. prod(app)은 v* 태그 미발행.
+- 배포: 커밋 eafbcf1(+27076ba 사이드 탭 세로정렬) → main push → 스테이징(test.lighthouse.career) 반영.
+- **prod 반영 완료 (2026-08-07, `v0.1.4`)**: app.lighthouse.career 배포 확인 — 아래 참조.
+
+---
+
+## 프로덕션 릴리스 `v0.1.4` (2026-08-07)
+
+`v0.1.3` 이후 3커밋을 본서비스(app.lighthouse.career)에 반영.
+
+| 항목 | 내용 |
+|------|------|
+| 태그 | `v0.1.4` (annotated) |
+| 워크플로우 | `deploy-app` run 31155237880 — success (43s) |
+| 경로 | build → S3 `lighthouse-career-app` → CF `E3LGZIV007TKVC` 무효화 |
+| 검증 | 프로덕션 index.html이 로컬 빌드와 동일한 메인 청크(`index-Br-PUT0x.js`) 참조, HTTP 200 |
+
+**포함 변경**
+- 하단 나브 3탭 축소 + '일정'→'로드맵' 리네임 (위 섹션)
+- 하단 나브 사이드 탭 세로 정렬 (`align-items: flex-end` → `center`)
+- `/main/before` 스테퍼: 완료된 단계는 설명 대신 **결과 한 줄** 표시(검사 유형 / 목표진로명 / 계획명)
+- `CareerDesignPlanWritePage`: **종료(완료)일 미입력 시 '다음으로' 비활성화** — 날짜 없이 다음 단계 진입 방지
+
+**참고**: 워크플로우가 쓰는 `actions/checkout@v4` 등이 Node 20 타깃이라 러너가 Node 24로 강제 실행 중(deprecation 경고). 동작 영향은 없으나 액션 버전 상향 권장. `deploy-test.yml`도 동일.
