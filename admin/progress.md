@@ -70,14 +70,28 @@ src/
 
 | 기능 | 비고 |
 |------|------|
-| Admin 인증 미들웨어 | DB API `/api/admin` 전체 오픈 상태 |
 | 후기 관리 UI | 승인/반려 버튼, 어드민 직접 등록 폼 미구현 |
-| `encyclopediaApi.getReviews` 경로 | `/review` → `/reviews` 수정 필요 |
+| `encyclopediaApi.getReviews` 경로 | `/review` → `/reviews` 수정 필요. **2026-08-07 재확인 — 아직 그대로**(`src/lib/api.ts:74`) |
+
+> ✅ **해결됨(2026-07-31)**: "Admin 인증 미들웨어 / DB API `/api/admin` 전체 오픈" 항목은 완료되어 위 표에서 제거했다.
+> `/api/admin/*`에 `adminAuth`(`x-admin-key`, 미설정 시 503 fail-closed)가 붙었고,
+> Admin은 `src/app/api/proxy/[...path]/route.ts`가 NextAuth 세션을 검증한 뒤 서버사이드에서 키를 주입한다(브라우저 미노출).
+> `src/lib/api.ts`의 axios baseURL도 `/api/proxy`로 전환됨.
+
+### ⚠️ 알려진 위험 — 관리자 비밀번호 (조치 보류)
+프로덕션 admin.lighthouse.career는 `admin@lighthouse.com` / `changeme`로 로그인된다(2026-08-07 실측).
+비밀번호는 DB가 아니라 Vercel production env `ADMIN_PASSWORD`와 평문 비교(`auth.ts`)이며, 아직 교체되지 않았다.
+**사용자가 위험을 인지한 상태에서 현행 유지를 선택**했으므로 방치가 아니라 보류다.
+조치 시: Vercel → Settings → Environment Variables → Production 에서 변경 후 재배포.
+NextAuth JWT 세션은 서버 무효화가 불가하므로 기존 세션까지 끊으려면 `AUTH_SECRET`도 함께 로테이션해야 한다.
 
 ## 인프라 메모
 
 - **로컬 dev**: `next dev --webpack` (port 3000, `NEXTAUTH_URL=http://localhost:3000`)
-- **운영**: 홈서버 PM2 port 3010
+- **운영**: ~~홈서버 PM2 port 3010~~ → **Vercel** (2026-06-25 이전 완료). 구 PM2 방식은 폐기됨
+- **env 위치 주의**: Admin은 **Vercel 프로젝트 env**를 읽는다(GitHub Secrets 아님).
+  API(`lighthouse-api`)는 **GitHub 레포 시크릿**을 읽어 Lightsail에 주입한다. `ADMIN_API_KEY`는 **양쪽에 같은 값**이 있어야 하며,
+  과거 이 둘을 혼동해 API가 빈 키로 떠서 전 관리자 API가 503된 사고가 있었다(2026-07-31)
 - **CORS 이슈 해결됨 (2026-05-07)**: DB API에 `app.options('*', cors())` 추가 배포 완료
   - 브라우저 cross-origin preflight OPTIONS → CloudFront 504 문제 수정
 

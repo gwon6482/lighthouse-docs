@@ -162,11 +162,16 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 
 **구현 파일**: `models/WeeklySchedule.js`, `controllers/weeklyScheduleController.js`, `routes/careerPlan.js` (기존 라우터에 endpoint 추가)
 
-### 진로달성 기록 (Achievement) — 2026-06-15 구현 ⚠️ 배포 대기
+### 진로달성 기록 (Achievement) — 2026-06-15 구현 ✅ 배포 완료
 진로달성 모듈의 실제 달성 행위(완료 토글 / 인증사진·난이도·메모 / 커리큘럼 체크)를 서버 영속화.
 이전에는 전부 브라우저 localStorage 에만 저장되어 기기 변경 시 소실되던 데이터. 인증사진은 base64 를 DB 에 넣지 않고 **S3 presigned 업로드 후 URL 만 저장**.
 
-> 상태: **코드 구현 + 로컬 검증 완료 / 미배포**. 운영 반영 전 AWS 버킷 CORS·운영 env(`S3_UPLOAD_PUBLIC_BASE`)·IAM PutObject 확인 필요.
+> 상태: **운영 반영 완료** (2026-08-07 실측 확인). 오랫동안 "배포 대기"로 잘못 적혀 있던 항목 — 정정함.
+> - 프로덕션 `POST /api/career-plan/uploads/presign`, `GET/PUT/DELETE /api/career-plan/:planId/achievements/...` 모두 **401 응답**(=라우트 생존, 인증 요구).
+> - S3 `lighthouse-uploads` 버킷 CORS 설정 완료 — `AllowedMethods: PUT/GET/HEAD`, `AllowedOrigins: app·test.lighthouse.career + localhost:5173`.
+> - FE(`modules/career-achievement/achievement.api.ts`)도 `presignUpload`/`uploadPhoto`까지 배선 완료. localStorage는 **오프라인 캐시**일 뿐 서버가 source of truth.
+>
+> ⚠️ 찾을 때 주의: 라우트가 `routes/achievement.js`가 아니라 **`routes/careerPlan.js`**에 들어있다. 파일명으로 찾으면 없는 것처럼 보인다.
 
 | 엔드포인트 | 설명 |
 |-----------|------|
@@ -243,8 +248,8 @@ app.options('*', cors());  // OPTIONS preflight 처리
 | user_data | career_plans | 0건 | 2026-05-21 신규 생성 |
 | user_data | public_career_plans | 3건 | 2026-05-21 신규, 마케팅 직군 예시 3종 시드 |
 | user_data | weekly_schedules | — | 2026-05-28 신규 |
-| user_data | achievement_records | — | 2026-06-15 신규 ⚠️ 배포 대기 |
-| user_data | curriculum_completions | — | 2026-06-15 신규 ⚠️ 배포 대기 |
+| user_data | achievement_records | — | 2026-06-15 신규, 배포 완료 |
+| user_data | curriculum_completions | — | 2026-06-15 신규, 배포 완료 |
 | job_data | job_info | 537건 | details 정규화 완료 |
 | job_data | job_reviews | 4건 | 013601 테스트 더미 |
 | reference_data | survey_elements | 239건 | |

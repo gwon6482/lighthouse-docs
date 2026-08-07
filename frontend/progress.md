@@ -1,8 +1,9 @@
 # Frontend 진행상황
 
-**프로젝트**: lighthouse_FE (LightHouse_app)
+**프로젝트**: `lighthouse-test` (pnpm 모노레포 — 구 `lighthouse_FE` / `LightHouse_app` 명칭은 폐기)
 **스택**: Vue 3 + TypeScript + Vite
 **상태**: 🟡 개발 중
+**구조**: `packages/core`(기능모듈+shared) + 두 셸 — `apps/test`(스테이징, main push → test.lighthouse.career) / `apps/app`(프로덕션, `v*` 태그 → app.lighthouse.career)
 
 ## 기술 스택
 
@@ -17,7 +18,7 @@
 | 스타일 | SCSS (Pretendard 폰트) |
 | PWA | vite-plugin-pwa |
 | 모바일 | Capacitor 8 (iOS / Android 하이브리드) |
-| 배포 | S3 + CloudFront → lighthouse.career |
+| 배포 | S3 + CloudFront. test=`lighthouse-career-fe`/CF `EYU43VZ4GPE7Q`, app=`lighthouse-career-app`/CF `E3LGZIV007TKVC` |
 
 ## 구현된 페이지
 
@@ -592,11 +593,11 @@ src/modules/
 - [ ] 워크넷 공식 API 적용 — 채용정보 탭(`/api/job/:jobCode/recruitment`) 기능 구현
 - [ ] 진로계획 UI 및 기능 개선 (진로계획 작성/타임라인/완성 플로우)
 - [x] 진로달성 페이지 생성 (단계 1 메인 + 단계 2 시작/완료 완료)
-- [~] 진로달성 BE 연동 (entry 업로드 API + 인증사진 S3 업로드) — 2026-06-15 구현·로컬검증 완료, **배포 대기**(AWS 버킷 CORS·운영 env·IAM 확인 후 반영)
+- [x] 진로달성 BE 연동 (entry 업로드 API + 인증사진 S3 업로드) — **배포 완료**. 2026-08-07 실측 정정: 오랫동안 '배포 대기'로 잘못 적혀 있었으나 API·FE·S3 CORS 전부 반영된 상태였다. `achievement.api.ts`에 presign/uploadPhoto 배선 완료, localStorage는 오프라인 캐시일 뿐 서버가 source of truth
 - [ ] 진로달성 피드 페이지 (다른 사용자의 인증 기록 모아보기)
 - [ ] 목표진로 "진로백과에서 선택하기" 연동 (검색 선택 플로우)
 - [x] 최초 진입 온보딩 플로우 (스플래시~welcome) + 설계 전 메인 `/main/before` 3단계 스테퍼
-- [ ] 설계 후 메인 `/main` 구현 (현재 스텁)
+- [x] 설계 후 메인 — **`/main` 제거하고 진로달성(`/career-achievement`)으로 일원화**(2026-08-07, `v0.1.5`). 아래 참조
 - [ ] 회원가입 진로답변(Q1/Q2/Q3) 백엔드 저장 (현재 localStorage 임시)
 - [ ] 메인페이지 종합 (홈 화면에 각 섹션 요약 연결)
 - [ ] 랜딩페이지 연결 (www.lighthouse.career)
@@ -617,7 +618,8 @@ src/modules/
 - **R3 — 자동저장 우선**: 가능하면 설문처럼 localStorage 자동저장으로 유실을 원천 제거.
   (표준 예: `survey/composables/useSurvey.ts` persistProgress)
 - **R4 — 하드웨어 백 일원화**: Capacitor `@capacitor/app` backButton 리스너를 전역 1곳(App.vue).
-  루트/홈(`/`, `/main`, `/onboarding`)에서는 "한 번 더 누르면 종료", 그 외엔 라우터 뒤로.
+  루트/홈(`/`, `/career-achievement`, `/main/before`, `/onboarding`)에서는 "한 번 더 누르면 종료", 그 외엔 라우터 뒤로.
+  (2026-08-07 갱신: `/main` 제거, 설계 전 메인 `/main/before`도 루트 취급에 추가)
 - **R5 — 인증 경계**: 로그인 페이지(`/onboarding/auth`) 진입 시 토큰 있으면 로그아웃 confirm.
   (전역 가드 `shared/router/app.ts` beforeEach)
 
@@ -661,3 +663,49 @@ src/modules/
 - `CareerDesignPlanWritePage`: **종료(완료)일 미입력 시 '다음으로' 비활성화** — 날짜 없이 다음 단계 진입 방지
 
 **참고**: 워크플로우가 쓰는 `actions/checkout@v4` 등이 Node 20 타깃이라 러너가 Node 24로 강제 실행 중(deprecation 경고). 동작 영향은 없으나 액션 버전 상향 권장. `deploy-test.yml`도 동일.
+
+---
+
+## 프로덕션 릴리스 `v0.1.5` (2026-08-07) — 잔재 페이지 `/main` 제거
+
+### 배경
+`/main`(설계 후 메인)은 `"준비 중인 페이지입니다"`만 렌더하는 23줄짜리 플레이스홀더였는데,
+진입가드(`shared/router/app.ts`)와 로그인 후 리다이렉트(`AuthPage.vue`)가 **활성 plan 보유자를 전부 여기로** 보내고 있었다.
+
+> 단, "깨진 경로"는 아니었다. `/main`에 `meta.showBottomNav: true`가 있고 하단 나브 노출 3조건
+> (`showBottomNav` && `isLoggedIn` && `hasActivePlan`)이 이 상황에서 전부 참이라 나브가 정상 렌더됐고,
+> 홈 탭을 누르면 곧바로 진로달성으로 이동 가능했다. 실제 영향은 "앱 열 때마다 군더더기 한 탭 + 나쁜 첫인상" 수준.
+
+**판단(사용자)**: 진로달성(`/career-achievement`)이 사실상 설계 후 메인이고 `/main`은 쓸모없는 잔재 → 일원화.
+
+### 변경 (8파일, +11 / -97)
+| 파일 | 변경 |
+|---|---|
+| `modules/survey/survey.routes.ts` | `/main`을 `redirect: '/career-achievement'`로 교체. 컴포넌트·name `'Main'`·meta `mainState` 제거 |
+| `shared/router/app.ts` | 진입가드 `hasActivePlan ? '/career-achievement' : '/main/before'` |
+| `modules/onboarding/pages/AuthPage.vue` | 로그인 후 replace 목적지 동일 변경 |
+| `shared/composables/useHardwareBack.ts` | `ROOT_PATHS` → `['/', '/career-achievement', '/main/before', '/onboarding']` |
+| `modules/survey/pages/HomePage.vue` | test 셸 dev 런처의 '메인 페이지' 전/후 선택 모달 제거 → `메인 페이지(설계 전)` 단일 항목 |
+| 삭제 | `survey/pages/MainPage.vue`, `appearance/modules/survey/MainPage.scss` (+ `styles.scss`의 `@use`) |
+
+**라우트를 지우지 않고 redirect로 남긴 이유**: PWA `start_url`·북마크·기존 히스토리가 `/main`을 가리킬 수 있고,
+S3+CloudFront SPA fallback 구조에서 매칭 라우트가 없으면 빈 화면이 되기 때문.
+
+**곁다리 수정**: `ROOT_PATHS`에 `/main/before`를 새로 추가했다. 그간 설계 전 메인이 빠져 있어
+안드로이드 하드웨어 백에서 루트 취급을 못 받았다(종료 확인 없이 그냥 뒤로 감).
+
+### 배포·검증
+| 항목 | 내용 |
+|---|---|
+| 커밋 / 태그 | `a82c689` → `v0.1.5` |
+| 스테이징 | `deploy-test` run 31157015624 — success |
+| 프로덕션 | `deploy-app` run 31157118160 — success (40s) |
+
+빌드 산출물 실측(프로덕션 `index-BlCd-V4X.js`, 로컬 빌드와 해시 일치):
+- `path:"/main",redirect:"/career-achievement"` ✓
+- `hasActivePlan?"/career-achievement":"/main/before"` ✓ (index·AuthPage 두 청크 모두)
+- `ROOT_PATHS` = `["/","/career-achievement","/main/before","/onboarding"]` ✓
+- 플레이스홀더 문구 "준비 중인 페이지입니다" 전 자산에서 소멸, PWA precache 135 → 134 entries
+
+> 참고: 구 청크 URL(`/assets/MainPage-*.js`)을 직접 치면 HTTP 200이 나오는데, S3에서는 이미 삭제됐고
+> CloudFront의 SPA fallback이 `index.html`을 돌려주는 것이다(`content-type: text/html`). 정상 동작.
