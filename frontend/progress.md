@@ -51,8 +51,8 @@ GET  /api/job/search?name=                  ✅ 연동됨
 GET  /api/job/recommend/:survey_id          ✅ 연동됨 (경로 수정 완료)
 GET  /api/job/recommend-t2/:survey_id       ✅ 연동됨 (T2 추천)
 GET  /api/job/:jobCode/reviews              ✅ 연동됨
-GET  /api/job/:jobCode/preparation          🔴 백엔드 미구현
-GET  /api/job/:jobCode/recruitment          🔴 백엔드 미구현 (워크넷 API 연동 예정)
+GET  /api/job/:jobCode/preparation          ⬛ 미사용 — 화면은 FE 하드코딩 사용(아래 주의)
+GET  /api/job/:jobCode/recruitment          ⬛ 미사용 — 화면은 FE 하드코딩 사용(아래 주의)
 GET  /api/user/profile                      ✅ 연동됨
 GET  /api/user/survey-results               ✅ 연동됨
 GET  /api/user/bookmarks                    ✅ 연동됨
@@ -63,6 +63,16 @@ PUT  /api/user/target-career               ✅ 연동됨 (2026-05-21)
 GET  /api/reference/survey-elements         🔴 미연동
 GET  /api/reference/career-attributes       🔴 미연동
 ```
+
+> ⚠️ **진로백과 준비과정·채용 탭 주의 (2026-08-17 정정)**
+> 두 탭은 API를 **호출하지 않는다**. 데이터는 컴포넌트 내 jobCode 하드코딩 맵에 있다.
+> - 준비과정 = `PreparationTab.vue`의 `SAMPLE_JOURNEYS_BY_JOB`
+> - 채용 = `RecruitmentTab.vue`의 `SAMPLE_POSTINGS_BY_JOB`
+>
+> `encyclopedia.api.ts`에 preparation/recruitment 호출 함수가 있으나 **어떤 컴포넌트도 쓰지 않는
+> dead code**이며 API는 두 경로 모두 404. 기존에 "백엔드 미구현"으로 적혀 있던 항목의 실체가 이것이다.
+> 현재 데이터가 들어 있는 jobCode는 **013601, 024101** 둘뿐. 신규 직업 추가는 백엔드가 아니라
+> 위 두 맵을 수정하는 작업이다. DB 이관은 미착수 별도 과제.
 
 ---
 
@@ -709,3 +719,30 @@ S3+CloudFront SPA fallback 구조에서 매칭 라우트가 없으면 빈 화면
 
 > 참고: 구 청크 URL(`/assets/MainPage-*.js`)을 직접 치면 HTTP 200이 나오는데, S3에서는 이미 삭제됐고
 > CloudFront의 SPA fallback이 `index.html`을 돌려주는 것이다(`content-type: text/html`). 정상 동작.
+
+---
+
+## 프로덕션 릴리스 `v0.1.6` (2026-08-17) — 진로백과 024101 3개 탭 채우기
+
+광고·홍보·마케팅전문가(`024101`) 상세의 후기·준비과정·채용 탭을 013601과 동일 수준으로 채움.
+08-12 작업분이 미커밋으로 남아 있던 것을 커밋·배포하여 종료.
+
+| 탭 | 변경 |
+|---|---|
+| 준비과정 | `SAMPLE_JOURNEYS_BY_JOB`에 024101 현직자 여정 3건(퍼포먼스 마케팅 / 대행사 AE / 브랜드 커뮤니케이션). 각 projects 7건 + routines 2건 |
+| 채용 | `SAMPLE_POSTINGS_BY_JOB`에 024101 공고 3건(제일기획·무신사·당근). 마감일 미래 날짜 |
+| 후기 | 코드 변경 없음. 프로덕션 Atlas `job_data.job_reviews`에 승인 더미 4건 시딩(08-12, 만족도 66/74/71/68). 롤백 마커 `adminNote: "seed:024101-dummy-20260812"` |
+
+### 배포·검증
+| 항목 | 내용 |
+|---|---|
+| 커밋 / 태그 | `217bb43` → `v0.1.6` |
+| 스테이징 | `Deploy TEST` success — `EncyclopediaJobDetailPage-s4TV3CFD.js` |
+| 프로덕션 | `Deploy PROD` run 32007955416 success — `index-B3RqrZrE.js` → `EncyclopediaJobDetailPage-DO35JUO9.js` |
+
+라이브 실측: 프로덕션 청크에 제일기획·무신사·당근·"퍼포먼스 마케팅 리드" 포함 ✓,
+`GET /api/job/024101/reviews` → count 4 · `adminNote` 미노출 ✓
+
+### 남은 것
+- **013601 채용공고 마감일이 과거 날짜**(2026-07-18/25)라 D-day 만료로 표시됨 — 갱신 여부 미결
+- 준비과정·채용의 FE 하드코딩 구조 자체는 그대로(DB 이관 미착수)
