@@ -784,15 +784,25 @@ S3+CloudFront SPA fallback 구조에서 매칭 라우트가 없으면 빈 화면
 ### 배포·검증
 | 항목 | 내용 |
 |---|---|
-| 커밋 | `dbaba72` → 머지 `4755e0c` |
+| 커밋 / 태그 | `dbaba72` → 머지 `4755e0c` → **`v0.1.7`** |
 | 스테이징 | `Deploy TEST` run 33043783828 **success** |
+| 프로덕션 | `Deploy PROD` run 33044088117 **success** |
 
 라이브 실측(test.lighthouse.career): `index-DGH377r1.js` → `CareerDesignProjectCurriculumPage-CRRSmL1m.js` 청크에
 "주차별 커리큘럼"·"주차 제목은 기본값이 채워져"·"항목 입력 후 Enter" 포함 ✓.
 `CareerDesignProjectWritePage-CsmpoNxj.js`에 "프로젝트 기간"·"몇 주차 계획으로 만들까요" 포함,
 구버전 "주차 추가"·"주차별 학습 내용을 추가해보세요" 제거 확인 ✓
 
-> 프로덕션(app.lighthouse.career)에는 **미반영**. `v*` 태그 푸시 필요.
+프로덕션 실측(app.lighthouse.career): `index-BfFB_4Do.js` →
+`CareerDesignProjectCurriculumPage-UDaXvjmi.js` 청크 존재 ✓,
+`CareerDesignProjectWritePage-BLUME6XP.js`에 "프로젝트 기간"·"몇 주차 계획으로 만들까요" 포함,
+구버전 "주차 추가" 제거 ✓
+
+### v0.1.7 에 함께 실린 것 — 진로백과 스타일 분리
+`dev`에만 있던 스타일 분리 리팩터링이 이 릴리스로 **배포 라인에 처음** 올라갔다.
+프로덕션 전역 CSS `index-Chrwhc2v.css`(123KB)에 encyclopedia 스타일 포함 확인,
+`EncyclopediaJobDetailPage-DFw-TNmL.js`에 제일기획·무신사·당근·"퍼포먼스 마케팅 리드" 잔존 확인,
+라이브 화면에서 024101 채용 탭 공고 3건 정상 렌더 ✓ (스타일 유실 없음)
 
 ---
 
