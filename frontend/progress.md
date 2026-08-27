@@ -601,7 +601,7 @@ src/modules/
 ## 남은 작업
 
 - [ ] 워크넷 공식 API 적용 — 채용정보 탭(`/api/job/:jobCode/recruitment`) 기능 구현
-- [ ] 진로계획 UI 및 기능 개선 (진로계획 작성/타임라인/완성 플로우)
+- [ ] 진로계획 UI 및 기능 개선 (진로계획 작성/타임라인/완성 플로우) — 프로젝트 추가 2단계 분리는 완료(2026-08-27, 아래 참조)
 - [x] 진로달성 페이지 생성 (단계 1 메인 + 단계 2 시작/완료 완료)
 - [x] 진로달성 BE 연동 (entry 업로드 API + 인증사진 S3 업로드) — **배포 완료**. 2026-08-07 실측 정정: 오랫동안 '배포 대기'로 잘못 적혀 있었으나 API·FE·S3 CORS 전부 반영된 상태였다. `achievement.api.ts`에 presign/uploadPhoto 배선 완료, localStorage는 오프라인 캐시일 뿐 서버가 source of truth
 - [ ] 진로달성 피드 페이지 (다른 사용자의 인증 기록 모아보기)
@@ -746,3 +746,80 @@ S3+CloudFront SPA fallback 구조에서 매칭 라우트가 없으면 빈 화면
 ### 남은 것
 - **013601 채용공고 마감일이 과거 날짜**(2026-07-18/25)라 D-day 만료로 표시됨 — 갱신 여부 미결
 - 준비과정·채용의 FE 하드코딩 구조 자체는 그대로(DB 이관 미착수)
+
+---
+
+## 새 프로젝트 추가 2단계 분리 (2026-08-27)
+
+`/career-design/project/new` 한 화면에서 '주차 추가' 버튼으로 커리큘럼을 직접 쌓던 방식을 둘로 나눴다.
+
+| 단계 | 경로 | 내용 |
+|---|---|---|
+| 1 | `/career-design/project/new` (기존) | 커리큘럼 섹션 제거 → **프로젝트 기간 스테퍼**(−/+, 1~52주, 기본 4주). CTA `추가하기` → `다음` |
+| 2 | `/career-design/project/curriculum` (신규) | 주차 수만큼 카드 자동 생성, 제목 기본값 `"{프로젝트명} - n주차"`. 제목 수정·항목 추가 후 저장 |
+
+커리큘럼이 '선택'에서 **필수 단계**로 바뀌었다. 제목이 기본값으로 차 있어 그냥 넘겨도 빈 값이 안 된다.
+
+### 변경 파일
+| 파일 | 내용 |
+|---|---|
+| `pages/CareerDesignProjectWritePage.vue` | 커리큘럼 섹션·주차 편집 함수 제거, 기간 스테퍼 추가 |
+| `pages/CareerDesignProjectCurriculumPage.vue` (NEW) | 2단계 전체 |
+| `composables/useProjectCurriculum.ts` (NEW) | `MIN/MAX/DEFAULT_WEEKS`, `clampWeeks`, `defaultWeekTitle`, `syncCurriculumLength` |
+| `career-design.routes.ts` | `/project/curriculum` — **`/project/:id` 보다 앞에** 둬야 `:id`로 매칭되지 않음 |
+| `composables/useCareerDesign.ts` | `draftProject` 초기값·`resetDraftProject`에 `weeks` |
+| `pages/CareerDesignProjectsPage.vue` | 수정 진입 시 `weeks`를 `curriculum.length`에서 복원 |
+
+### ⚠️ 서버는 `weeks`를 저장하지 않는다
+`syncAddProject`/`syncUpdateProject`가 서버로 보내는 건 `curriculum`뿐이다.
+`Project.weeks`는 타입에만 있고 템플릿 더미데이터에서만 쓰였다.
+→ **수정 재진입 시 기간은 `curriculum.length`에서 유도**한다. 서버 필드가 필요해지면 `lighthouse-api` 별도 작업.
+
+### 함정 2건 (브라우저 실측으로 발견)
+1. **입력 유실** — 2단계가 커리큘럼을 로컬 `ref`로 들고 있으면 기간 고치러 1단계 다녀오는 사이 항목이 날아간다.
+   → `draftProject.curriculum`에 직접 쓴다. draft 자동저장(R3, `lh_cd_draft`)에도 실린다.
+2. **저장 후 엉뚱한 화면** — `safeBack`은 히스토리를 되감으므로 단계가 늘어나면 목록이 아니라 1단계로 간다.
+   → `router.replace('/career-design/plan/projects')`.
+
+### 배포·검증
+| 항목 | 내용 |
+|---|---|
+| 커밋 | `dbaba72` → 머지 `4755e0c` |
+| 스테이징 | `Deploy TEST` run 33043783828 **success** |
+
+라이브 실측(test.lighthouse.career): `index-DGH377r1.js` → `CareerDesignProjectCurriculumPage-CRRSmL1m.js` 청크에
+"주차별 커리큘럼"·"주차 제목은 기본값이 채워져"·"항목 입력 후 Enter" 포함 ✓.
+`CareerDesignProjectWritePage-CsmpoNxj.js`에 "프로젝트 기간"·"몇 주차 계획으로 만들까요" 포함,
+구버전 "주차 추가"·"주차별 학습 내용을 추가해보세요" 제거 확인 ✓
+
+> 프로덕션(app.lighthouse.career)에는 **미반영**. `v*` 태그 푸시 필요.
+
+---
+
+## 브랜치 정리 — `main` ↔ `dev` 동일화 (2026-08-27)
+
+`dev`가 `main`보다 divergent한 채 방치돼 있었다(dev 6커밋 / main 4커밋, 공통조상 `d912512`).
+양방향 머지로 **두 브랜치를 동일 상태(`4755e0c`, 트리 `90cbd59`)로** 맞췄다.
+
+| 방향 | 방식 | 결과 |
+|---|---|---|
+| main → dev | `git merge main` | 머지커밋 `4755e0c`, 충돌 0건 |
+| dev → main | `git merge --ff-only dev` | fast-forward |
+
+`main`의 4커밋(하단나브 3탭·나브정렬·`/main` 제거·024101 더미데이터)과
+`dev`의 진로백과 스타일 분리(`.vue`의 `<style>` → `appearance/modules/encyclopedia/*.scss`)가
+겹치는 파일이 없어 충돌이 나지 않았다.
+
+### 클린 머지 ≠ 정상
+git이 조용히 합쳐도 한쪽이 증발할 수 있어 파일 단위로 대조했다.
+main이 건드린 19개 중 16개 byte-identical, 삭제 2건 정상 반영, 나머지 3건(`styles.scss`,
+`Preparation/RecruitmentTab.vue`)은 dev도 손댄 파일로 양쪽 작업이 모두 살아있음을 확인.
+
+### ⚠️ 머지 직후의 sass 에러는 코드 버그가 아니다
+```
+[sass] Can't find stylesheet to import.  @use './modules/survey/MainPage.scss';  ← styles.scss 4:1
+```
+`a82c689`가 `MainPage.scss`와 그 `@use` 줄을 함께 지웠으므로 디스크는 정합하다.
+정체는 **머지 이전에 띄워둔 dev 서버**가 옛 `styles.scss`를 모듈 그래프에 들고 있던 것.
+에러가 가리키는 4번 줄이 현재 파일에 없다는 게 증거. → **dev 서버 재시작으로 해결.**
+브랜치를 오래 갈라둔 뒤 머지하면 실행 중인 dev 서버는 반드시 한 번 헛돈다. 머지 후 재시작이 기본.
