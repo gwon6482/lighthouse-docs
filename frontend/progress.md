@@ -601,7 +601,7 @@ src/modules/
 ## 남은 작업
 
 - [ ] 워크넷 공식 API 적용 — 채용정보 탭(`/api/job/:jobCode/recruitment`) 기능 구현
-- [ ] 진로계획 UI 및 기능 개선 (진로계획 작성/타임라인/완성 플로우) — 프로젝트 추가 2단계 분리는 완료(2026-08-27, 아래 참조)
+- [ ] 진로계획 UI 및 기능 개선 (진로계획 작성/타임라인/완성 플로우) — 프로젝트 추가 2단계 분리(2026-08-27)와 타임라인 주차 전환(2026-08-28, `v0.1.8`)은 완료. 아래 참조
 - [x] 진로달성 페이지 생성 (단계 1 메인 + 단계 2 시작/완료 완료)
 - [x] 진로달성 BE 연동 (entry 업로드 API + 인증사진 S3 업로드) — **배포 완료**. 2026-08-07 실측 정정: 오랫동안 '배포 대기'로 잘못 적혀 있었으나 API·FE·S3 CORS 전부 반영된 상태였다. `achievement.api.ts`에 presign/uploadPhoto 배선 완료, localStorage는 오프라인 캐시일 뿐 서버가 source of truth
 - [ ] 진로달성 피드 페이지 (다른 사용자의 인증 기록 모아보기)
@@ -833,3 +833,67 @@ main이 건드린 19개 중 16개 byte-identical, 삭제 2건 정상 반영, 나
 정체는 **머지 이전에 띄워둔 dev 서버**가 옛 `styles.scss`를 모듈 그래프에 들고 있던 것.
 에러가 가리키는 4번 줄이 현재 파일에 없다는 게 증거. → **dev 서버 재시작으로 해결.**
 브랜치를 오래 갈라둔 뒤 머지하면 실행 중인 dev 서버는 반드시 한 번 헛돈다. 머지 후 재시작이 기본.
+
+
+---
+
+## 타임라인 배치 월별 → 주차별 전환 (2026-08-28, `v0.1.8`)
+
+`/career-design/complete`의 배치 단위를 월에서 주차로 바꿨다. 구현은 8/27, 배포는 8/28.
+FE와 서버 스키마가 함께 바뀌므로 **서버(`lighthouse-api` `cce2853`) 먼저, FE 나중** 순서로 배포했다.
+
+### 주차 규칙 — `usePlanTimeline`이 정본
+- 한 주 = **월요일~일요일**. 그 주는 **월요일이 속한 달**에 귀속
+- → 한 달의 주차 수 = 그 달의 월요일 개수 = **항상 4 또는 5**
+- → 모든 주가 정확히 7일 ⇒ "n주 프로젝트 = n×7일"이 배치 위치와 무관하게 보장
+- 1일이 주 중간이면 그 며칠은 전달 마지막 주 (2026-08-01 토 → **7월 4주차**)
+- `reviewDay`는 여전히 주 경계가 아니다
+
+대안이던 "짧은 주도 그 달 1주차"안은 6주차가 생기고(2026~2099 중 191개월) 프로젝트 실기간이
+배치 위치마다 달라져(3주 프로젝트가 16~21일) 커리큘럼 주차와 날짜가 어긋난다.
+
+`data/month-weeks.ts`는 2026~2099 888개월 테이블(`scripts/generate-month-weeks.mjs`로 생성, 멱등).
+2100년 이후는 `weeksInMonth` 즉석 계산으로 fallback.
+
+### 주요 변경
+| 파일 | 내용 |
+|---|---|
+| `composables/usePlanTimeline.ts` (NEW) | 주차 계산 정본 |
+| `types/career-design.ts` | `TimelineSlot.month: string` → `week: number`. `WeekCurriculum.description` 추가 |
+| `CareerDesignCompletePage.vue` | 계획 기간만큼 고정된 주차 행, 겹침 허용(다중 레인), 계획 끝 넘는 배치 비활성, 행 라벨 "8월 1주차" + 달 경계 구분선, 바에 그 주차 커리큘럼 설명 표시 |
+| `CareerDesignProjectCurriculumPage.vue` | 항목 목록·추가버튼 제거 → **설명 textarea 1개**. 투명해서 안 보이던 주차 제목 input에 옅은 배경 부여 |
+| `useAchievement.ts` / `useWeeklySchedule.ts` | 월 라벨 파싱 제거 → 날짜 기준. `curriculumWeek = 계획주차 − 시작주차 + 1`로 단순화 |
+
+**시작주만 저장하고 점유 구간은 저장하지 않는다.** 저장하면 프로젝트 기간을 고쳤을 때 둘이 어긋난다.
+
+### 🐛 타임라인 슬롯의 stale 프로젝트 복사본
+슬롯이 배치 시점의 프로젝트 **복사본**을 들고 있었다. `draftPlan.projects`와 메모리상으론 같은
+참조지만 **localStorage 복원(`lh_cd_draft`)이나 `loadPlanFromApi`를 거치면 별개 객체로 갈라진다.**
+→ 배치 후 커리큘럼·기간을 고쳐도 타임라인과 진로달성이 옛 값을 봤다.
+
+`resolveProject(p, projects)`로 슬롯의 프로젝트를 **항상 id로 원본에서 다시 집어오게** 고쳤다.
+커리큘럼 표시 요청이 없었으면 안 드러났을 뿐, **기간 변경이 반영되지 않는** 더 넓은 문제였다.
+
+### 배포·검증
+| 항목 | 내용 |
+|---|---|
+| 커밋 / 태그 | `8438439` (main=dev) → **`v0.1.8`** |
+| 스테이징 | `Deploy TEST` run 33147620244 **success** |
+| 프로덕션 | `Deploy PROD` run 33148109016 **success** |
+| 서버 | `lighthouse-api` `cce2853`, run 33147384945 success |
+
+라이브 실측: test/app 양쪽 `CareerDesignProjectCurriculumPage` 청크에 신규 placeholder
+"이 주차에 무엇을 할지 적어보세요" 존재 ✓, 구 "항목" UI 문구 0건 ✓,
+`CareerDesignCompletePage`에 "주차" 6건, index 청크에 month-weeks 테이블 포함 ✓
+
+### ⚠️ 배포하며 드러난 것 두 가지
+1. **8/27 로그가 기록한 단위테스트가 레포에 없다.** "주차규칙 29건 / 주간일정 11건 통과"로
+   남아 있지만 spec 파일이 없어 재실행 불가였다. 핵심 명제(월별 주차 수 = 그 달 월요일 개수)만
+   독립 계산으로 888개월 전수 대조해 대체했다(불일치 0건, 5주차 달 309개월).
+   → **`usePlanTimeline` 회귀 테스트를 레포에 심는 게 후속 과제.**
+2. **루트 `pnpm type-check`는 이번 변경과 무관하게 2건 실패한다** — 모노레포 전환 잔재로
+   `vitest.config.ts`가 없는 루트 `./vite.config`를 참조하고 `tsconfig.vitest.json`의 include 대상이 0개다.
+   소스는 `vue-tsc --build tsconfig.app.json`으로 돌리면 0건.
+
+> 번들 실측 시 `grep -c`를 믿지 말 것. minify된 청크는 한 줄이라 매칭 **줄** 수가 항상 1이다.
+> `grep -o | wc -l`로 세야 한다.

@@ -141,6 +141,14 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 **DB**: `user_data.career_plans` — projects/routines/timeline은 CareerPlan에 embedded
 **Routine 스키마**: `name`(필수), `days[]`, `duration`(분), `notificationTime`("HH:MM"), `notification`(bool), `memo`
 **공개 템플릿 DB**: `user_data.public_career_plans` — 시드 3건 (마케팅 기획자/퍼포먼스 마케터/신입 마케터)
+**타임라인 주차 모델 (2026-08-28, `cce2853`)**: `TimelineSlotSchema.month`(required 'YYYY.MM') → **`week: Number`**(1-based 시작주차).
+`month`는 legacy optional로 잔존. **시작주만 저장하고 점유 구간은 저장하지 않는다** — 저장하면 프로젝트 기간 수정 시 둘이 어긋난다.
+주차 경계 정본은 FE `usePlanTimeline`(월~일 달력 주, `startDate`가 속한 주 = 1주차).
+`_weekFromLegacyMonth`가 `week` 없는 구 문서를 read 시 환산해서 내려주고, `saveTimeline`은 week 정수·1이상·프로젝트 존재분만 저장한다.
+같은 커밋에서 `CurriculumWeekSchema.description`(주차당 설명 1건) 추가, `items`는 레거시 읽기 호환으로 유지.
+⚠️ 주 경계가 바뀌어 기존 `WeeklySchedule.weekStart`는 새 계산과 어긋난다(구 레코드 미조회 → 새로 생성, 고아 잔존).
+배포 시점엔 실사용 데이터가 없어 마이그레이션을 생략했다.
+
 **reviewDay 필드 (2026-05-28)**: `CareerPlan.reviewDay: String` 추가. 일주일의 끝이자 시작이 되는 요일 ('월'~'일'). create/update 모두 수용.
 
 ### 주간 일정 (WeeklySchedule) — 2026-05-28 Phase 1
