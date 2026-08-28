@@ -890,10 +890,51 @@ FE와 서버 스키마가 함께 바뀌므로 **서버(`lighthouse-api` `cce2853
 1. **8/27 로그가 기록한 단위테스트가 레포에 없다.** "주차규칙 29건 / 주간일정 11건 통과"로
    남아 있지만 spec 파일이 없어 재실행 불가였다. 핵심 명제(월별 주차 수 = 그 달 월요일 개수)만
    독립 계산으로 888개월 전수 대조해 대체했다(불일치 0건, 5주차 달 309개월).
-   → **`usePlanTimeline` 회귀 테스트를 레포에 심는 게 후속 과제.**
-2. **루트 `pnpm type-check`는 이번 변경과 무관하게 2건 실패한다** — 모노레포 전환 잔재로
-   `vitest.config.ts`가 없는 루트 `./vite.config`를 참조하고 `tsconfig.vitest.json`의 include 대상이 0개다.
-   소스는 `vue-tsc --build tsconfig.app.json`으로 돌리면 0건.
+   → **같은 날 해결**: `usePlanTimeline.spec.ts`(34건) + `useWeeklySchedule.spec.ts`(16건)
+   총 50건을 레포에 심었다(`dbfdfb4`). 돌연변이 검증(구 규칙 복원 시 15건 실패)까지 확인.
+2. ~~**루트 `pnpm type-check`는 2건 실패한다**~~ — 모노레포 전환 잔재였다.
+   `vitest.config.ts`가 없는 루트 `./vite.config`를 참조하고 `tsconfig.vitest.json`의 include 대상이 0개.
+   **`dbfdfb4`에서 해결 → 이제 루트 `pnpm type-check` 0건, `pnpm test` 50건.**
 
 > 번들 실측 시 `grep -c`를 믿지 말 것. minify된 청크는 한 줄이라 매칭 **줄** 수가 항상 1이다.
 > `grep -o | wc -l`로 세야 한다.
+
+
+---
+
+## ⚠️ envDir 누락 — 로컬 빌드에 API base URL 이 없었다 (2026-08-28, `dbfdfb4`)
+
+`apps/*/vite.config.ts` 에 **`envDir` 이 없어** Vite 가 각 앱 디렉터리(`apps/app`, `apps/test`)에서만
+env 파일을 찾았다. `.env.production` 은 모노레포 **루트**에 있으므로 무시됐고,
+로컬 빌드는 `VITE_API` 가 `undefined` 인 채로 만들어지고 있었다.
+
+```
+grep -o 'api.lighthouse.career' apps/app/dist/assets/index-*.js   # → 0건
+```
+
+CI 는 워크플로우(`deploy-test.yml`/`deploy-app.yml`)가 `VITE_API` 를 직접 주입해서 통과할 뿐이었다.
+"로컬 빌드 해시 ≠ 라이브 해시" 는 이것의 부산물이다.
+
+**조치**: 두 앱의 vite.config 에 `envDir` = 모노레포 루트(`publicDir` 과 같은 패턴).
+
+| | 로컬 | 라이브 |
+|---|---|---|
+| prod | `index-CCgTL8Du.js` | `index-CCgTL8Du.js` |
+| test | `index-B4Dr35q3.js` | `index-B4Dr35q3.js` |
+
+> 함정은 루트에 `.env.production` 이 **있는데도** 안 먹는다는 것이다. 파일이 보이니 읽힌다고 믿게 된다.
+> pnpm workspaces + Vite 조합에서 `envDir` 을 명시하지 않으면 기준은 앱 디렉터리다.
+
+→ 이제 로컬 `pnpm build:app` 산출 해시를 라이브와 대조하는 검증법이 실제로 통한다.
+
+## 테스트 (2026-08-28 신설)
+
+`pnpm test` (vitest). 대상은 `packages/core/src/**/__tests__/**/*.spec.ts`.
+
+| spec | 건수 | 범위 |
+|---|---|---|
+| `career-design/__tests__/usePlanTimeline.spec.ts` | 34 | 주 경계, month-weeks 888개월 전수, 주차↔날짜 왕복, 넘침·겹침, stale 복사본 방어 |
+| `career-achievement/__tests__/useWeeklySchedule.spec.ts` | 16 | reviewDay 가 경계가 아님, 커리큘럼 매핑, 계획 밖 날짜 클램프 |
+
+`tsconfig.vitest.json` include 에 `packages/core/src/env.d.ts` 가 필요하다 —
+테스트가 `useWeeklySchedule` → `@/shared/api` 를 끌어오는데 거기서 `import.meta.env` 를 쓴다.

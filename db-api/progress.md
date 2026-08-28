@@ -147,7 +147,11 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 `_weekFromLegacyMonth`가 `week` 없는 구 문서를 read 시 환산해서 내려주고, `saveTimeline`은 week 정수·1이상·프로젝트 존재분만 저장한다.
 같은 커밋에서 `CurriculumWeekSchema.description`(주차당 설명 1건) 추가, `items`는 레거시 읽기 호환으로 유지.
 ⚠️ 주 경계가 바뀌어 기존 `WeeklySchedule.weekStart`는 새 계산과 어긋난다(구 레코드 미조회 → 새로 생성, 고아 잔존).
-배포 시점엔 실사용 데이터가 없어 마이그레이션을 생략했다.
+**실측(2026-08-28)**: `weekly_schedules` 18건 중 7건이 구 경계(weekStart 가 월요일 아님, 2026-07-01~08-27 생성),
+`career_plans` 21건 중 15건에 타임라인·14건에 레거시 month 슬롯. 전부 테스트 데이터로 확인돼 마이그레이션은 생략했다.
+단순히 weekStart 를 월요일로 옮기는 마이그레이션은 안 된다 — 구 주는 `weekStart..+6`(예: 수~화)이라
+새 월~일 창 밖으로 나가는 항목이 레코드당 1~8건 생긴다. 항목 재분배가 필요하다.
+점검은 `scripts/inspect-timeline-week-data.js`(읽기 전용)로 언제든 다시 셀 수 있다.
 
 **reviewDay 필드 (2026-05-28)**: `CareerPlan.reviewDay: String` 추가. 일주일의 끝이자 시작이 되는 요일 ('월'~'일'). create/update 모두 수용.
 
