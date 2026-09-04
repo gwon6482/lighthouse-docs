@@ -13,7 +13,7 @@
 2. DB API 현황: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/db-api/progress.md
 3. Frontend 현황: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/frontend/progress.md
 4. Admin 현황: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/admin/progress.md
-5. 최근 개발일지: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/devlog/2026-04-01.md
+5. 최근 개발일지: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/devlog/2026-09-03.md
 
 문서를 읽고 나서:
 - DB 구조를 메모리에 업데이트 해줘

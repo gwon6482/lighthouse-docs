@@ -59,6 +59,13 @@
 | **FE app** | `v*` 태그 → S3 `lighthouse-career-app` → CF `E3LGZIV007TKVC` |
 | **랜딩** | `main` push → generate → S3 `lighthouse-www-landing` → CF 무효화 |
 
+> ⚠️ **브랜치 관례가 레포마다 다르다.** `dev`는 `lighthouse-test`(FE 모노레포)와
+> `lighthouse-landing`(2026-09-04 신설)에만 있다. API·Admin은 `main` 하나뿐.
+> 랜딩은 **스테이징이 없어서 `main` push가 곧 프로덕션 배포**다 — `dev`에 먼저 쌓고 옮길 것.
+>
+> `LighthouseProject/`는 **모노레포가 아니다**. git 레포도 아닌 그냥 폴더이고 안에 독립 레포 4개가
+> 나란히 있을 뿐이다. "FE 모노레포"는 `lighthouse-test` **한 레포 안**의 pnpm workspaces를 말한다.
+
 > ⚠️ **홈서버 PM2 방식은 전부 폐기됨**(구 port 3000/3010). API=Lightsail, Admin=Vercel로 서로 다른 플랫폼.
 > env: API는 GitHub Secrets(레포 시크릿), Admin은 Vercel 프로젝트 env.
 
