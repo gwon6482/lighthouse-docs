@@ -13,7 +13,8 @@
 2. DB API 현황: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/db-api/progress.md
 3. Frontend 현황: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/frontend/progress.md
 4. Admin 현황: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/admin/progress.md
-5. 최근 개발일지: https://raw.githubusercontent.com/gwon6482/lighthouse-docs/main/devlog/2026-09-09.md
+5. 최근 개발일지: https://github.com/gwon6482/lighthouse-docs/tree/main/devlog 목록에서
+   **가장 최근 날짜 파일 2개** (파일명이 YYYY-MM-DD.md라 사전순 = 시간순)
 
 문서를 읽고 나서:
 - DB 구조를 메모리에 업데이트 해줘
