@@ -608,7 +608,10 @@ src/modules/
 - [ ] 목표진로 "진로백과에서 선택하기" 연동 (검색 선택 플로우)
 - [x] 최초 진입 온보딩 플로우 (스플래시~welcome) + 설계 전 메인 `/main/before` 3단계 스테퍼
 - [x] 설계 후 메인 — **`/main` 제거하고 진로달성(`/career-achievement`)으로 일원화**(2026-08-07, `v0.1.5`). 아래 참조
-- [ ] 회원가입 진로답변(Q1/Q2/Q3) 백엔드 저장 (현재 localStorage 임시)
+- [x] 회원가입 진로답변(Q1/Q2/Q3) 백엔드 저장 — **2026-09-09 완료**. `User.onboarding`
+  (`status`/`concerns`/`selfAwareness`/`answeredAt`)에 저장. API `be045f3`+`2c49ea3`, FE `42d433c`.
+  실상은 '임시 저장'이 아니라 **write-only**였다 — `lh_onboarding_v1`을 읽는 코드가 레포 전체에 0곳이었다.
+  ⚠️ **저장한 답을 쓰는 곳은 아직 없다.** 기존 가입자에겐 필드가 없다(백필 안 함)
 - [ ] 메인페이지 종합 (홈 화면에 각 섹션 요약 연결)
 - [ ] 랜딩페이지 연결 (www.lighthouse.career)
 - [ ] 카카오 소셜 로그인 / SNS OAuth
