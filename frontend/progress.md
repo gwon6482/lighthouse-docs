@@ -614,7 +614,7 @@ src/modules/
   ⚠️ **저장한 답을 쓰는 곳은 아직 없다.** 기존 가입자에겐 필드가 없다(백필 안 함)
 - [ ] 메인페이지 종합 (홈 화면에 각 섹션 요약 연결)
 - [ ] 랜딩페이지 연결 (www.lighthouse.career)
-- [~] 카카오 소셜 로그인 / SNS OAuth — **백엔드 완료·배포(2026-09-10)**, FE 는 `dev` 에만 있고 미배포.
+- [~] 카카오 소셜 로그인 / SNS OAuth — **백엔드·FE 모두 스테이징 반영 완료(2026-09-10)**. 프로덕션은 `v*` 태그 대기.
   `AuthPage` 가 `GET /api/auth/providers` 응답으로만 버튼을 켠다(FE 에 플래그를 두지 않는다).
   복귀 지점 `OAuthReturnPage.vue`(`/onboarding/oauth`) 신규 — 성공 `#token=` / 실패 `?error=`.
   ⚠️ 토큰을 읽는 즉시 `history.replaceState` 로 주소창에서 지운다(히스토리·bfcache 유출 방지).
