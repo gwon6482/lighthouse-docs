@@ -20,6 +20,26 @@
 **구현 파일**: `middleware/auth.js`, `controllers/authController.js`, `routes/auth.js`
 **테스트 계정**: email: `test`, password: `test`
 
+### 소셜 로그인 (OAuth) — 2026-09-10 배포
+| 엔드포인트 | 설명 |
+|-----------|------|
+| `GET /api/auth/providers` | 사용 가능한 소셜 로그인 목록. **FE 버튼 on/off 의 유일한 진실** |
+| `GET /api/auth/kakao` | 카카오 인가 페이지로 302 (state = 서명된 10분 JWT) |
+| `GET /api/auth/kakao/callback` | 코드→토큰→프로필→계정→우리 JWT 발급 후 FE 로 302 |
+
+**구현 파일**: `controllers/oauthController.js`, `routes/auth.js`
+**env**: `KAKAO_REST_API_KEY`·`KAKAO_CLIENT_SECRET`(GitHub Secrets) +
+`KAKAO_REDIRECT_URI`·`OAUTH_ALLOWED_ORIGINS`(deploy.yml 평문). 셋 다 없으면 기능 OFF(503, fail-closed)
+
+> ⚠️ **시크릿 등록만으로는 서버에 안 들어간다.** `deploy.yml` 이 Lightsail 배포 스펙에
+> env 를 한 줄씩 명시하는 구조다. 새 env 는 워크플로에도 추가해야 한다.
+> 단 카카오 키는 `os.environ.get` 으로 읽어 미등록이면 항목을 뺀다 — `os.environ[]` 로 쓰면
+> 키 넣기 전까지 배포 전체가 죽는다(`ADMIN_API_KEY` 와 의도가 반대).
+
+> ⚠️ 신원은 **카카오 회원번호(providerId)** 로만 판단한다. 이메일은 바뀔 수 있어 표시용 스냅샷일 뿐이고,
+> 같은 이메일의 로컬 계정이 있어도 **자동 연결하지 않는다**(계정 탈취 경로) → `error=email_taken`.
+> 이메일 동의는 선택이라 **이메일 없는 카카오 계정이 정상적으로 존재한다**(`email` 은 sparse unique).
+
 ### 유저 (User)
 | 엔드포인트 | 설명 |
 |-----------|------|
@@ -217,7 +237,7 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 |------|------|
 | `GET /api/job/:jobCode/recruitment` | 워크넷 공식 API 연동 예정 |
 | `GET /api/job/:jobCode/preparation` | 미구현 |
-| OAuth 로그인 | Google/Kakao provider 스키마 준비됨, 구현 미완 |
+| OAuth 로그인 | **카카오 완료(2026-09-10, 라이브)**. Google/Apple 은 `providers` 에서 false 고정, 미구현 |
 | 테스트 코드 | 없음 |
 | CORS 오리진 화이트리스트 | 현재 전체 허용(`app.use(cors())`). 모바일 오리진 확정 후 예정 |
 
