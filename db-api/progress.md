@@ -26,6 +26,7 @@
 | `GET /api/auth/providers` | 사용 가능한 소셜 로그인 목록. **FE 버튼 on/off 의 유일한 진실** |
 | `GET /api/auth/kakao` | 카카오 인가 페이지로 302 (state = 서명된 10분 JWT) |
 | `GET /api/auth/kakao/callback` | 코드→토큰→프로필→계정→우리 JWT 발급 후 FE 로 302 |
+| `POST /api/auth/complete-profile` | 소셜 가입자의 위저드 완료 저장(name·age·gender·onboarding). 인증 필요 |
 
 **구현 파일**: `controllers/oauthController.js`, `routes/auth.js`
 **env**: `KAKAO_REST_API_KEY`·`KAKAO_CLIENT_SECRET`(GitHub Secrets) +
@@ -35,6 +36,10 @@
 > env 를 한 줄씩 명시하는 구조다. 새 env 는 워크플로에도 추가해야 한다.
 > 단 카카오 키는 `os.environ.get` 으로 읽어 미등록이면 항목을 뺀다 — `os.environ[]` 로 쓰면
 > 키 넣기 전까지 배포 전체가 죽는다(`ADMIN_API_KEY` 와 의도가 반대).
+
+> ⚠️ 소셜은 **콜백에서 계정이 이미 만들어진다.** 그래서 위저드 끝에서 `register` 를 부르면 409 다 —
+> `complete-profile` 로 나머지를 채운다(검증은 `register` 와 같은 `buildOnboarding` 재사용).
+> 카카오에서 받는 것은 **이메일·닉네임뿐**이고 나이·성별·진로답변은 위저드에서 받는다.
 
 > ⚠️ 신원은 **카카오 회원번호(providerId)** 로만 판단한다. 이메일은 바뀔 수 있어 표시용 스냅샷일 뿐이고,
 > 같은 이메일의 로컬 계정이 있어도 **자동 연결하지 않는다**(계정 탈취 경로) → `error=email_taken`.
