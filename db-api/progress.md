@@ -20,7 +20,7 @@
 **구현 파일**: `middleware/auth.js`, `controllers/authController.js`, `routes/auth.js`
 **테스트 계정**: email: `test`, password: `test`
 
-### 소셜 로그인 (OAuth) — 카카오 2026-09-10 배포 / 구글 2026-09-17 배선(키 대기)
+### 소셜 로그인 (OAuth) — 카카오 2026-09-10 / 구글 2026-09-17 배포
 | 엔드포인트 | 설명 |
 |-----------|------|
 | `GET /api/auth/providers` | 사용 가능한 소셜 로그인 목록. **FE 버튼 on/off 의 유일한 진실** |
