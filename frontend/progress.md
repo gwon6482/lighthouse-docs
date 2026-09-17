@@ -5,6 +5,24 @@
 **상태**: 🟡 개발 중
 **구조**: `packages/core`(기능모듈+shared) + 두 셸 — `apps/test`(스테이징, main push → test.lighthouse.career) / `apps/app`(프로덕션, `v*` 태그 → app.lighthouse.career)
 
+## ⚠️ main 에 고쳐져 있어도 프로덕션은 옛 번들일 수 있다 (2026-09-17)
+
+프로덕션은 `main` push 가 아니라 **`v*` 태그**로만 나간다. 그래서 "코드는 고쳐졌는데
+사용자에게는 여전히 옛 동작"인 구간이 길게 생긴다. 실제로 **2026-09-09 에 고친
+가입 진로답변 서버 전송(`42d433c`)이 v0.1.8 뒤 커밋이라, 9/17 시점에도 프로덕션
+가입자의 Q1~Q3 는 계속 버려지고 있었다.**
+
+> **소스·`git log` 로는 못 잡는다. 배포된 번들을 받아서 확인할 것.**
+> ```
+> curl app.lighthouse.career/ | grep -o 'assets/index-[A-Za-z0-9_-]*\.js'
+> # 그 청크에서 SignupWizardPage-*.js 이름을 뽑아 받고
+> grep -c selfAwareness    # 0 이면 미반영
+> ```
+> 브라우저로 본 화면은 **서비스워커 캐시** 때문에 옛 번들일 수 있다(2026-09-11 에 실제로 오인).
+> 판단은 curl 로 받은 청크 기준으로 한다.
+
+현재 프로덕션 태그와 `main` 의 차이는 `git log <최신태그>..origin/main` 으로 확인한다.
+
 ## 기술 스택
 
 | 항목 | 기술 |

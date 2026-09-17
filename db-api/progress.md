@@ -45,6 +45,33 @@
 > 같은 이메일의 로컬 계정이 있어도 **자동 연결하지 않는다**(계정 탈취 경로) → `error=email_taken`.
 > 이메일 동의는 선택이라 **이메일 없는 카카오 계정이 정상적으로 존재한다**(`email` 은 sparse unique).
 
+#### 가입 경로별 저장 위치 (2026-09-17 정리)
+
+둘 다 `user_data.users` 의 같은 `User` 문서다. 갈리는 것은 **누가 채우느냐와 계정이 언제 생기느냐**다.
+
+| User 필드 | 이메일 (`register` 1회) | 카카오 (콜백 + `complete-profile`) |
+|---|---|---|
+| `email` | 입력값 | 동의 시에만. 미동의면 **없음** |
+| `passwordHash` | bcrypt(10) | **없음** → 이메일 로그인 영구 불가 |
+| `authProviders` | `[{local, providerId: 이메일}]` | `[{kakao, providerId: 회원번호}]` |
+| `name` | 위저드 입력 | 콜백이 닉네임으로 선채움 → 위저드에서 수정 |
+| `age`·`gender` | 위저드 입력 | 콜백엔 없음 → `complete-profile` 에서만 |
+| `onboarding` | `register` 본문에 동봉 | `complete-profile` 에서만 |
+| `lastLoginAt` | `login` 이 갱신 | 콜백이 갱신 (2026-09-17 추가, 그 전엔 **안 찍혔다**) |
+| 계정 생성 시점 | 위저드 **끝** | 위저드 **전**(콜백) |
+
+> ⚠️ 카카오는 계정이 먼저 생기므로 위저드 도중 이탈하면 **나이·성별·진로답변이 빈 계정이 남는다.**
+> 재진입 가드는 `apps/app` 라우터에만 있어 **test 셸에서는 검증이 불가능**하다.
+
+> ⚠️ `lastLoginAt` 갱신은 `save()` 가 아니라 `updateOne` 이다. `save()` 는 문서 전체 검증을
+> 다시 돌려서, 옛 계정에 스키마와 어긋난 값이 하나라도 있으면 **로그인 자체가 실패한다.**
+
+**검증 공유**: 나이·성별은 `validateProfile`, 진로답변은 `buildOnboarding` 을 `register` 와
+`completeProfile` 이 **같이 쓴다**(2026-09-17 통합). 그 전에는 `register` 에만 age 검증이 없어
+잘못된 값이 400 이 아니라 **500**(Mongoose ValidationError)으로 샜다.
+⚠️ 빈 문자열은 '보내지 않음'으로 통과시키므로 **대입부에도 `age !== ''` 가드가 필요하다**
+(`Number('') === 0` → 스키마 `min:1` 위반).
+
 ### 유저 (User)
 | 엔드포인트 | 설명 |
 |-----------|------|
