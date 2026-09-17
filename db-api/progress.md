@@ -72,6 +72,27 @@
 ⚠️ 빈 문자열은 '보내지 않음'으로 통과시키므로 **대입부에도 `age !== ''` 가드가 필요하다**
 (`Number('') === 0` → 스키마 `min:1` 위반).
 
+### 관리자 — 가입 설문 분포 (2026-09-17 신규)
+
+| 엔드포인트 | 설명 |
+|-----------|------|
+| `GET /api/admin/onboarding/stats` | 회원가입 Q1~Q3 답변 분포. `adminAuth`(x-admin-key) 뒤 |
+
+**구현 파일**: `controllers/onboardingStatsController.js`, `routes/admin.js`
+**응답**: `{ total, answered, byStatus(1~4), byConcern(1~6), bySelfAwareness(1~3) }`
+(선택되지 않은 코드도 0 으로 채워 보낸다 — 화면이 흔들리지 않게)
+
+> ⚠️ **비율의 분모는 `total` 이 아니라 `answered` 다.** `onboarding` 필드는 2026-09-09 에 생겨서
+> 그 전 가입자에겐 필드 자체가 없다(2026-09-17 실측: total 29 / onboarding 있음 0 / gender 있음 22).
+> 전체를 분모로 잡으면 비율이 통째로 어긋난다.
+
+> ⚠️ `byConcern` 합계는 `answered` 를 **넘을 수 있고 그게 정상**이다. Q2 는 복수 선택이라
+> `$unwind` 로 세므로 '응답자 수'가 아니라 **'선택 수'**다.
+
+> ⚠️ 선택지 **문구는 API 에 두지 않았다.** 값은 숫자 코드뿐이고 해석표의 정본은
+> FE `SignupWizardPage.vue` 와 `models/User.js` 의 OnboardingSchema 주석이다.
+> API 에 복사해두면 FE 가 문구를 바꿨을 때 조용히 어긋난다.
+
 ### 유저 (User)
 | 엔드포인트 | 설명 |
 |-----------|------|

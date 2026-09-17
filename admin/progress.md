@@ -20,6 +20,7 @@ src/
 │   │       ├── responses/page.tsx            # 응답 목록 + 상세 모달 ✅
 │   │       ├── reference/page.tsx            # 참조데이터 CRUD ✅
 │   │       ├── statistics/page.tsx           # 통계 조회 ✅
+│   │       ├── onboarding/page.tsx          # 가입 설문 Q1~Q3 분포 ✅ (2026-09-17)
 │   │       ├── jobs/page.tsx                 # 직업 검색/상세 ✅
 │   │       └── encyclopedia/page.tsx         # 진로백과 (후기/준비과정/채용) ✅
 │   └── api/auth/[...nextauth]/route.ts       # NextAuth 핸들러 ✅
@@ -48,6 +49,7 @@ src/
 | `encyclopediaApi.getPreparation(jobCode)` | GET | `/api/job/:jobCode/preparation` |
 | `encyclopediaApi.getRecruitment(jobCode)` | GET | `/api/job/:jobCode/recruitment` |
 | `jobApi.search(name)` | GET | `/api/job/search?name=` |
+| `onboardingApi.getStats()` | GET | `/api/admin/onboarding/stats` (2026-09-17) |
 | `jobApi.getOne(jobCode)` | GET | `/api/job/:jobCode` |
 
 > ⚠️ `encyclopediaApi.getReviews` 경로가 `/review`(단수)로 되어 있음 → `/reviews`로 수정 필요
