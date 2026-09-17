@@ -20,21 +20,29 @@
 **구현 파일**: `middleware/auth.js`, `controllers/authController.js`, `routes/auth.js`
 **테스트 계정**: email: `test`, password: `test`
 
-### 소셜 로그인 (OAuth) — 2026-09-10 배포
+### 소셜 로그인 (OAuth) — 카카오 2026-09-10 배포 / 구글 2026-09-17 배선(키 대기)
 | 엔드포인트 | 설명 |
 |-----------|------|
 | `GET /api/auth/providers` | 사용 가능한 소셜 로그인 목록. **FE 버튼 on/off 의 유일한 진실** |
 | `GET /api/auth/kakao` | 카카오 인가 페이지로 302 (state = 서명된 10분 JWT) |
 | `GET /api/auth/kakao/callback` | 코드→토큰→프로필→계정→우리 JWT 발급 후 FE 로 302 |
 | `POST /api/auth/complete-profile` | 소셜 가입자의 위저드 완료 저장(name·age·gender·onboarding). 인증 필요 |
+| `GET /api/auth/google` | 구글 동의 화면으로 302 (scope=openid email profile, prompt=select_account) |
+| `GET /api/auth/google/callback` | 코드→토큰→userinfo→계정→우리 JWT 발급 후 FE 로 302 |
 
 **구현 파일**: `controllers/oauthController.js`, `routes/auth.js`
-**env**: `KAKAO_REST_API_KEY`·`KAKAO_CLIENT_SECRET`(GitHub Secrets) +
-`KAKAO_REDIRECT_URI`·`OAUTH_ALLOWED_ORIGINS`(deploy.yml 평문). 셋 다 없으면 기능 OFF(503, fail-closed)
+**env**: 제공자별로 3개씩. 시크릿 2개는 GitHub Secrets, Redirect URI 는 deploy.yml 평문.
+- 카카오: `KAKAO_REST_API_KEY`·`KAKAO_CLIENT_SECRET` + `KAKAO_REDIRECT_URI`
+- 구글: `GOOGLE_CLIENT_ID`·`GOOGLE_CLIENT_SECRET` + `GOOGLE_REDIRECT_URI`
+- 공통: `OAUTH_ALLOWED_ORIGINS`
+
+셋 다 갖춰진 제공자만 켜진다(fail-closed). 하나라도 없으면 `providers` 가 false 를 보고하고
+`/api/auth/<제공자>` 는 503 이다. **Redirect URI 를 평문으로 둔 이유**: 콘솔 등록값과 한 글자만
+달라도 실패하는데(카카오 KOE006 / 구글 redirect_uri_mismatch) 값이 가려지면 대조를 못 한다.
 
 > ⚠️ **시크릿 등록만으로는 서버에 안 들어간다.** `deploy.yml` 이 Lightsail 배포 스펙에
 > env 를 한 줄씩 명시하는 구조다. 새 env 는 워크플로에도 추가해야 한다.
-> 단 카카오 키는 `os.environ.get` 으로 읽어 미등록이면 항목을 뺀다 — `os.environ[]` 로 쓰면
+> 단 소셜 키(카카오·구글)는 `os.environ.get` 으로 읽어 미등록이면 항목을 뺀다 — `os.environ[]` 로 쓰면
 > 키 넣기 전까지 배포 전체가 죽는다(`ADMIN_API_KEY` 와 의도가 반대).
 
 > ⚠️ 소셜은 **콜백에서 계정이 이미 만들어진다.** 그래서 위저드 끝에서 `register` 를 부르면 409 다 —
@@ -44,6 +52,26 @@
 > ⚠️ 신원은 **카카오 회원번호(providerId)** 로만 판단한다. 이메일은 바뀔 수 있어 표시용 스냅샷일 뿐이고,
 > 같은 이메일의 로컬 계정이 있어도 **자동 연결하지 않는다**(계정 탈취 경로) → `error=email_taken`.
 > 이메일 동의는 선택이라 **이메일 없는 카카오 계정이 정상적으로 존재한다**(`email` 은 sparse unique).
+
+#### 제공자가 늘어도 갈라지지 않게 (2026-09-17)
+
+계정 정책은 `findOrCreateSocialUser` **한 곳**에 있다. 제공자는 `normalize<제공자>Profile` 로
+응답 모양만 맞춰 넘긴다. 따로 두면 신원 판단·이메일 충돌·`lastLoginAt` 규칙이 반드시 갈라진다.
+`signState`(state 서명)와 `issueAppToken`(우리 JWT)도 공통이다.
+
+| | 카카오 | 구글 |
+|---|---|---|
+| 신원 식별자 | 회원번호(`id`) | `sub` |
+| 이메일 채택 조건 | `is_email_valid && is_email_verified` | `email_verified` |
+| 이름 | `kakao_account.profile.nickname` | `name` |
+| scope | 콘솔 동의항목으로 정해짐(생략) | **필수** — `openid email profile` |
+| 기타 | client_secret 기본 활성 | `prompt=select_account` 필수적으로 붙임 |
+
+> ⚠️ 구글 `prompt=select_account` 가 없으면 브라우저에 구글 세션이 하나 있을 때
+> **묻지도 않고** 그 계정으로 로그인되어 다른 계정으로 바꿀 방법이 없다.
+
+> ⚠️ 미인증 이메일(`email_verified:false`)은 저장하지 않는다. 받으면 그 이메일의 주인이 아닌
+> 계정이 우리 쪽 이메일 칸을 차지할 수 있다.
 
 #### 가입 경로별 저장 위치 (2026-09-17 정리)
 
