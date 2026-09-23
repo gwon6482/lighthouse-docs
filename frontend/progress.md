@@ -632,7 +632,9 @@ src/modules/
   ⚠️ **저장한 답을 쓰는 곳은 아직 없다.** 기존 가입자에겐 필드가 없다(백필 안 함)
 - [ ] 메인페이지 종합 (홈 화면에 각 섹션 요약 연결)
 - [ ] 랜딩페이지 연결 (www.lighthouse.career)
-- [~] 카카오 소셜 로그인 / SNS OAuth — **백엔드·FE 모두 스테이징 반영 완료(2026-09-10)**. 프로덕션은 `v*` 태그 대기.
+- [~] 소셜 로그인(카카오·구글) / SNS OAuth — **카카오는 프로덕션 반영(v0.1.9~)**,
+  **구글은 API 만 라이브이고 FE 는 아직 프로덕션에 없다(v0.1.10 기준 `comingSoon('구글')` 하드코딩)**.
+  `v0.1.11` 태그 대기 중이며 **구글 동의 화면 '게시'가 선행 조건**이다 — 2026-09-23 일지 참조.
   `AuthPage` 가 `GET /api/auth/providers` 응답으로만 버튼을 켠다(FE 에 플래그를 두지 않는다).
   복귀 지점 `OAuthReturnPage.vue`(`/onboarding/oauth`) 신규 — 성공 `#token=` / 실패 `?error=`.
   ⚠️ 토큰을 읽는 즉시 `history.replaceState` 로 주소창에서 지운다(히스토리·bfcache 유출 방지).
@@ -695,6 +697,43 @@ src/modules/
 - 구현: `shared/components/BottomNav.vue`(navItems를 `visibleNavItems` computed로 필터). i18n 미도입이라 라벨은 인라인 문자열, Tabler 미사용이라 아이콘은 인라인 SVG.
 - 배포: 커밋 eafbcf1(+27076ba 사이드 탭 세로정렬) → main push → 스테이징(test.lighthouse.career) 반영.
 - **prod 반영 완료 (2026-08-07, `v0.1.4`)**: app.lighthouse.career 배포 확인 — 아래 참조.
+
+---
+
+## 프로덕션 릴리스 `v0.1.10` (2026-09-17) — 뒤로가기 로그아웃 수정
+
+`0662a9b`(R5 개정: 가입 직후 뒤로가기 한 번에 로그아웃되던 문제) + `afab9be`(로그인 화면 카카오 진입점).
+run 35182966911 success.
+
+> ⚠️ **2026-09-17 일지의 '배포' 표에는 이 태그가 빠져 있다.** v0.1.9 까지만 적혀 있어
+> 2026-09-21 세션에서 "최신 태그 = v0.1.9"로 잘못 알고 시작했다. 태그는 일지가 아니라
+> `git tag --sort=-v:refname` 으로 확인할 것.
+
+프로덕션 메인청크: `index-CcbA4u2y.js`
+
+---
+
+## 프로덕션 릴리스 `v0.1.11` — **대기 중** (2026-09-23 기준)
+
+`v0.1.10..main` 에 2건이 미출시 상태다.
+
+| 커밋 | 내용 |
+|---|---|
+| `ada4ae9` | 구글 버튼을 `providers` 플래그에 연결 (제공자 일반화) |
+| `9c9b81e` | 소셜 로그인 실패 문구에서 제공자 이름 제거 (`OAuthReturnPage`) |
+
+**일부러 멈춰 세웠다.** 구글 OAuth 동의 화면이 아직 '테스트 중'이라, 지금 태그하면
+프로덕션에 구글 버튼이 보이는데 등록된 테스트 사용자 외에는 `access_denied` 가 난다.
+**보이는데 안 되는 기능**은 '준비 중' alert 보다 나쁘다.
+
+선행 조건 → 구글 클라우드 콘솔에서 **OAuth 동의 화면 게시**(scope 가 `openid`/`email`/`profile`
+뿐이라 검토 없이 즉시 게시된다). 그 뒤 태그하고 실측:
+
+```bash
+git tag v0.1.11 && git push origin v0.1.11
+curl -s https://app.lighthouse.career/ | grep -o 'assets/index-[A-Za-z0-9_-]*\.js'
+# index-Cs4p3IZk.js 가 나와야 한다 (v0.1.10 = index-CcbA4u2y.js)
+```
 
 ---
 

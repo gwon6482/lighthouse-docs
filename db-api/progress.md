@@ -73,6 +73,33 @@
 > ⚠️ 미인증 이메일(`email_verified:false`)은 저장하지 않는다. 받으면 그 이메일의 주인이 아닌
 > 계정이 우리 쪽 이메일 칸을 차지할 수 있다.
 
+#### ⚠️ 복귀 URL 허용목록 — 로컬에서는 소셜 로그인을 검증할 수 없다 (2026-09-23)
+
+`sanitizeReturnUrl` 은 `?redirect=` 가 `OAUTH_ALLOWED_ORIGINS` 밖이면 **에러가 아니라
+기본값으로 대체**한다(오픈 리다이렉트 방지 — JWT 를 외부 도메인에 넘기지 않으려는 의도적 설계).
+
+현재 값: `https://app.lighthouse.career,https://test.lighthouse.career` — **localhost 는 없다.**
+
+그래서 로컬 FE(`localhost:5173`)에서 소셜 로그인을 누르면 **실패하지 않고 조용히
+프로덕션으로 넘어가서 성공한다.**
+
+```
+localhost:5173 에서 시작
+  → state.returnTo = https://app.lighthouse.career/onboarding/oauth  (localhost 가 잘림)
+  → 콜백 후 프로덕션 app 에 로그인된 채 착지. 로컬은 토큰을 못 받는다
+  → 위저드도 로컬 번들이 아니라 프로덕션 태그 시점 번들로 돈다
+  → 신규 계정이 프로덕션 user_data.users 에 진짜로 생긴다
+```
+
+2026-09-21 에 실제로 이렇게 테스트 계정 1건이 프로덕션에 생겼다(이후 정리, 총 유저 31 → 28).
+
+> **소셜 로그인 변경은 `test.lighthouse.career` 에 올려서 검증할 것.** 굳이 로컬이 필요하면
+> `OAUTH_ALLOWED_ORIGINS` 에 `http://localhost:5173` 을 임시로 넣고 끝나면 뺀다.
+> 프로덕션 허용목록에 개발 오리진을 상주시키지 말 것.
+
+> ⚠️ 제공자측 에러(구글 `access_denied` 등)는 콜백에서 `req.query.error` 로 들어와
+> **전부 `cancelled`** 로 뭉개진다. '테스트 사용자가 아님'과 '사용자가 취소함'이 구분되지 않는다.
+
 #### 가입 경로별 저장 위치 (2026-09-17 정리)
 
 둘 다 `user_data.users` 의 같은 `User` 문서다. 갈리는 것은 **누가 채우느냐와 계정이 언제 생기느냐**다.
@@ -344,6 +371,30 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 - GitHub `main` 브랜치 push → `.github/workflows/deploy.yml` 자동 실행
 - 홈서버: `git pull` → `npm install --omit=dev` → `pm2 reload lighthouse-db-api --update-env`
 - SSH 인증: `SSH_HOST`, `SSH_USER=root`, `SSH_PASSWORD`
+
+### 라이브 로그 (2026-09-23 정리)
+
+요청 로그(morgan)는 **AWS Lightsail 컨테이너 로그에만** 남는다. 파일도 pm2 도 CloudWatch 도 아니다.
+**보존은 약 3일.**
+
+```bash
+aws lightsail get-container-log --region ap-northeast-2 \
+  --service-name lighthouse-api --container-name app \
+  --start-time <epoch> --end-time <epoch> --filter-pattern 'auth' \
+  --query 'logEvents[].{t:createdAt,m:message}' --output text
+```
+
+> ⚠️ **`--filter-pattern` 은 지정 구간 전체를 스캔하지 않는다.** 한 페이지(100건)만 훑고 멈춘다.
+> 실측에서 **48h 창은 `auth=1`, 96h 창은 `auth=0`** 이 나왔다 — 넓은 창이 더 적게 잡히는
+> 모순이 곧 증거다. 로그의 99%가 헬스체크(ELB 4대 × 10초 = 분당 24건)라 상한을 금방 채운다.
+> **창을 4분 단위로 쪼개서** 돌 것(4분 ≈ 100건).
+
+> ⚠️ morgan 이 쿼리스트링을 통째로 찍어 OAuth `code=`·`state=` 가 평문으로 남는다.
+> 단명이라 위험은 낮지만 붙여넣을 때는 잘라낼 것. `state` 는 base64 라 디코드하면
+> `returnTo` 가 바로 보인다 — 어느 도메인으로 돌아갔는지 확정하는 가장 빠른 방법.
+
+**점검 스크립트**: `scripts/inspect-social-accounts.js` (읽기 전용, `d5c6314`) —
+소셜 계정 전량 + 계정별 딸린 데이터 건수. 계정 정리 전 고아 확인용.
 
 ### CORS
 ```js
