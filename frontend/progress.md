@@ -632,13 +632,13 @@ src/modules/
   ⚠️ **저장한 답을 쓰는 곳은 아직 없다.** 기존 가입자에겐 필드가 없다(백필 안 함)
 - [ ] 메인페이지 종합 (홈 화면에 각 섹션 요약 연결)
 - [ ] 랜딩페이지 연결 (www.lighthouse.career)
-- [~] 소셜 로그인(카카오·구글) / SNS OAuth — **카카오는 프로덕션 반영(v0.1.9~)**,
-  **구글은 API 만 라이브이고 FE 는 아직 프로덕션에 없다(v0.1.10 기준 `comingSoon('구글')` 하드코딩)**.
-  `v0.1.11` 태그 대기 중이며 **구글 동의 화면 '게시'가 선행 조건**이다 — 2026-09-23 일지 참조.
+- [x] 소셜 로그인(카카오·구글) / SNS OAuth — **카카오·구글 모두 프로덕션 반영 완료**
+  (카카오 v0.1.9~ / **구글 v0.1.11, 2026-09-25**). Apple 미구현.
   `AuthPage` 가 `GET /api/auth/providers` 응답으로만 버튼을 켠다(FE 에 플래그를 두지 않는다).
-  복귀 지점 `OAuthReturnPage.vue`(`/onboarding/oauth`) 신규 — 성공 `#token=` / 실패 `?error=`.
+  복귀 지점 `OAuthReturnPage.vue`(`/onboarding/oauth`) — 성공 `#token=` / 실패 `?error=`.
   ⚠️ 토큰을 읽는 즉시 `history.replaceState` 로 주소창에서 지운다(히스토리·bfcache 유출 방지).
-  Apple·구글은 `providers` 가 false 라 기존 '준비 중' alert 유지
+  ⚠️ 실패 문구에 **제공자 이름을 박지 말 것** — 이 페이지는 어느 제공자로 시작했는지 모른다.
+  Apple 만 `providers` 가 false 라 '준비 중' alert 로 남는다
 
 ---
 
@@ -713,27 +713,37 @@ run 35182966911 success.
 
 ---
 
-## 프로덕션 릴리스 `v0.1.11` — **대기 중** (2026-09-23 기준)
-
-`v0.1.10..main` 에 2건이 미출시 상태다.
+## 프로덕션 릴리스 `v0.1.11` (2026-09-25) — 구글 소셜 로그인 출시
 
 | 커밋 | 내용 |
 |---|---|
-| `ada4ae9` | 구글 버튼을 `providers` 플래그에 연결 (제공자 일반화) |
+| `ada4ae9` | 구글 버튼을 `providers` 플래그에 연결 (하드코딩된 '준비 중' 제거) |
 | `9c9b81e` | 소셜 로그인 실패 문구에서 제공자 이름 제거 (`OAuthReturnPage`) |
+| `d692941` | `inactive` 에러 문구 추가 (비활성 계정 소셜 로그인 차단 대응) |
 
-**일부러 멈춰 세웠다.** 구글 OAuth 동의 화면이 아직 '테스트 중'이라, 지금 태그하면
-프로덕션에 구글 버튼이 보이는데 등록된 테스트 사용자 외에는 `access_denied` 가 난다.
-**보이는데 안 되는 기능**은 '준비 중' alert 보다 나쁘다.
+프로덕션 메인청크: **`index-E7qK2KZM.js`** (v0.1.10 = `index-CcbA4u2y.js`)
+실측: `AuthPage-7qPTfRcq.js` 가 `e.value.google?p("google"):m("구글")` — providers 연결 확인.
+`OAuthReturnPage-D8SwwdjO.js` 에 '카카오' 잔재 0건.
 
-선행 조건 → 구글 클라우드 콘솔에서 **OAuth 동의 화면 게시**(scope 가 `openid`/`email`/`profile`
-뿐이라 검토 없이 즉시 게시된다). 그 뒤 태그하고 실측:
+### 2026-09-23 에 일부러 멈춰 세웠던 이유와, 실제로 걸린 것
 
-```bash
-git tag v0.1.11 && git push origin v0.1.11
-curl -s https://app.lighthouse.career/ | grep -o 'assets/index-[A-Za-z0-9_-]*\.js'
-# index-Cs4p3IZk.js 가 나와야 한다 (v0.1.10 = index-CcbA4u2y.js)
-```
+구글 동의 화면이 '테스트 중'이면 버튼은 보이는데 테스트 사용자 외에는 `access_denied` 다.
+**보이는데 안 되는 기능**은 '준비 중' alert 보다 나쁘다고 판단해 태그를 미뤘다.
+
+⚠️ **그때 적어둔 "scope 가 비민감이라 검토 없이 즉시 게시" 는 불완전했다.**
+구글 *검토(verification)* 가 불필요한 것은 맞지만, **게시 자체가 브랜딩 필수항목을 먼저 요구한다.**
+실제로 막혔고, 푸는 데 2026-09-25 하루가 더 들었다. 자세한 것은 그날 일지 참조.
+
+게시 최소 조합: 앱 이름 + 지원 이메일 + **홈페이지 URL** + **개인정보처리방침 URL**
++ 승인된 도메인 + 개발자 연락처.
+
+⚠️ **홈페이지 URL 에 `app.lighthouse.career` 를 넣으면 안 된다.** 진입가드가 토큰 없으면
+`/onboarding` 으로 보내서 "로그인 페이지가 홈페이지보다 먼저 표시됨" 에 걸리고, 앱 셸이라
+초기 HTML 가시 텍스트가 10자뿐이라 "앱의 목적 설명 없음" 에도 걸린다.
+**랜딩(`https://www.lighthouse.career`)을 넣어야 한다** — 구글은 홈페이지가 마케팅 사이트여도
+되고 승인된 도메인과 같을 필요도 없다고 명시한다.
+
+⚠️ **로고는 업로드하지 말 것.** 외부 프로덕션 앱이 로고를 올리면 brand-verification 이 붙는다.
 
 ---
 

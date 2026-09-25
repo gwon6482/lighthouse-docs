@@ -99,6 +99,12 @@ localhost:5173 에서 시작
 
 > ⚠️ 제공자측 에러(구글 `access_denied` 등)는 콜백에서 `req.query.error` 로 들어와
 > **전부 `cancelled`** 로 뭉개진다. '테스트 사용자가 아님'과 '사용자가 취소함'이 구분되지 않는다.
+> (2026-09-25 동의화면을 프로덕션 게시한 뒤로는 실질적으로 취소만 남는다)
+
+> ⚠️ **비활성 계정 가드는 2026-09-25 에야 붙었다.** 그전까지 `authController.login` 은
+> `isActive=false` 를 403 으로 막는데 `oauthController` 에는 검사가 **아예 없어서**,
+> 비활성화된 계정이 카카오·구글로는 그대로 로그인됐다.
+> 지금은 `findOrCreateSocialUser` 가 `INACTIVE` 를 돌려 `?error=inactive` 로 보낸다.
 
 #### 가입 경로별 저장 위치 (2026-09-17 정리)
 
@@ -153,7 +159,7 @@ localhost:5173 에서 시작
 |-----------|------|
 | `GET /api/user/profile` | 내 프로필 조회 |
 | `PUT /api/user/profile` | 설정 수정 (settings — theme/language/notifications) |
-| `DELETE /api/user` | 계정 탈퇴 (isActive: false 소프트 삭제) |
+| `DELETE /api/user` | 계정 탈퇴 (**하드 삭제** — 2026-09-25 전환. 아래 주의 참조) |
 | `POST /api/user/survey-results` | 설문 결과를 유저에 연결 |
 | `GET /api/user/survey-results` | 내 설문 결과 목록 조회 |
 | `GET /api/user/bookmarks` | 북마크 직업 목록 조회 (job_data join) |
@@ -166,6 +172,39 @@ localhost:5173 에서 시작
 | `PUT /api/user/target-career` | 목표 진로 설정/변경/삭제 (2026-05-21) |
 
 **구현 파일**: `controllers/userController.js`, `routes/user.js`
+
+#### ⚠️ 회원 탈퇴는 하드 삭제다 (2026-09-25 전환)
+
+옛 구현은 `isActive=false` 만 찍고 문서를 그대로 뒀다. 그런데 개인정보처리방침이
+"탈퇴 시 지체 없이 파기"라고 공개돼 있어 사실과 달랐다(법 제21조상 파기 의무).
+소프트 삭제는 **같은 소셜 계정 재가입 충돌**의 원인이기도 했다.
+
+| 대상 | 처리 | 키 |
+|---|---|---|
+| `user_data.users` | 삭제 | `uid` |
+| `career_plans`/`weekly_schedules`/`achievement_records`/`curriculum_completions` | 삭제 | `userUid` |
+| `survey_data.survey_results` | 삭제 | `survey_id ∈ User.surveyResults` **OR** `respondent_id == uid` |
+| S3 `lighthouse-uploads` | 삭제 | 접두사 `uploads/achievements/<uid>/` |
+| `job_data.job_reviews` | **익명화**(submitterEmail 만 비움) | `submitterEmail == user.email` |
+| `public_career_plans` | **제외** | 유저 참조 없는 큐레이션 콘텐츠 |
+
+> ⚠️ **삭제 순서: 딸린 것 먼저, `users` 문서 맨 마지막.** 중간 실패 시 계정이 남아 같은 토큰으로
+> 재시도할 수 있다. 반대로 하면 재인증이 불가능해져 고아 데이터만 남는다.
+> 트랜잭션은 쓰지 않는다 — S3 가 못 들어가고 DB 3개에 걸쳐 있다.
+
+> ⚠️ `respondent_id` 는 클라이언트가 보내는 값이라 빌 수 있다. `survey_id` 와 **OR** 로 걸어야 한다.
+
+> ⚠️ S3 는 **접두사 기준**으로 지운다. `photoUrl` 을 훑으면 presigned 업로드만 되고 DB 기록이
+> 안 남은 **고아 파일**을 놓친다.
+
+> ⚠️ 후기는 지우지 않는다. 본문은 다른 이용자가 보는 공개 정보이고 개인 식별자는
+> `submitterEmail` 하나뿐이라 그것만 비운다.
+
+> ⚠️ **FE 에 계정 삭제 UI 가 아직 없다.** 이 엔드포인트를 호출하는 코드가 FE 전체에 0건이다.
+
+점검용 읽기 전용 스크립트: `scripts/inspect-deletion-scope.js`, `scripts/inspect-orphans.js`.
+⚠️ 후자는 버킷을 **프로덕션 값으로 명시**한다 — `config/s3.js` 기본값(`lighthouse-career-fe`)에
+맡기면 엉뚱한 버킷을 본다(프로덕션은 deploy.yml 이 `lighthouse-uploads` 주입).
 **User 스키마**: `models/User.js` → `user_data.users` 컬렉션
 
 #### User 스키마 주요 필드 (2026-05-21 기준)
