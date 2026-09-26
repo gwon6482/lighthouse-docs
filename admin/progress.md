@@ -21,12 +21,17 @@ src/
 │   │       ├── reference/page.tsx            # 참조데이터 CRUD ✅
 │   │       ├── statistics/page.tsx           # 통계 조회 ✅
 │   │       ├── onboarding/page.tsx          # 가입 설문 Q1~Q3 분포 ✅ (2026-09-17)
+│   │       ├── users/page.tsx                # 회원 관리 (목록·검색·삭제) ✅ (2026-09-25)
 │   │       ├── jobs/page.tsx                 # 직업 검색/상세 ✅
 │   │       └── encyclopedia/page.tsx         # 진로백과 (후기/준비과정/채용) ✅
-│   └── api/auth/[...nextauth]/route.ts       # NextAuth 핸들러 ✅
+│   ├── api/auth/[...nextauth]/route.ts       # NextAuth 핸들러 ✅
+│   └── api/proxy/[...path]/route.ts          # API 프록시 (세션 검증 + x-admin-key 주입) ✅
+├── components/
+│   └── users/UserDetailModal.tsx             # 회원 상세 + 단계별 리셋 ✅ (2026-09-26)
 ├── lib/
 │   ├── api.ts                                # axios 클라이언트 + API 함수 ✅
-│   └── auth.ts                               # NextAuth v5 설정 ✅
+│   ├── auth.ts                               # NextAuth v5 설정 ✅
+│   └── onboardingLabels.ts                   # Q1~Q3 해석표 (분포 화면·상세 팝업 공용) ✅
 └── types/index.ts                            # 전체 타입 정의 ✅
 ```
 
@@ -67,6 +72,33 @@ src/
 | `/dashboard/statistics` | 그룹별/문항별 통계, MeanBar 차트 |
 | `/dashboard/jobs` | 직업 검색/상세 |
 | `/dashboard/encyclopedia` | 직업 검색 + 후기/준비과정/채용 탭 조회 |
+| `/dashboard/onboarding` | 회원가입 진로답변 Q1~Q3 분포 |
+| `/dashboard/users` | **회원 관리** — 목록·검색·상세 팝업·단계별 리셋·영구 삭제 (2026-09-25~26) |
+
+### 회원 관리 (`/dashboard/users`)
+
+행 클릭 → 상세 모달(가입설문 / 자기이해검사 / 진로탐색 / 진로설계 / 단계별 리셋).
+
+| 단계 | 지워지는 것 |
+|---|---|
+| `design` 진로설계 전 | 진로계획·주간일정·달성기록·커리큘럼완료·인증사진(S3) |
+| `survey` 검사 전 | 검사결과·추천직업·북마크·목표진로 **+ design** |
+| `signup` 가입 직후 | 이름·나이·성별·가입설문 **+ survey + design** |
+
+> 🚨 **`signup` 리셋이 가입 위저드를 다시 띄우는 것은 소셜 계정뿐이다.**
+> 앱 진입 가드(`lighthouse-test shared/router/app.ts`)가 `socialOnly && !onboarding.answeredAt`
+> 일 때만 위저드로 보낸다. 이메일 계정은 onboarding 을 지워도 `/main/before` 로 간다.
+> 가드를 "local 이 없으면 소셜"로 뒤집으면 **authProviders 가 빈 옛 계정이 위저드에 갇힌다**
+> (2026-09-09 이전 이메일 가입자). 그래서 가드는 두고, 응답 `wizardWillShow` 와 모달 배너로 알린다.
+
+> ⚠️ 삭제 확인은 **이메일(없으면 uid)을 그대로 입력**해야 버튼이 열린다. 하드 삭제라 되돌릴 수 없다.
+
+> ⚠️ 가입 설문 **문구의 정본은 FE `SignupWizardPage.vue`** 다. API 는 숫자 코드만 준다.
+> 해석표는 `src/lib/onboardingLabels.ts` 하나뿐이고 분포 화면과 상세 팝업이 **공유**한다 —
+> 두 곳에 복사하면 한쪽만 고쳐져 같은 코드가 다르게 해석된다.
+
+> ℹ️ 2026-09-26 기준 28명 중 **가입설문 응답이 있는 계정은 0명**이다. onboarding 필드는
+> 2026-09-09 에 생겼고 값을 가진 소셜 계정은 9/23 에 정리됐다. "응답 없음"이 정상이다.
 
 ## 미완성 기능 ⚠️
 
@@ -85,10 +117,20 @@ src/
 > Admin은 `src/app/api/proxy/[...path]/route.ts`가 NextAuth 세션을 검증한 뒤 서버사이드에서 키를 주입한다(브라우저 미노출).
 > `src/lib/api.ts`의 axios baseURL도 `/api/proxy`로 전환됨.
 
+> ✅ **해결됨(2026-09-26)**: 로그인이 "로그인 중..." 에서 멈추면 화면에 단서가 0개였다.
+> `signIn` 호출에 try/catch 가 없어 reject 시 `setLoading(false)` 에 영원히 도달하지 못했다(`ad99bc5`).
+> 함께 `router.push` → `window.location.assign` 으로 바꿨다 — App Router 가 캐시한
+> **로그인 전 `/dashboard` RSC 페이로드**를 쓰면 `auth()` 가 null 을 보고 `/login` 으로 되돌린다.
+> ⚠️ 무한 로딩 **자체는 재현하지 못했다.** 원인 특정이 아니라 다음에 원인이 보이게 만든 것이다.
+
 ### ⚠️ 알려진 위험 — 관리자 비밀번호 (조치 보류)
 프로덕션 admin.lighthouse.career는 `admin@lighthouse.com` / `changeme`로 로그인된다(2026-08-07 실측).
 비밀번호는 DB가 아니라 Vercel production env `ADMIN_PASSWORD`와 평문 비교(`auth.ts`)이며, 아직 교체되지 않았다.
 **사용자가 위험을 인지한 상태에서 현행 유지를 선택**했으므로 방치가 아니라 보류다.
+
+> ⚠️ **2026-09-25~26 에 전제가 바뀌었다.** 판단 당시 어드민이 할 수 있는 최악은 문항·후기 수정이었는데,
+> 지금은 `/dashboard/users` 에서 **전 회원과 딸린 데이터를 되돌릴 수 없게 삭제**할 수 있다.
+> 결정을 바꾸라는 뜻은 아니지만, 근거가 된 조건이 달라졌다는 사실은 기록해 둔다.
 조치 시: Vercel → Settings → Environment Variables → Production 에서 변경 후 재배포.
 NextAuth JWT 세션은 서버 무효화가 불가하므로 기존 세션까지 끊으려면 `AUTH_SECRET`도 함께 로테이션해야 한다.
 

@@ -139,6 +139,41 @@ localhost:5173 에서 시작
 |-----------|------|
 | `GET /api/admin/onboarding/stats` | 회원가입 Q1~Q3 답변 분포. `adminAuth`(x-admin-key) 뒤 |
 
+### 관리자 — 회원 관리 (2026-09-25~26 신규)
+
+| 엔드포인트 | 설명 |
+|-----------|------|
+| `GET /api/admin/users` | 회원 목록. page/limit(≤100)/search/provider/isActive + 딸린 데이터 건수 |
+| `GET /api/admin/users/:uid` | 회원 상세. 가입설문·자기이해검사·진로탐색·진로설계 |
+| `POST /api/admin/users/:uid/reset` | **단계별 리셋** `{stage: design\|survey\|signup}` |
+| `DELETE /api/admin/users/:uid` | **영구 삭제** (되돌릴 수 없음) |
+
+**구현 파일**: `controllers/adminUserController.js`, `services/userPurge.js`
+
+삭제·리셋 규칙은 **`services/userPurge.js` 한 곳**에 있다. 본인 탈퇴(`DELETE /api/user`)도
+같은 함수를 쓴다 — 따로 두면 컬렉션 추가 시 한쪽만 고쳐져 고아 데이터가 남는다.
+
+**리셋 단계는 누적이다:**
+`design`(계획·일정·달성·커리큘럼·S3사진) → `survey`(검사결과·추천·북마크·목표진로 + design)
+→ `signup`(이름·나이·성별·가입설문 + survey + design)
+
+> 🚨 **`signup` 리셋이 가입 위저드를 다시 띄우는 것은 소셜 계정뿐이다.**
+> 앱 진입 가드가 `socialOnly && !onboarding.answeredAt` 일 때만 위저드로 보낸다.
+> 이메일 계정은 `onboarding` 을 지워도 `/main/before` 로 간다. 응답의 `wizardWillShow` 로 알린다.
+
+> ⚠️ 목록의 건수 집계는 **컬렉션당 aggregate 1회(총 4회)**. 유저마다 세면 N+1 이다.
+
+> ⚠️ `search` 는 정규식 메타문자를 이스케이프한다. 입력을 그대로 넣으면 `(` 하나로 터지고 ReDoS 도 가능.
+
+> ⚠️ 상세 조회에서 `passwordHash` 를 projection 으로 빼면 안 된다 — 빼놓고 `!!user.passwordHash` 로
+> 판정해 **항상 false** 가 됐던 버그가 있었다(`df6cb04`). 값은 응답에 싣지 않는다(화이트리스트 구성).
+
+> ⚠️ 유저 문서 갱신은 `save()` 가 아니라 `updateOne`. `save()` 는 문서 전체 검증을 다시 돌려서
+> 옛 계정에 스키마와 어긋난 값이 있으면 리셋 자체가 실패한다.
+
+> ⚠️ 가입 설문 **문구는 API 에 두지 않는다.** 숫자 코드만 내려준다. 정본은 FE `SignupWizardPage.vue`
+> 이고 해석표는 어드민 `src/lib/onboardingLabels.ts` 하나뿐이다.
+
 **구현 파일**: `controllers/onboardingStatsController.js`, `routes/admin.js`
 **응답**: `{ total, answered, byStatus(1~4), byConcern(1~6), bySelfAwareness(1~3) }`
 (선택되지 않은 코드도 0 으로 채워 보낸다 — 화면이 흔들리지 않게)
