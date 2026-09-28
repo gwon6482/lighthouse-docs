@@ -114,8 +114,9 @@ GET  /api/reference/career-attributes       🔴 미연동
 ⚠️ 타입 수정 동반: `relatedMajors` 가 `string[]` 이 아니라 `RelatedMajor[]` 였다.
    `RatioItem` · `ProspectBucket` · `JobWork24` · `dataSource` · `sharedWith` 신설.
 
-🚨 **아직 프로덕션에 없다.** prod 태그는 `v0.1.12` 이고 이 2건은 그 뒤 커밋이다.
-   `test.lighthouse.career` 에서만 보인다.
+✅ **`v0.1.13` 으로 프로덕션 반영 완료(2026-09-28).** run 36394129209 success.
+   실측: 메인청크 `index-Dh7WXHnz.js`, 진로백과 청크에 '되는 길'·'이 일을 하는 사람들'·
+   '일자리 전망'·'준비과정 예시' 4종 모두 존재.
 
 ---
 
