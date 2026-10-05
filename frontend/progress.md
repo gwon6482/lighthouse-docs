@@ -114,6 +114,10 @@ GET  /api/reference/career-attributes       🔴 미연동
 ⚠️ 타입 수정 동반: `relatedMajors` 가 `string[]` 이 아니라 `RelatedMajor[]` 였다.
    `RatioItem` · `ProspectBucket` · `JobWork24` · `dataSource` · `sharedWith` 신설.
 
+✅ **`v0.1.14` (2026-10-05)** — `jobNm` 이 자기 이름과 같은 6건(간호사·항공기조종사 등)에
+   "아래 정보는 **간호사** 기준이에요" 라는 빈 배너가 뜨던 것 수정. `showSharedNotice` 조건 추가.
+   Deploy PROD run 37255560008 success / 라이브 `index-Cj3Tq3Vy.js`.
+
 ✅ **`v0.1.13` 으로 프로덕션 반영 완료(2026-09-28).** run 36394129209 success.
    실측: 메인청크 `index-Dh7WXHnz.js`, 진로백과 청크에 '되는 길'·'이 일을 하는 사람들'·
    '일자리 전망'·'준비과정 예시' 4종 모두 존재.
