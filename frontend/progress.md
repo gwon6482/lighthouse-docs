@@ -114,6 +114,37 @@ GET  /api/reference/career-attributes       🔴 미연동
 ⚠️ 타입 수정 동반: `relatedMajors` 가 `string[]` 이 아니라 `RelatedMajor[]` 였다.
    `RatioItem` · `ProspectBucket` · `JobWork24` · `dataSource` · `sharedWith` 신설.
 
+### 회원 탈퇴 UI (2026-10-05, `ba1c4ce`, **미출시**)
+
+`DELETE /api/user` 는 2026-09-25 부터 하드 삭제인데 **앱에 화면이 없었다** —
+처리방침에 '파기'를 명시해놓고 탈퇴할 길이 없었다.
+
+`/mypage` 맨 아래 '계정' 섹션(밑줄 링크, 빨간 버튼 아님 — 오조작 유도 방지).
+`AccountDeleteSheet.vue` 가 **두 단계**로 확인한다: 지워지는 항목 나열 + **'삭제' 직접 입력**.
+
+⚠️ **실패 시 토큰을 지우지 않는다** — 지우면 계정은 남았는데 로그아웃돼 재시도 길이 막힌다.
+⚠️ 성공 시 `logout()` → `router.replace('/onboarding')`. **`push` 가 아니라 `replace`** 다
+   (뒤로가기로 지워진 계정 화면에 돌아오면 안 된다).
+✅ R5 가드 루프 없음 — 분기는 `/onboarding/auth` 에서만 돌고 토큰 없으면 `'pass'`.
+
+🚨 **(사람) 테스트 계정으로 실제 탈퇴 왕복 필요.** 라이브에서 돌리면 진짜 계정이 지워진다.
+
+---
+
+### 항목 설명문 툴팁 (2026-10-05, `a4a180f`, **미출시**)
+
+진로백과 개요 탭 속성 칩을 누르면 설명이 펼쳐진다. 한 번에 하나.
+설명문은 **이미 `reference_data.career_attributes` 에 202건 있었다**(definition 누락 0).
+
+⚠️ 직업 상세 응답에는 `code`·`name` 만 있다. 직업마다 설명문을 실으면 **직업 1건당
+   항목이 ~190개**라 응답이 불어난다 → `shared/composables/useCareerAttributes.ts` 가
+   `GET /api/reference/career-attributes`(공개, 42KB/gzip ~10KB)를 **한 번만** 받아 캐시한다
+   (모듈 스코프 + inflight 공유). 실패하면 조용히 넘긴다 — 보조 정보다.
+⚠️ 칩이 `li` → **`button`**. 같은 코드가 '직업내'·'직업간' 두 블록에 동시에 나올 수 있어
+   설명은 **블록별로** 판정해 그린다(안 하면 어느 칩을 눌렀는지 알 수 없다).
+
+---
+
 ### 묶음 직업 선택 (2026-10-05, `33d0e73` → **`v0.1.15`**)
 
 서버가 추천 목록에서 **묶음 직업을 한 자리로 접는다**(전문의 13종 → '전문의사').
