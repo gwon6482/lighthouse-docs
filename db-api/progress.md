@@ -380,6 +380,14 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 어떤 응답으로도 TOP30 에 못 들던 직업 **166건 → 1건**(경기심판, 유일한 크롤링 잔존).
 변별력 유지(점수 sd 0.0453 → 0.0426). 비용 40ms/537건.
 
+✅ **동점 2종 해결 (2026-10-05).**
+   (a) `round3` 로 자르고 정렬해 537개가 ~171버킷에 몰렸고 동점이 **문서 순서로** 갈렸다
+       (5·6위 동점 27%). → `totalExact` 로 정렬, 응답만 3자리. 고유 점수 171 → **481**.
+   (b) 남은 동점 29덩어리는 **전부 공유 그룹**(= 그룹 수와 일치). `details`·임금·만족도가
+       전부 동일해 정렬로 못 푼다. → **`collapseSharedGroups` 로 한 자리로 접는다.**
+       `title`=대표명 / `members`=세부 직업 / `jobCode`=첫 구성원(상세 링크 유지).
+       **전문의 13종 TOP5 등장 5개 → 13개.** 메인 5축·recommend-t2 양쪽 적용.
+
 ⚠️ **`survey_results` 88건은 전부 더미다.** 표본 기반으로 검증하지 말 것.
    실사용자 검사 응답은 아직 없다. (초판에 적었던 「83%」는 그 오인에서 나와 철회했다.)
 
@@ -533,6 +541,21 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 ---
 
 ## 인프라 / 배포
+
+### 🚨 Lightsail 배포 경쟁 (2026-10-05 교정)
+
+Lightsail 은 **한 번에 하나의 deployment 만** 허용한다. 커밋을 연달아 push 하면
+뒤 배포가 `InvalidInputException: deployment N is in progress` 로 **실패한다.**
+2026-09-28 에 2번, 10-05 에 1번 실제로 밟았다. 10-05 건은 컨트롤러 코드라 미배포가 문제였다
+(9/28 두 건은 `scripts/`·`.github/` 만 건드려 컨테이너와 무관했고 무해했다).
+
+고침(`deploy.yml`): `concurrency: group: deploy-api` 로 직렬화 +
+배포 생성 전 서비스 상태가 `DEPLOYING`/`UPDATING` 이 아닐 때까지 대기(최대 10분) +
+생성 실패 시 10회 재시도.
+⚠️ concurrency 만으로는 부족하다 — **Lightsail 배포는 워크플로가 끝난 뒤에도 수 분간 계속된다.**
+
+> ⚠️ **push 후 Actions 결과를 확인할 것.** 그리고 컨테이너 반영은 **uptime 이 아니라 기능으로**
+> 판정할 것 — uptime 이 낮아도 그게 *이전* 배포의 교체일 수 있다.
 
 ### 배포 방식
 - GitHub `main` 브랜치 push → `.github/workflows/deploy.yml` 자동 실행

@@ -114,6 +114,24 @@ GET  /api/reference/career-attributes       🔴 미연동
 ⚠️ 타입 수정 동반: `relatedMajors` 가 `string[]` 이 아니라 `RelatedMajor[]` 였다.
    `RatioItem` · `ProspectBucket` · `JobWork24` · `dataSource` · `sharedWith` 신설.
 
+### 묶음 직업 선택 (2026-10-05, `33d0e73`, 미출시)
+
+서버가 추천 목록에서 **묶음 직업을 한 자리로 접는다**(전문의 13종 → '전문의사').
+`title`=그룹명 / `members`=세부 직업.
+
+FE 가 `members` 를 무시하면 **누른 이름과 열린 화면 제목이 달라진다**
+(목록 "초·중·고등학교 교장 및 교감" → 상세 "초등학교 교장 및 교감").
+→ `shared/components/JobGroupPicker.vue` — `members` 2개 이상이면 선택 시트.
+  적용: `EncyclopediaRecommendedPage`(2리스트) · `SurveyResultBody`(종합 추천).
+  부모는 **최종 jobCode 만** 받으므로 변경 없음. 카드에 `유사 N개` 배지.
+
+ℹ️ 데이터 오염은 없다 — 북마크·목표진로는 **상세 화면에서만** 일어나고 거기엔 항상
+   구체적 개별 직업이 로드된다. 추천 목록엔 그 버튼이 없다.
+
+⚠️ **실제 화면 미확인** — 추천 페이지는 로그인 + 검사 결과가 필요하다.
+
+---
+
 ✅ **`v0.1.14` (2026-10-05)** — `jobNm` 이 자기 이름과 같은 6건(간호사·항공기조종사 등)에
    "아래 정보는 **간호사** 기준이에요" 라는 빈 배너가 뜨던 것 수정. `showSharedNotice` 조건 추가.
    Deploy PROD run 37255560008 success / 라이브 `index-Cj3Tq3Vy.js`.
