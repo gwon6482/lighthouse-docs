@@ -114,7 +114,7 @@ GET  /api/reference/career-attributes       🔴 미연동
 ⚠️ 타입 수정 동반: `relatedMajors` 가 `string[]` 이 아니라 `RelatedMajor[]` 였다.
    `RatioItem` · `ProspectBucket` · `JobWork24` · `dataSource` · `sharedWith` 신설.
 
-### 묶음 직업 선택 (2026-10-05, `33d0e73`, 미출시)
+### 묶음 직업 선택 (2026-10-05, `33d0e73` → **`v0.1.15`**)
 
 서버가 추천 목록에서 **묶음 직업을 한 자리로 접는다**(전문의 13종 → '전문의사').
 `title`=그룹명 / `members`=세부 직업.
@@ -128,7 +128,15 @@ FE 가 `members` 를 무시하면 **누른 이름과 열린 화면 제목이 달
 ℹ️ 데이터 오염은 없다 — 북마크·목표진로는 **상세 화면에서만** 일어나고 거기엔 항상
    구체적 개별 직업이 로드된다. 추천 목록엔 그 버튼이 없다.
 
-⚠️ **실제 화면 미확인** — 추천 페이지는 로그인 + 검사 결과가 필요하다.
+빌드 해시 `index-DqvY_Z-e.js` / `JobGroupPicker-mCdxnLXI.js` /
+`EncyclopediaRecommendedPage-_0eSfFFa.js` (v0.1.14 = `index-Cj3Tq3Vy.js`).
+스테이징에서 `JobGroupPicker-mCdxnLXI.js` HTTP 200 확인.
+
+⚠️ **선택 시트의 실제 화면은 확인하지 못했다** — 추천 페이지는 로그인 + 검사 결과가 필요하다.
+   **(사람) `유사 N개` 배지가 붙은 항목을 눌러 시트가 뜨는지 확인할 것.**
+
+ℹ️ 이 태그는 **서버와의 어긋남을 메우는 것**이다. 서버는 10-05 부터 그룹을 접어 보내는데
+   `v0.1.14` 는 `members` 를 몰라서 목록 이름과 상세 제목이 달라진 상태였다.
 
 ---
 
