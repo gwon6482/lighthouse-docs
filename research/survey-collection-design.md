@@ -352,28 +352,28 @@ m=±10%p → n ≈ 96          m=±5%p → n ≈ 384
 
 ### 6.1 서버 (lighthouse-api) — 먼저
 
-- [ ] `models/ResearchSurveyResult.js`
+- [x] `models/ResearchSurveyResult.js` (`87a3d28`)
   - `respondent`: role / jobCode / careerYears / ageGroup / gender / fitScore
   - `answers`: 기존 `survey_results` 와 **동일 구조**(분석 코드 재사용)
   - `quality`: durationMs / maxStraightRun / startedAt / submittedAt
   - `meta`: userAgent / 제출토큰 / 수집 캠페인 태그
-- [ ] `POST /api/survey/research/response` — 공개. 레이트리밋. 메타 검증(jobCode 존재 확인)
-- [ ] `GET /api/survey/research/stats` — adminAuth. 신분별·대분류별·직업별 수집 현황
-- [ ] ⚠️ **기존 `survey_statistics` 를 건드리지 않는다.** 연구 응답이 사용자 백분위에
+- [x] `POST /api/survey/research/response` (`87a3d28`, 이어 쓰기 `8fd4fa1`) — 공개. 레이트리밋. 메타 검증(jobCode 존재 확인)
+- [x] `GET /api/survey/research/stats` — adminAuth. 신분별·대분류별·직업별 수집 현황
+- [x] ⚠️ **기존 `survey_statistics` 를 건드리지 않는다.** 연구 응답이 사용자 백분위에
       섞이면 진단 1 과 같은 사고가 반복된다
-- [ ] `scripts/research-recall.js` — Recall@K · MRR 측정. **점수 로직은 `__test__` 재사용**
+- [x] `scripts/research-recall.js` (`5b13f6f`) — Recall@K · MRR 측정. **점수 로직은 `__test__` 재사용**
 
 ### 6.2 랜딩 (lighthouse-landing)
 
-- [ ] `/survey` — 메타 입력 → T1 43 → T21 61 → T22 33 → T23 9(3선) → T3 6 → 완료
-- [ ] 문항은 `GET /api/survey/form` 에서 받는다. **하드코딩 금지**
-- [ ] 직업 선택은 `GET /api/job/search?name=` 자동완성
-- [ ] 진행률·중간 저장(localStorage) — ⚠️ **편의 기능이 아니다.**
+- [x] `/survey` (랜딩 `dev` `97115b0`, **main 미반영**) — 메타 입력 → T1 43 → T21 61 → T22 33 → T23 9(3선) → T3 6 → 완료
+- [x] 문항은 `GET /api/survey/form` 에서 받는다. **하드코딩 금지**
+- [x] 직업 선택은 `GET /api/job/search?name=` 자동완성
+- [x] 진행률·중간 저장(localStorage) — ⚠️ **편의 기능이 아니다.**
       완주 100% 만 반영하므로 완주율이 모집 비용을 직접 좌우한다
       (완주율 50%→70% 면 모집 인원 **29% 감소**)
-- [ ] 파트별 분할 진행(T1 → T21 → …) + 이탈 후 복귀 유도
-- [ ] ⚠️ **부분 응답도 서버에 저장**한다(완주율·이탈 지점 실측용). 단 집계에서는 제외
-- [ ] 수집 동의 문구 + `/privacy` 링크
+- [x] 파트별 분할 진행(T1 → T21 → …) + 이탈 후 복귀 유도
+- [x] ⚠️ **부분 응답도 서버에 저장**한다(완주율·이탈 지점 실측용). 단 집계에서는 제외
+- [x] 수집 동의 문구 + `/privacy` 링크 — ⚠️ 처리방침에 비회원 연구 응답 항목이 **없다**(미결)
 
 ### 6.3 어드민 (lighthouse-admin)
 

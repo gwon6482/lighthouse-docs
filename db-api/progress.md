@@ -274,6 +274,17 @@ devices:           [DeviceSchema]
 | `GET /api/survey/analysis/:survey_id` | 설문 분석 결과 (personality_type 포함) |
 | `GET /api/survey/t1-result/:survey_id` | T1 성격 유형 결과 |
 
+#### 연구용 설문 수집 (2026-10-05 신설 · 10-12 이어 쓰기)
+
+| 엔드포인트 | 설명 |
+|-----------|------|
+| `POST /api/survey/research/response` | **공개**, 레이트리밋 60회/10분/IP. 실무자 jobCode 필수. `respondent_id` 를 다시 보내면 **같은 문서 이어 쓰기**(200), 완주본 수정 409 |
+| `GET /api/survey/research/stats` | adminAuth. 완주본만 집계, 완주율·이탈 지점·품질·대분류 쏠림 경고 |
+
+🚨 컬렉션 `survey_results_research` 는 `survey_results` 와 **물리적으로 분리**, `survey_statistics` 를 **갱신하지 않는다**.
+설계 정본 `research/survey-collection-design.md`. 화면은 랜딩 `/survey`.
+⚠️ 이어 쓰기 시 시작 시각은 **처음 저장값**을 쓴다(클라이언트 값을 믿으면 too_fast 판정을 피할 수 있다).
+
 #### 🚨 T23 가치관 13문항 → 9문항 (2026-09-26 축소)
 
 고용24가 진로백과를 개편하며 **가치관 범위를 좁혔다**. 삭제된 4개는
