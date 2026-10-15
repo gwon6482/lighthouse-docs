@@ -279,7 +279,7 @@ devices:           [DeviceSchema]
 | 엔드포인트 | 설명 |
 |-----------|------|
 | `POST /api/survey/research/response` | **공개**, 레이트리밋 60회/10분/IP. 실무자 jobCode 필수. `respondent_id` 를 다시 보내면 **같은 문서 이어 쓰기**(200), 완주본 수정 409 |
-| `GET /api/survey/research/result/:respondent_id` | **공개**. 완주본만(409). 앱 결과와 **같은 함수**(`buildSurveyAnalysis` · `runRecommend`)로 `{ analysis, recommend(5) }` |
+| `GET /api/survey/research/result/:respondent_id` | **공개**. 완주본만(409). 앱 결과와 **같은 함수**(`buildSurveyAnalysis` · `runRecommend`)로 `{ completed_at, analysis, recommend(5) }`. `completed_at`=완주 시각(PDF 결과지 검사일, 2026-10-14~). ⚠️ `submitted_at` 은 첫 중간 저장 시각 |
 | `GET /api/survey/research/stats` | adminAuth. 완주본만 집계, 완주율·이탈 지점·품질·대분류 쏠림 경고 |
 
 🚨 컬렉션 `survey_results_research` 는 `survey_results` 와 **물리적으로 분리**, `survey_statistics` 를 **갱신하지 않는다**.
