@@ -659,3 +659,8 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - 고용24 연결: ⚠️ 우리 jobCode 를 채용 직종코드로 그대로 쓰면 안 된다(모양만 같고 버전이 다름).
   `job_info.work24.keco.code`(4자리)+'00' = 상위 직종 → 하위 직종 공고까지 포함. 537개 중 534개 연결, 미연결은 `skipped`
 - 키 `WORK24_KEY_RECRUIT`(Secrets). 출처가 하나라도 성공했을 때만 캐시
+
+### 채용 — 기업 공채 `openings` (2026-10-16, `c0408c8`)
+- 응답에 `openings: [{ source, sourceName, total, scope: { code, name }, items: Opening[] }]` 추가 — 고용24 공채속보(210L21)
+- 직종 **중분류** 단위(세분류 0건). 세분류→중분류 = `config/work24OccupationTree.json`(재생성 `node --env-file=.env scripts/work24-occupation-tree.js`)
+- 출처 약속에 선택 메서드 `searchOpenings` 추가. Posting 의 employmentType = 고용형태(empTpCd), workSchedule = 근무형태

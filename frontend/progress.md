@@ -709,7 +709,7 @@ src/modules/
 
 ## 남은 작업
 
-- [x] 고용24 공식 API 적용 — 채용정보 탭(`/api/job/:jobCode/recruitment`) (2026-10-16, 앱 `de7e1ba`, 프로덕션 v0.1.18)
+- [x] 고용24 공식 API 적용 — 채용정보 탭(`/api/job/:jobCode/recruitment`) (2026-10-16, 앱 `de7e1ba`, 프로덕션 v0.1.18) + '기업 공채' 섹션(`7e4db1d`, 스테이징)
 - [ ] 진로계획 UI 및 기능 개선 (진로계획 작성/타임라인/완성 플로우) — 프로젝트 추가 2단계 분리(2026-08-27)와 타임라인 주차 전환(2026-08-28, `v0.1.8`)은 완료. 아래 참조
 - [x] 진로달성 페이지 생성 (단계 1 메인 + 단계 2 시작/완료 완료)
 - [x] 진로달성 BE 연동 (entry 업로드 API + 인증사진 S3 업로드) — **배포 완료**. 2026-08-07 실측 정정: 오랫동안 '배포 대기'로 잘못 적혀 있었으나 API·FE·S3 CORS 전부 반영된 상태였다. `achievement.api.ts`에 presign/uploadPhoto 배선 완료, localStorage는 오프라인 캐시일 뿐 서버가 source of truth
