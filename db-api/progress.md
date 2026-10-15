@@ -649,3 +649,13 @@ app.options('*', cors());  // OPTIONS preflight 처리
 | `GET /api/admin/work24/endpoints` | adminAuth. 허용 목록 41개 + 서버 키 설정 여부(값 아님) |
 | `POST /api/admin/work24/call` | adminAuth. `{ apiId, params }` → 허용 목록 주소만, **키는 서버에서만** 붙임(화면 authKey 무시). 응답 `{ httpStatus, ms, apiError, body, url(키 가림) }` |
 - 허용 목록 `config/work24Endpoints.js`(명세에서 생성), 심리검사 결과 37·38 제외. 키 `WORK24_KEY_*` 13개 GitHub Secrets → deploy.yml(선택 항목)
+
+## 진로백과 채용 — `GET /api/job/:jobCode/recruitment` (2026-10-16, `411b019`)
+
+- 쿼리 `limit` 1~20(기본 10). 응답 `{ postings[], sources[], cached }` — 출처가 달라도 공고 모양은 같다
+  (`id '<출처>:<번호>'`·회사·제목·지역·급여·경력·학력·등록일·마감{date, untilFilled, label}·원문 URL)
+- 구조: `services/recruit/index.js`(합치기·중복 제거·최신순·6시간 캐시·출처별 8초 타임아웃) + `providers/<출처>.js`
+  → **사람인·잡코리아는 providers 파일 하나 추가**로 붙는다(잡코리아는 출구 IP 54.117.34.116 경유 예정)
+- 고용24 연결: ⚠️ 우리 jobCode 를 채용 직종코드로 그대로 쓰면 안 된다(모양만 같고 버전이 다름).
+  `job_info.work24.keco.code`(4자리)+'00' = 상위 직종 → 하위 직종 공고까지 포함. 537개 중 534개 연결, 미연결은 `skipped`
+- 키 `WORK24_KEY_RECRUIT`(Secrets). 출처가 하나라도 성공했을 때만 캐시
