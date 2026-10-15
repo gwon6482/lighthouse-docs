@@ -1117,3 +1117,10 @@ CI 는 워크플로우(`deploy-test.yml`/`deploy-app.yml`)가 `VITE_API` 를 직
 
 `tsconfig.vitest.json` include 에 `packages/core/src/env.d.ts` 가 필요하다 —
 테스트가 `useWeeklySchedule` → `@/shared/api` 를 끌어오는데 거기서 `import.meta.env` 를 쓴다.
+
+
+## 진로백과 후기 탭 보완 (2026-10-15, `12e6185` — 스테이징만, 프로덕션 태그 전)
+
+- 현직자 후기(랜딩 연구 설문 → 어드민 승인)가 싣는 값 표시: 경력 배지 "현직 3~5년", 선택 서술 '준비'·'하루'
+- ⚠️ 성격 태그 이름이 **옛 표기**(C 성실성·S 민감성·I 지성 …)로 남아 결과 화면과 달랐다 → 검사 결과와 같은 이름으로 정정
+- 실데이터 현황: `job_reviews` 8건 = 전부 어드민 더미. 진짜 후기는 연구 설문 경로로만 들어온다
