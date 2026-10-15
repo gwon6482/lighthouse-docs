@@ -23,6 +23,7 @@ src/
 │   │       ├── onboarding/page.tsx          # 가입 설문 Q1~Q3 분포 ✅ (2026-09-17)
 │   │       ├── users/page.tsx                # 회원 관리 (목록·검색·삭제) ✅ (2026-09-25)
 │   │       ├── reviews/page.tsx              # 직업 후기 검수 (승인 대기·승인·반려·수정·삭제) ✅ (2026-10-15)
+│   │       ├── work24/page.tsx               # 고용24 API 탐색기(Swagger 형태, 41개 API 호출) ✅ (2026-10-16)
 │   │       ├── jobs/page.tsx                 # 직업 검색/상세 ✅
 │   │       └── encyclopedia/page.tsx         # 진로백과 (후기/준비과정/채용) ✅
 │   ├── api/auth/[...nextauth]/route.ts       # NextAuth 핸들러 ✅

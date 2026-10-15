@@ -643,3 +643,9 @@ app.options('*', cors());  // OPTIONS preflight 처리
 
 - **로컬**: `http://localhost:3000/api-docs`
 - **프로덕션**: `https://api.lighthouse.career/api-docs`
+
+
+## 어드민 고용24 API 탐색기 중계 (2026-10-16, `4027cab`)
+| `GET /api/admin/work24/endpoints` | adminAuth. 허용 목록 41개 + 서버 키 설정 여부(값 아님) |
+| `POST /api/admin/work24/call` | adminAuth. `{ apiId, params }` → 허용 목록 주소만, **키는 서버에서만** 붙임(화면 authKey 무시). 응답 `{ httpStatus, ms, apiError, body, url(키 가림) }` |
+- 허용 목록 `config/work24Endpoints.js`(명세에서 생성), 심리검사 결과 37·38 제외. 키 `WORK24_KEY_*` 13개 GitHub Secrets → deploy.yml(선택 항목)
