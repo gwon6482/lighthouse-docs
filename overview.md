@@ -61,6 +61,7 @@
 | **FE test** | `main` push → S3 `lighthouse-career-fe` → CF `EYU43VZ4GPE7Q` |
 | **FE app** | `v*` 태그 → S3 `lighthouse-career-app` → CF `E3LGZIV007TKVC` |
 | **랜딩** | `main` push → generate → S3 `lighthouse-www-landing` → CF 무효화 |
+| **고정 출구 IP** | Lightsail 인스턴스 `lighthouse-egress` + 고정 IP **54.117.34.116** — 외부 기관(잡코리아 등)에 등록할 서버 IP. API 컨테이너는 고정 IP 불가(2026-10-16) |
 
 > ⚠️ **브랜치 관례가 레포마다 다르다.** `dev`는 `lighthouse-test`(FE 모노레포)와
 > `lighthouse-landing`(2026-09-04 신설)에만 있다. API·Admin은 `main` 하나뿐.
