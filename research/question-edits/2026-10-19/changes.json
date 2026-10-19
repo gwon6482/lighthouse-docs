@@ -1,0 +1,482 @@
+[
+ {
+  "id": "T1_S3",
+  "field": "question_text",
+  "before": "나는 무엇이든 높은 목표를 설정하고, 이를 달성하기 위해 최선을 다한다.",
+  "after": "나는 무슨 일이든 목표를 높게 세우고, 이를 달성하기 위해 최선을 다한다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T1_R2",
+  "field": "question_text",
+  "before": "나는 결과가 불확실한 일에 대해 걱정부터 앞서는 경향이 있다.",
+  "after": "나는 결과가 불확실한 일이 생기면 걱정부터 하는 편이다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T1_S1",
+  "field": "question_text",
+  "before": "어려운 문제에 직면했을 때, \"나는 할 수 있다\"고 생각하는 편이다.",
+  "after": "어려운 문제에 직면했을 때, \"나는 할 수 있다\"라고 생각하는 편이다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T1_C5",
+  "field": "question_text",
+  "before": "나는 \"왜?\"라는 질문을 자주 던지며 다양한 것에 궁금해한다.",
+  "after": "나는 \"왜?\"라는 질문을 자주 던지며 다양한 것을 궁금해한다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T1_E3",
+  "field": "question_text",
+  "before": "나는 사람들 앞에서 당당하게 나의 생각을 말한다.",
+  "after": "나는 사람들 앞에서 내 생각을 당당하게 말한다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T1_A6",
+  "field": "question_text",
+  "before": "다른 사람이 아플 때 나도 함께 아프고, 기쁠 때 함께 기쁘다.",
+  "after": "다른 사람이 슬퍼하면 나도 함께 슬프고, 기뻐하면 함께 기쁘다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T1_A5",
+  "field": "question_text",
+  "before": "나의 노력보다 다른 사람들의 도움에 대해 인정하고 감사한다.",
+  "after": "나는 내 노력보다 다른 사람들이 도와준 몫을 먼저 인정하고 감사한다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T1_E2",
+  "field": "question_text",
+  "before": "나는 여러사람들과 함께 어울리는 것이 좋다.",
+  "after": "나는 여러 사람과 함께 어울리는 것이 좋다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T1_U5",
+  "field": "question_text",
+  "before": "나는 상황에 따라 쉽게 나의 신념을 바꾸지 않는다.",
+  "after": "나는 상황이 달라져도 내 신념을 쉽게 바꾸지 않는다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T1_T4",
+  "field": "question_text",
+  "before": "나는 타인의 실수나 부족함에 대해 너그럽게 이해하고 용서한다.",
+  "after": "나는 타인의 실수나 부족함을 너그럽게 이해하고 용서한다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T1_C2",
+  "field": "question_text",
+  "before": "나는 평소 음악, 미술, 문학, 영화 등 다양한 예술 작품을 깊게 감상하곤 한다.",
+  "after": "나는 평소 음악, 미술, 문학, 영화 등 다양한 예술 작품을 깊이 감상하곤 한다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T1_U4",
+  "field": "question_text",
+  "before": "나는 나의 강점과 약점을 잘 알고 받아들인다.",
+  "after": "나는 내 강점과 약점을 잘 알고 받아들인다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T1_S5",
+  "field": "question_text",
+  "before": "나는 중요한 결정을 내리기 전에 충분한 시간을 갖고 생각한다.",
+  "after": "나는 중요한 결정을 내리기 전에 충분히 시간을 들여 생각한다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_M6",
+  "field": "question_text",
+  "before": "어떤 현상이 왜 일어났는지 궁금할 때, '만약 ~라면 ~할 것이다'와 같은 가설과 검증을 위한 방법들을 스스로 생각해낼 수 있다.",
+  "after": "어떤 현상이 왜 일어났는지 궁금할 때, '만약 ~라면 ~할 것이다'와 같은 가설을 세우고, 이를 검증할 방법을 스스로 생각해낼 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_N7",
+  "field": "question_text",
+  "before": "중요한 결정을 내려야 할 때, 논리적인 근거나 설명은 어렵지만 '왠지 모르게 이게 맞을 것 같다'는 강한 느낌을 믿고 따르는 경우가 많다.",
+  "after": "중요한 결정을 내려야 할 때, 논리적으로 설명하기는 어렵지만 '왠지 모르게 이게 맞을 것 같다'는 강한 느낌을 믿고 따르는 경우가 많다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_T2",
+  "field": "question_text",
+  "before": "처음 보는 식물이나 동물을 보더라도, 어떤 특징을 가지고 있는지 파악하여 다른 종류와 비슷하거나 다른 점을 쉽게 분류할 수 있다.",
+  "after": "처음 보는 식물이나 동물이라도 어떤 특징이 있는지 파악해, 어떤 종류와 가까운지 쉽게 분류할 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_A7",
+  "field": "question_text",
+  "before": "악기를 연주하거나 노래를 부를 때, 음정·박자 이상의 곡이 가진 감정이나 분위기를 풍부하게 표현할 수 있다.",
+  "after": "악기를 연주하거나 노래를 부를 때, 음정과 박자를 넘어 곡이 가진 감정이나 분위기까지 풍부하게 표현할 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_I3",
+  "field": "question_text",
+  "before": "어떤 내용을 설명할 때, 이해하기 어렵거나 지루해하지 않도록 쉽고 재미있게 이야기하고, 이야기를 들을 때도 적절한 반응과 함께 듣는 편이다.",
+  "after": "어떤 내용을 설명할 때, 듣는 사람이 어렵거나 지루하지 않도록 쉽고 재미있게 이야기하고, 이야기를 들을 때도 적절한 반응과 함께 듣는 편이다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_T3",
+  "field": "question_text",
+  "before": "자연에서 작은 곤충의 움직임이나 새의 소리, 혹은 구름의 미묘한 변화 같은 자연의 세부적인 모습에 관심을 가지고 관찰한다.",
+  "after": "곤충의 움직임이나 새소리, 구름의 미묘한 변화처럼 자연의 세세한 모습에 관심을 갖고 관찰한다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_S5",
+  "field": "question_text",
+  "before": "처음 가보는 장소에 갈 때, 지도를 한번 보고 나면 길을 잃지 않고 쉽게 목적지까지 찾아갈 수 있다.",
+  "after": "처음 가는 장소라도 지도를 한 번 보고 나면 길을 잃지 않고 쉽게 목적지까지 찾아갈 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_I4",
+  "field": "question_text",
+  "before": "새로운 모임이나 집단에 갔을 때, 사람들 사이에 어떤 분위기, 관계가 형성되어 있는지 빠르게 파악하는 편이다.",
+  "after": "새로운 모임이나 집단에 갔을 때, 사람들 사이에 어떤 분위기와 관계가 형성되어 있는지 빠르게 파악하는 편이다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_N3",
+  "field": "question_text",
+  "before": "다른 사람들과 다르게 행동하거나 생각하는 자신을 발견했을 때, 스스로 납득할 만한 이유를 찾아낼 수 있다.",
+  "after": "내가 다른 사람들과 다르게 행동하거나 생각한다는 것을 알게 되었을 때, 스스로 납득할 만한 이유를 찾아낼 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_L3",
+  "field": "question_text",
+  "before": "다른 사람이 말하거나 쓴 글에서 문법적으로 어색한 표현을 들으면 바로 알아차릴 수 있다.",
+  "after": "다른 사람의 말이나 글에서 문법적으로 어색한 표현을 바로 알아차릴 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_A4",
+  "field": "question_text",
+  "before": "여러 소리가 어우러져 만들어내는 화음이 아름답거나 부조화스럽게 느껴지는 것을 쉽게 구분할 수 있다.",
+  "after": "여러 소리가 어우러진 화음이 조화로운지 어긋나는지 쉽게 구분할 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_N6",
+  "field": "question_text",
+  "before": "자신이 어떤 일을 얼마나 잘했는지, 무엇이 부족했는지 다른 사람의 평가 없이도 스스로 객관적으로 분석할 수 있다.",
+  "after": "내가 어떤 일을 얼마나 잘했는지, 무엇이 부족했는지 다른 사람의 평가 없이도 스스로 객관적으로 분석할 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_T4",
+  "field": "question_text",
+  "before": "뉴스에서 기상이변이나 자연재해 소식을 들었을 때, 그 현상이 왜 일어났는지, 어떤 원리로 발생하는지 스스로 궁금해하고 이해하려한다.",
+  "after": "뉴스에서 기상이변이나 자연재해 소식을 들었을 때, 그 현상이 왜 일어났는지, 어떤 원리로 발생하는지 스스로 궁금해하고 이해하려 한다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_A6",
+  "field": "question_text",
+  "before": "길이가 긴 곡을 들을 때, 곡이 진행되는 과정에서 반복되는 부분이나 변화하는 부분을 쉽게 인지할 수 있다.",
+  "after": "긴 곡을 들을 때, 곡이 진행되는 과정에서 반복되는 부분이나 변화하는 부분을 쉽게 인지할 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_N5",
+  "field": "question_text",
+  "before": "화가 나거나 스트레스를 받을 때, 충동적으로 행동하기보다 자신의 감정을 가라앉히고 상황을 이성적으로 판단하여 적절히 대처한다.",
+  "after": "화가 나거나 스트레스를 받을 때, 충동적으로 행동하기보다 내 감정을 가라앉히고 상황을 이성적으로 판단하여 적절히 대처한다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_L7",
+  "field": "question_text",
+  "before": "사람들 앞에서 발표하거나 설명할 때, 핵심내용을 명확하고 설득력있게 전달한다.",
+  "after": "사람들 앞에서 발표하거나 설명할 때, 핵심 내용을 명확하고 설득력 있게 전달한다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_S7",
+  "field": "question_text",
+  "before": "한번 본 그림이나 도표, 또는 특정 장소의 세세한 특징들을 시간이 지나도 잘 기억하고 떠올릴 수 있다.",
+  "after": "한 번 본 그림이나 도표, 또는 특정 장소의 세세한 특징들을 시간이 지나도 잘 기억하고 떠올릴 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_B2",
+  "field": "question_text",
+  "before": "두 손이나 손과 발을 동시에 사용하는 활동(예: 공 던지고 받기, 악기 연주)을 할 때, 몸의 각 부분이 부드럽고 정확하게 조화롭게 움직인다.",
+  "after": "두 손이나 손과 발을 동시에 사용하는 활동(예: 공 던지고 받기, 악기 연주)을 할 때, 몸의 각 부분이 부드럽고 정확하게, 조화를 이루며 움직인다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_N2",
+  "field": "question_text",
+  "before": "실수나 성공을 경험한 후에, 그 원인과 자신의 역할을 깊이 되돌아보고 다음번에는 어떻게 할지 스스로 정리하는 시간을 갖는다.",
+  "after": "실수나 성공을 경험한 후에, 그 원인과 내 역할을 깊이 되돌아보고 다음번에는 어떻게 할지 스스로 정리하는 시간을 갖는다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_L5",
+  "field": "question_text",
+  "before": "복잡한 설명서나 긴 뉴스 기사를 읽고 요점과 세부정보를 잘 이해한다.",
+  "after": "복잡한 설명서나 긴 뉴스 기사를 읽고 요점과 세부 정보를 잘 이해한다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_A5",
+  "field": "question_text",
+  "before": "다양한 악기 소리를 들었을 때, 그 음색 차이를 통해 어떤 악기나 사람인지 쉽게 구별할 수 있다.",
+  "after": "여러 악기 소리나 목소리를 들었을 때, 음색만으로 어떤 악기인지, 누구의 목소리인지 쉽게 구별할 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_A3",
+  "field": "question_text",
+  "before": "한번 들은 노래의 멜로디를 금방 외워서 흥얼거리거나, 나만의 멜로디를 즉흥적으로 만들어낼 수 있다.",
+  "after": "한 번 들은 노래의 멜로디를 금방 외워서 흥얼거리거나, 나만의 멜로디를 즉흥적으로 만들어낼 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_S6",
+  "field": "question_text",
+  "before": "멀리 떨어져 있는 물건(예: 저 멀리 있는 표지판, 건물의 높이)을 보았을 때, 실제 거리나 크기를 꽤 정확하게 짐작할 수 있다.",
+  "after": "멀리 있는 표지판이나 건물을 보고 실제 거리나 높이를 꽤 정확하게 짐작할 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_I7",
+  "field": "question_text",
+  "before": "팀 프로젝트나 단체 활동을 할 때, 나의 역할을 충실히 수행하고 다른 팀원들의 강점을 잘 활용하여 함께 최고의 결과를 만들어낼 수 있다.",
+  "after": "팀 프로젝트나 단체 활동을 할 때, 내 역할을 충실히 수행하고 다른 팀원들의 강점을 잘 활용하여 함께 최고의 결과를 만들어낼 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_A1",
+  "field": "question_text",
+  "before": "처음 듣는 노래를 들었을 때, 각 음의 높낮이가 올라가거나 내려가는 것을 쉽게 알아차릴 수 있다.",
+  "after": "처음 듣는 노래라도 음이 올라가는지 내려가는지 쉽게 알아차릴 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_T5",
+  "field": "question_text",
+  "before": "버려진 쓰레기를 보거나 환경 오염에 대한 소식을 들으면, 개인적으로도 큰 안타까움이나 책임감을 느끼고 자연 보호의 중요성을 공감한다.",
+  "after": "버려진 쓰레기를 보거나 환경 오염에 대한 소식을 들으면, 개인적으로도 큰 안타까움이나 책임감을 느끼고 자연 보호의 중요성에 공감한다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_L6",
+  "field": "question_text",
+  "before": "자신의 생각을 글로 옮길 때, 문장 구성이나 단어 선택에 크게 어려움이 없다.",
+  "after": "내 생각을 글로 옮길 때, 문장 구성이나 단어 선택에 큰 어려움이 없다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_T6",
+  "field": "question_text",
+  "before": "반려동물의 행동이나 식물의 상태를 보고, 그들이 무엇을 필요로 하는지, 어떤 기분인지 직관적으로 파악하고 예측한다.",
+  "after": "반려동물의 행동이나 식물의 상태를 보고, 무엇이 필요한지, 어떤 기분인지 직관적으로 파악하고 예측한다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T21_S1",
+  "field": "question_text",
+  "before": "비슷하게 생긴 물건들이나 미세한 색깔 차이가 있는 것들을 볼 때, 정확하게 다른 점을 찾아낼 수 있다.",
+  "after": "비슷하게 생긴 물건들이나 미세한 색깔 차이가 있는 것들을 볼 때, 다른 점을 정확하게 찾아낼 수 있다.",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T22_BUS_2",
+  "field": "item_text",
+  "before": "고객에게 서비스를 제공하는데 필요한 지식(고객의 욕구평가, 고객의 만족도 평가, 서비스 기준 설정 등)",
+  "after": "고객에게 서비스를 제공하는 데 필요한 지식(고객의 욕구평가, 고객의 만족도 평가, 서비스 기준 설정 등)",
+  "nameBefore": "고객 서비스",
+  "nameAfter": "고객 서비스"
+ },
+ {
+  "id": "T22_BUS_3",
+  "field": "item_text",
+  "before": "워드 프로세스, 문서처리 및 기타 다른 사무절차에 관한 지식",
+  "after": "워드 프로세서, 문서처리 및 기타 사무절차에 관한 지식",
+  "nameBefore": "사무",
+  "nameAfter": "사무"
+ },
+ {
+  "id": "T22_BUS_5",
+  "field": "item_text",
+  "before": "상품이나 서비스를 판매하거나 촉진을 하는 것에 관한 지식(마케팅 전략, 상품의 전시와 판매기법, 영업관리 등)",
+  "after": "상품이나 서비스를 판매하거나 판매를 촉진하는 것에 관한 지식(마케팅 전략, 상품의 전시와 판매기법, 영업관리 등)",
+  "nameBefore": "영업과 마케팅",
+  "nameAfter": "영업과 마케팅"
+ },
+ {
+  "id": "T22_BUS_6",
+  "field": "item_text",
+  "before": "돈의 흐름, 은행업무, 그리고 재무자료의 보고와 분석과 같은 경제 및 회계원리에 관한 지식",
+  "after": "돈의 흐름, 은행업무, 재무 자료의 보고·분석 등 경제 및 회계원리에 관한 지식",
+  "nameBefore": "경제와 회계",
+  "nameAfter": "경제와 회계"
+ },
+ {
+  "id": "T22_COM_3",
+  "field": "item_text",
+  "before": "영어를 읽고, 쓰고, 듣고 말하는데 필요한 지식",
+  "after": "영어를 읽고, 쓰고, 듣고, 말하는 데 필요한 지식",
+  "nameBefore": "영어",
+  "nameAfter": "영어"
+ },
+ {
+  "id": "T22_EDU_1",
+  "field": "item_text",
+  "before": "사람을 가르치고 훈련시키는데 필요한 방법과 이론에 관한 지식",
+  "after": "사람을 가르치고 훈련시키는 데 필요한 방법과 이론에 관한 지식",
+  "nameBefore": "교육 및 훈련",
+  "nameAfter": "교육 및 훈련"
+ },
+ {
+  "id": "T22_EDU_2",
+  "field": "item_text",
+  "before": "개인의 신상 및 경력 혹은 정신적 어려움에 관한 상담을 하는 절차나 방법 혹은 원리에 관한 지식",
+  "after": "개인의 신상, 경력, 정신적 어려움 등을 상담하는 절차·방법·원리에 관한 지식",
+  "nameBefore": "상담",
+  "nameAfter": "상담"
+ },
+ {
+  "id": "T22_SCI_3",
+  "field": "item_text",
+  "before": "질병이나 치아의 질환 여부를 진단하고 치료하는 것에 관한 지식",
+  "after": "질병이나 치아 질환을 진단하고 치료하는 것에 관한 지식",
+  "nameBefore": "의료",
+  "nameAfter": "의료"
+ },
+ {
+  "id": "T22_SCI_4",
+  "field": "item_text",
+  "before": "식용을 위해 동물이나 식물을 기르고 수확물을 채취하기 위한 기법이나 필요한 장비에 관련된 지식",
+  "after": "식용 동식물을 기르고 수확하는 데 필요한 기법과 장비에 관한 지식",
+  "nameBefore": "식품 생산",
+  "nameAfter": "식품 생산"
+ },
+ {
+  "id": "T22_SOC_3",
+  "field": "item_text",
+  "before": "역사적 사건과 원인 그리고 유적에 관한 지식",
+  "after": "역사적 사건과 그 원인, 유적에 관한 지식",
+  "nameBefore": "역사",
+  "nameAfter": "역사"
+ },
+ {
+  "id": "T22_SOC_4",
+  "field": "item_text",
+  "before": "음악, 무용, 미술, 드라마에 관한 지식",
+  "after": "음악, 무용, 미술, 연극에 관한 지식",
+  "nameBefore": "예술",
+  "nameAfter": "예술"
+ },
+ {
+  "id": "T22_TEC_1",
+  "field": "item_text",
+  "before": "전화기, 네트워크, 방송 등의 통신기기를 조작하고 통제하는데 필요한 지식",
+  "after": "전화기, 네트워크, 방송 등의 통신기기를 조작하고 통제하는 데 필요한 지식",
+  "nameBefore": "통신",
+  "nameAfter": "통신"
+ },
+ {
+  "id": "T22_TEC_3",
+  "field": "item_text",
+  "before": "비행기, 철도, 선박 그리고 자동차를 통해 사람들과 물품을 움직이는 원리와 방법에 관한 지식",
+  "after": "비행기, 철도, 선박, 자동차를 통해 사람과 물품을 운송하는 원리와 방법에 관한 지식",
+  "nameBefore": "운송",
+  "nameAfter": "운송"
+ },
+ {
+  "id": "T22_TEC_8",
+  "field": "item_text",
+  "before": "다양한 물건을 만들고 설계하거나 서비스를 제공하기 위해 필요한 공학적인 원리, 기법, 장비 등을 실제로 적용시키는 지식",
+  "after": "다양한 물건을 만들고 설계하거나 서비스를 제공하기 위해 필요한 공학적인 원리, 기법, 장비 등을 실제로 적용하는 지식",
+  "nameBefore": "공학과 기술",
+  "nameAfter": "공학과 기술"
+ },
+ {
+  "id": "T23_2",
+  "field": "item_text",
+  "before": "심리적, 물질적으로 불안함 없이 안정적이고 예측가능한 삶을 사는 것",
+  "after": "심리적·물질적으로 불안함 없이 안정적이고 예측 가능한 삶을 사는 것",
+  "nameBefore": "안정",
+  "nameAfter": "안정"
+ },
+ {
+  "id": "T23_4",
+  "field": "item_text",
+  "before": "가치있는 목표를 세우고, 나의 능력을 통해 그것을 성취해내는 것",
+  "after": "가치 있는 목표를 세우고, 나의 능력을 통해 그것을 성취해내는 것",
+  "nameBefore": "성취",
+  "nameAfter": "성취"
+ },
+ {
+  "id": "T3_FLX",
+  "field": "item_question",
+  "before": "업무 패턴이 얼마나 변화무쌍하길 원하시나요?",
+  "after": "업무 내용이 얼마나 자주 바뀌길 원하시나요?",
+  "nameBefore": null,
+  "nameAfter": null
+ },
+ {
+  "id": "T3_PHY",
+  "field": "item_question",
+  "before": "근무 환경의 물리적 강도는 어느 정도까지 괜찮으신가요?",
+  "after": "몸을 쓰는 일의 강도는 어느 정도까지 괜찮으신가요?",
+  "nameBefore": null,
+  "nameAfter": null
+ }
+]

@@ -1,0 +1,158 @@
+{
+ "T3_COM": {
+  "part_name": "소통 강도",
+  "part_question": "업무 중 말하고 소통하는 비중이 어느 정도이길 원하시나요?",
+  "levels": [
+   {
+    "level": 1,
+    "description": "이메일·문서 위주, 말할 일 거의 없음"
+   },
+   {
+    "level": 2,
+    "description": "소규모 팀 내 소통 위주"
+   },
+   {
+    "level": 3,
+    "description": "회의·전화 등 보통 수준의 소통"
+   },
+   {
+    "level": 4,
+    "description": "발표·협상·외부소통 자주"
+   },
+   {
+    "level": 5,
+    "description": "항상 말하고 설득하고 이끄는 역할"
+   }
+  ]
+ },
+ "T3_FLX": {
+  "part_name": "업무 변화 강도",
+  "part_question": "업무 내용이 얼마나 자주 바뀌길 원하시나요?",
+  "levels": [
+   {
+    "level": 1,
+    "description": "규칙적 루틴, 예측가능한 업무 선호"
+   },
+   {
+    "level": 2,
+    "description": "대체로 규칙적, 가끔 변화 괜찮음"
+   },
+   {
+    "level": 3,
+    "description": "규칙과 변화 적당히 혼재"
+   },
+   {
+    "level": 4,
+    "description": "변화 많고 유동적인 환경 선호"
+   },
+   {
+    "level": 5,
+    "description": "완전히 비정형, 매일 다른 업무도 좋음"
+   }
+  ]
+ },
+ "T3_PEO": {
+  "part_name": "대인접촉 강도",
+  "part_question": "다른 사람들과 얼마나 자주, 가깝게 일하고 싶으신가요?",
+  "levels": [
+   {
+    "level": 1,
+    "description": "혼자 일하는 것 선호, 사람 접촉 최소"
+   },
+   {
+    "level": 2,
+    "description": "소수와 가끔 접촉"
+   },
+   {
+    "level": 3,
+    "description": "팀 내 적당한 협업"
+   },
+   {
+    "level": 4,
+    "description": "다수와 자주 접촉, 고객응대 포함"
+   },
+   {
+    "level": 5,
+    "description": "항상 사람들과 함께, 신체적 접촉도 감수"
+   }
+  ]
+ },
+ "T3_PHY": {
+  "part_name": "근무환경 강도",
+  "part_question": "몸을 쓰는 일의 강도는 어느 정도까지 괜찮으신가요?",
+  "levels": [
+   {
+    "level": 1,
+    "description": "실내, 쾌적한 환경, 신체활동 거의 없음"
+   },
+   {
+    "level": 2,
+    "description": "실내 위주, 가끔 이동, 약간의 신체활동"
+   },
+   {
+    "level": 3,
+    "description": "실내외 혼재, 보통 수준의 신체활동"
+   },
+   {
+    "level": 4,
+    "description": "실외 활동 많음, 다양한 환경 감수"
+   },
+   {
+    "level": 5,
+    "description": "극한 환경, 강한 신체활동, 위험 노출 감수"
+   }
+  ]
+ },
+ "T3_RES": {
+  "part_name": "책임·권한 강도",
+  "part_question": "업무에서 책임지고 결정하는 역할을 얼마나 원하시나요?",
+  "levels": [
+   {
+    "level": 1,
+    "description": "주어진 일만, 책임 최소, 결정권 없음"
+   },
+   {
+    "level": 2,
+    "description": "작은 범위의 책임과 결정"
+   },
+   {
+    "level": 3,
+    "description": "팀·프로젝트 단위 책임과 결정"
+   },
+   {
+    "level": 4,
+    "description": "조직·다수에 영향 미치는 책임과 권한"
+   },
+   {
+    "level": 5,
+    "description": "전체를 책임지는 최종 의사결정자"
+   }
+  ]
+ },
+ "T3_STR": {
+  "part_name": "스트레스 강도",
+  "part_question": "업무 중 압박과 긴장감을 어느 정도까지 감수할 수 있으신가요?",
+  "levels": [
+   {
+    "level": 1,
+    "description": "여유롭고 안정적인 환경 선호"
+   },
+   {
+    "level": 2,
+    "description": "가끔 마감·압박 있어도 괜찮음"
+   },
+   {
+    "level": 3,
+    "description": "적당한 경쟁과 마감이 있는 환경"
+   },
+   {
+    "level": 4,
+    "description": "치열한 경쟁과 압박도 성장의 원동력"
+   },
+   {
+    "level": 5,
+    "description": "위기와 갈등도 즐기는 고강도 환경"
+   }
+  ]
+ }
+}
