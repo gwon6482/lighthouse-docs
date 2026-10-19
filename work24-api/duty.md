@@ -24,6 +24,9 @@ https://www.work24.go.kr/cm/openApi/call/wk/callOpenApiSvcInfo215L01.do?authKey=
 **실제로 호출한 주소**: `https://www.work24.go.kr/cm/openApi/call/wk/callOpenApiSvcInfo215L01.do?authKey=[WORK24_KEY_DUTY]&jobCont=간호&limit=5&returnType=JSON`
 
 > ⚠️ ⚠️ **40·41 이 완전히 같은 응답**을 준다(주소가 다른데도). 검색어(간호)와 무관한 결과(축산 '처방 처치')가 나와 **검색어가 반영되지 않는 것으로 보인다**. 응답은 JSON.
+>
+> **2026-10-19 정정 — 검색어는 반영된다.** `jobCont` 를 `encodeURIComponent` 로 인코딩하면 '간호' → 진료지원보조(보건), '전표 입력, 부가세 신고, 결산 보조' → 부가가치세 신고(세무)처럼 맞는 NCS 능력단위와 지식·기술·태도(`knwg_tchn_attd`)가 나온다. 앞선 '반영 안 됨'은 인코딩 문제로 보인다.
+> 다만 긴 문장·영문 도구명이 섞인 문장('Python Linux 서버')은 빈 결과(`{}`)가 잦다 — 짧은 업무 구절로 나눠 넣을 것.
 
 ### 요청 파라미터
 
