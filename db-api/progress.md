@@ -664,3 +664,10 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - 응답에 `openings: [{ source, sourceName, total, scope: { code, name }, items: Opening[] }]` 추가 — 고용24 공채속보(210L21)
 - 직종 **중분류** 단위(세분류 0건). 세분류→중분류 = `config/work24OccupationTree.json`(재생성 `node --env-file=.env scripts/work24-occupation-tree.js`)
 - 출처 약속에 선택 메서드 `searchOpenings` 추가. Posting 의 employmentType = 고용형태(empTpCd), workSchedule = 근무형태
+
+## 설문 문항 수정 전용 키 — `QUESTION_EDITOR_KEY` (2026-10-19, `f123236`)
+- 헤더 **`x-question-key`** 로는 `PUT /api/admin/questions/:collection_type/:question_id` **만** 된다(팀원 문항 문구 수정용).
+  그 밖의 `/api/admin`(회원 삭제·리셋 등)은 기존 `x-admin-key`(ADMIN_API_KEY)로만. 틀린 키·다른 경로는 바로 401
+- `middleware/questionEditorAuth.js` 가 `/api/admin` 앞단에서 판정 → 아니면 기존 adminAuth. 키 미설정 시 이 경로만 닫힘
+- 문항 수정 로그: `[question-edit] key=question-editor|admin|none status=… PUT …` (컨테이너 로그, 3일 보관, 키 값은 안 남김)
+- Secret `QUESTION_EDITOR_KEY`(사용자 등록) → deploy.yml 선택 항목으로 전달
