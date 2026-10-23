@@ -21,6 +21,7 @@ src/
 │   │       ├── reference/page.tsx            # 참조데이터 CRUD ✅
 │   │       ├── statistics/page.tsx           # 통계 조회 ✅
 │   │       ├── onboarding/page.tsx          # 가입 설문 Q1~Q3 분포 ✅ (2026-09-17)
+│   │       ├── research/page.tsx            # 연구 설문(/survey) 모집 현황 ✅ (2026-10-24)
 │   │       ├── users/page.tsx                # 회원 관리 (목록·검색·삭제) ✅ (2026-09-25)
 │   │       ├── reviews/page.tsx              # 직업 후기 검수 (승인 대기·승인·반려·수정·삭제) ✅ (2026-10-15)
 │   │       ├── work24/page.tsx               # 고용24 API 탐색기(Swagger 형태, 41개 API 호출) ✅ (2026-10-16)
@@ -57,6 +58,7 @@ src/
 | `encyclopediaApi.getRecruitment(jobCode)` | GET | `/api/job/:jobCode/recruitment` |
 | `jobApi.search(name)` | GET | `/api/job/search?name=` |
 | `onboardingApi.getStats()` | GET | `/api/admin/onboarding/stats` (2026-09-17) |
+| `researchApi.getStats(includeTest)` | GET | `/api/survey/research/stats` (2026-10-24, 테스트 응답 기본 제외) |
 | `jobApi.getOne(jobCode)` | GET | `/api/job/:jobCode` |
 
 > ⚠️ `encyclopediaApi.getReviews` 경로가 `/review`(단수)로 되어 있음 → `/reviews`로 수정 필요
@@ -75,6 +77,7 @@ src/
 | `/dashboard/jobs` | 직업 검색/상세 |
 | `/dashboard/encyclopedia` | 직업 검색 + 후기/준비과정/채용 탭 조회 |
 | `/dashboard/onboarding` | 회원가입 진로답변 Q1~Q3 분포 |
+| `/dashboard/research` | 연구 설문 모집 현황 — 역할별 목표 대비 진척·완주율, 적합도, 불성실 의심, 직업 대분류 쏠림, 중단 지점, 테스트 응답 포함 토글 |
 | `/dashboard/users` | **회원 관리** — 목록·검색·상세 팝업·단계별 리셋·영구 삭제 (2026-09-25~26) |
 
 ### 회원 관리 (`/dashboard/users`)

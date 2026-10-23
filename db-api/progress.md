@@ -279,9 +279,9 @@ devices:           [DeviceSchema]
 | 엔드포인트 | 설명 |
 |-----------|------|
 | `POST /api/survey/research/response` | **공개**, 레이트리밋 60회/10분/IP. 실무자 jobCode 필수. `respondent_id` 를 다시 보내면 **같은 문서 이어 쓰기**(200), 완주본 수정 409 |
-| `GET /api/survey/research/result/:respondent_id` | **공개**. 완주본만(409). 앱 결과와 **같은 함수**(`buildSurveyAnalysis` · `runRecommend`)로 `{ completed_at, analysis, recommend(5) }`. `completed_at`=완주 시각(PDF 결과지 검사일, 2026-10-14~). ⚠️ `submitted_at` 은 첫 중간 저장 시각 |
+| `GET /api/survey/research/result/:respondent_id` | **공개**. 완주본만(409). 앱 결과와 **같은 함수**(`buildSurveyAnalysis` · `runRecommend`)로 `{ completed_at, analysis, recommend(5), currentJob, reviewSubmitted }`. `reviewSubmitted`=실무자 후기 제출 여부(실무자 아니면 null, 2026-10-24~ — 랜딩 [직업 후기 남기기] 노출 기준). `completed_at`=완주 시각(PDF 결과지 검사일, 2026-10-14~). ⚠️ `submitted_at` 은 첫 중간 저장 시각 |
 | `POST /api/survey/research/review` | **공개**, 레이트리밋 공유. 완주한 **실무자**만(403/409), 응답자당 1건(409). 직업·성격 태그(성격 상위 3)·경력은 서버가 응답에서 채움. `consent:true` 필수. `job_reviews` 에 `submittedBy:'research'`, **pending** 저장(2026-10-15~). 공개 후기 응답에서 `respondentId` 제외 |
-| `GET /api/survey/research/stats` | adminAuth. 완주본만 집계, 완주율·이탈 지점·품질·대분류 쏠림 경고 |
+| `GET /api/survey/research/stats` | adminAuth. 완주본만 집계, 완주율·이탈 지점·품질·대분류 쏠림 경고. 테스트 응답(`meta.campaign:'__local_test__'`)은 **기본 제외**, `?includeTest=1` 로 포함, `testCount` 반환(2026-10-24~). 어드민 `/dashboard/research` |
 
 🚨 컬렉션 `survey_results_research` 는 `survey_results` 와 **물리적으로 분리**, `survey_statistics` 를 **갱신하지 않는다**.
 설계 정본 `research/survey-collection-design.md`. 화면은 랜딩 `/survey`.
@@ -443,7 +443,7 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 | `GET /api/career-plan` | 내 계획 목록 |
 | `GET /api/career-plan/:planId` | 계획 상세 조회 |
 | `PUT /api/career-plan/:planId` | 계획 기본 정보 수정 |
-| `DELETE /api/career-plan/:planId` | 계획 삭제 |
+| `DELETE /api/career-plan/:planId` | 계획 삭제 — 딸린 주간일정·실행기록·커리큘럼완료·인증사진(S3, 본인 접두사만)까지 함께(`services/userPurge.purgePlan`, 2026-10-24~). 응답에 `deleted` 카운트 |
 | `POST /api/career-plan/:planId/projects` | 프로젝트 추가 (STEP2) |
 | `PUT /api/career-plan/:planId/projects/:projId` | 프로젝트 수정 |
 | `DELETE /api/career-plan/:planId/projects/:projId` | 프로젝트 삭제 |
