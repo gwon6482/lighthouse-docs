@@ -437,6 +437,8 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 | `GET /api/reference/t1-types/:type_code` | T1 성격 유형 단건 |
 
 ### 진로계획 (CareerPlan) — 2026-05-21 구현
+> 프로젝트 `category` enum: qualification(자격요건)·knowledge(분야지식)·skill(직무기술)·portfolio(포트폴리오)·**experience(실무경험, 2026-10-25~ — 인턴·현장실습·대외활동)**. CareerPlan·PublicCareerPlan 공통
+
 | 엔드포인트 | 설명 |
 |-----------|------|
 | `POST /api/career-plan` | 계획 생성 (STEP1 — name/targetJob/startDate/endDate) |

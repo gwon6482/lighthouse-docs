@@ -53,6 +53,8 @@
 | 직업 상세 | `/career-encyclopedia/job/:jobCode` | ✅ |
 | 진로계획 메인 | `/career-design` | 🟡 개발 중 |
 | 진로계획 작성 | `/career-design/plan/new` | 🟡 개발 중 |
+
+> 프로젝트 분류 5개(2026-10-25): 자격요건 #1DB95A · 분야지식 #F47820 · 직무기술 #A855F7 · 포트폴리오 #4480F5 · **실무경험 #F0507E**(인턴·현장실습·대외활동, 아이콘 `public/career-design/icon-experience.svg`). ⚠️ 색·라벨 표가 18곳에 복제돼 있다 — 분류를 바꿀 땐 `grep -rn "experience"` 로 전부 찾을 것(공용화 과제)
 | 진로달성 메인 | `/career-achievement` | ✅ (단계 1) |
 | 진로달성 집중 모드 | `/career-achievement/start/:type/:id` | ✅ (단계 2) |
 | 진로달성 기록 작성 | `/career-achievement/complete/:type/:id` | ✅ (단계 2) |
