@@ -436,6 +436,18 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 | `GET /api/reference/t1-types` | T1 성격 유형 목록 |
 | `GET /api/reference/t1-types/:type_code` | T1 성격 유형 단건 |
 
+### 직업인 진로과정 참여 (CareerPathContribution) — 2026-10-26 구현
+랜딩 www `/career-path`(비회원). 컬렉션 `career_path_contributions`. 처리방침 제2조 6(2026-11-02 시행)과 항목이 같아야 한다.
+| 엔드포인트 | 설명 |
+|-----------|------|
+| `POST /api/career-path/contributions` | **공개**, 20회/10분/IP. type=mine(방향·해 온 것 12종·한마디) / review(템플릿 수정·빼기·추가·의견, 바뀐 것만 + templateJobCode). 201 `{ contribution_id }` = **제출 확인 번호**(`cpc_<18hex>`, 삭제 요청 근거) |
+| `GET /api/admin/career-path` | adminAuth. type·status·jobCode·`id`(제출 확인 번호) 필터, 테스트(`meta.campaign:'__local_test__'`) 기본 제외(`includeTest=1`), counts |
+| `PATCH /api/admin/career-path/:id` | 검수 — status·reviewNote·entryCategories(해 온 것 분류 바로잡기) |
+| `DELETE /api/admin/career-path/:id` | 작성자 삭제 요청 처리 |
+
+> 🔒 이름·연락처·User-Agent 안 받음. 보유 3년 = createdAt TTL(1095일). respondent_id 는 실제 연구 설문 응답일 때만 연결.
+> 변경의 `weeks` 없음 = 주차 안 고침, `[]` = 전부 지움(모델 기본값을 두지 않은 이유)
+
 ### 진로계획 (CareerPlan) — 2026-05-21 구현
 > 프로젝트 `category` enum: qualification(자격요건)·knowledge(분야지식)·skill(직무기술)·portfolio(포트폴리오)·**experience(실무경험, 2026-10-25~ — 인턴·현장실습·대외활동)**. CareerPlan·PublicCareerPlan 공통
 

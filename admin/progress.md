@@ -22,6 +22,7 @@ src/
 │   │       ├── statistics/page.tsx           # 통계 조회 ✅
 │   │       ├── onboarding/page.tsx          # 가입 설문 Q1~Q3 분포 ✅ (2026-09-17)
 │   │       ├── research/page.tsx            # 연구 설문(/survey) 모집 현황 ✅ (2026-10-24)
+│   │       ├── career-path/page.tsx         # 직업인 진로과정 검수 ✅ (2026-10-26)
 │   │       ├── users/page.tsx                # 회원 관리 (목록·검색·삭제) ✅ (2026-09-25)
 │   │       ├── reviews/page.tsx              # 직업 후기 검수 (승인 대기·승인·반려·수정·삭제) ✅ (2026-10-15)
 │   │       ├── work24/page.tsx               # 고용24 API 탐색기(Swagger 형태, 41개 API 호출) ✅ (2026-10-16)
@@ -77,6 +78,7 @@ src/
 | `/dashboard/jobs` | 직업 검색/상세 |
 | `/dashboard/encyclopedia` | 직업 검색 + 후기/준비과정/채용 탭 조회 |
 | `/dashboard/onboarding` | 회원가입 진로답변 Q1~Q3 분포 |
+| `/dashboard/career-path` | 직업인 진로과정 검수 — 승인 대기/승인/반려, 종류(나의 진로과정·템플릿 의견), 해 온 것 분류 고쳐 승인, 책·강의 '차시 조사 필요', 제출 확인 번호로 찾아 삭제(삭제 요청) |
 | `/dashboard/research` | 연구 설문 모집 현황 — 역할별 목표 대비 진척·완주율, 적합도, 불성실 의심, 직업 대분류 쏠림, 중단 지점, 테스트 응답 포함 토글 |
 | `/dashboard/users` | **회원 관리** — 목록·검색·상세 팝업·단계별 리셋·영구 삭제 (2026-09-25~26) |
 
