@@ -455,6 +455,7 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 
 | 엔드포인트 | 설명 |
 |-----------|------|
+> 프로젝트 진행 방식(2026-10-27~): `method`(config/projectMethods.js 17종, 없으면 null = 방식 미정) + `methodDetail`(title·link·org·target·deadline·resultUrl·note, 300자). 추가·일괄·수정 모두 `CareerPlan.cleanMethod` — 수정($set)은 스키마 검증을 안 거치므로 컨트롤러가 정리. 방식 없이 수정하면 기존 값 유지
 | `POST /api/career-plan` | 계획 생성 (STEP1 — name/targetJob/startDate/endDate) |
 | `GET /api/career-plan` | 내 계획 목록 |
 | `GET /api/career-plan/:planId` | 계획 상세 조회 |
