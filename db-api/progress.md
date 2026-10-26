@@ -446,6 +446,8 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 | `DELETE /api/admin/career-path/:id` | 작성자 삭제 요청 처리 |
 
 > 🔒 이름·연락처·User-Agent 안 받음. 보유 3년 = createdAt TTL(1095일). respondent_id 는 실제 연구 설문 응답일 때만 연결.
+> 종류(2026-10-27~) = **앱 진행 방식 17 + 대상 2(자격증·어학, `prep` 필수)**. 정본 `config/projectMethods.js`, 항목마다 앱 방식 `method`·양 `amount` 저장. 시작 단계·살펴보기 단계는 **비전공·전공만**('이직' 제외).
+> 동기화 검사: `node scripts/check-method-sync.js`(API ↔ 앱 projectMethods.ts·usePlanTemplates.ts ↔ 랜딩 useCareerPath.ts)
 > 변경의 `weeks` 없음 = 주차 안 고침, `[]` = 전부 지움(모델 기본값을 두지 않은 이유)
 
 ### 진로계획 (CareerPlan) — 2026-05-21 구현
