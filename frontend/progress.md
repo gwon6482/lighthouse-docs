@@ -56,6 +56,8 @@
 
 > 프로젝트 분류 5개(2026-10-25): 자격요건 #1DB95A · 분야지식 #F47820 · 직무기술 #A855F7 · 포트폴리오 #4480F5 · **실무경험 #F0507E**(인턴·현장실습·대외활동, 아이콘 `public/career-design/icon-experience.svg`). ⚠️ 색·라벨 표가 18곳에 복제돼 있다 — 분류를 바꿀 땐 `grep -rn "experience"` 로 전부 찾을 것(공용화 과제)
 > 프로젝트 진행 방식(2026-10-27~, 스테이징): `composables/projectMethods.ts` — 영역별 방식(학습 수단은 여러 영역 공용, 모두 기타), 방식별 입력·완료 기준. 작성 화면 필수, 목록·템플릿·도우미 표시, 방식 없는 프로젝트 '진행 방식을 정해주세요'. ⚠️ 커리큘럼 저장(saveProject)은 필드를 골라 담는다 — Project 필드를 늘리면 거기도. 템플릿 단계는 비전공·전공('이직' 제거)
+> 직업 진입 관문 배지(2026-10-28~, 스테이징): `shared/jobGates/`(gateBadges.ts 배지 5개 정의 한 곳 · jobGates.data.ts 111개 · useJobGate). 직업이 나오는 모든 화면에 배지(최대 2), 진로백과 '이 직업이 되려면', 템플릿 '이렇게 준비해요'. 데이터는 앱 정적 → 평가 후 서버
+> 자체 아이콘(2026-10-28~, 스테이징): `public/icons/*.svg`(24×24 currentColor) → `pnpm icons` → `shared/icons/icons.generated.ts` → `<AppIcon name size>`. 서비스 이모지 128개 교체 완료. ⚠️ 아이콘은 글자색을 따른다 — 어두운 배경·큰 그림은 color 를 지정할 것. 이모지를 새로 쓰지 말 것(기호 ✕✓›← 등은 아이콘 대기)
 | 진로달성 메인 | `/career-achievement` | ✅ (단계 1) |
 | 진로달성 집중 모드 | `/career-achievement/start/:type/:id` | ✅ (단계 2) |
 | 진로달성 기록 작성 | `/career-achievement/complete/:type/:id` | ✅ (단계 2) |
