@@ -688,3 +688,10 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - `middleware/questionEditorAuth.js` 가 `/api/admin` 앞단에서 판정 → 아니면 기존 adminAuth. 키 미설정 시 이 경로만 닫힘
 - 문항 수정 로그: `[question-edit] key=question-editor|admin|none status=… PUT …` (컨테이너 로그, 3일 보관, 키 값은 안 남김)
 - Secret `QUESTION_EDITOR_KEY`(사용자 등록) → deploy.yml 선택 항목으로 전달
+
+## 2026-10-29
+- 진로 뉴스 `GET /api/news/career`(routes/news.js, services/news) — 진로엔뉴스 RSS 제목·링크만, 1시간 캐시
+- 프로젝트 실행 설정(duration·priority·notification·missedNotification·notificationTime·memo) 저장(addProject·bulkAddProjects·updateProject)
+- services/scheduleReset — 계획 변경 시 이번 주 이후 결산 전 주간 일정 삭제
+- ⚠️ 운영 이미지엔 devDependencies 없음(axios 는 dev) — 서버 코드에서 쓰지 말 것
+
