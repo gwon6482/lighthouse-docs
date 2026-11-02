@@ -47,6 +47,9 @@
 | 설문 유형 선택 | `/self-understanding/select` | ✅ |
 | 설문 진행 | `/self-understanding/test` | ✅ |
 | 설문 결과 보고서 | `/result/:survey_id` | ✅ |
+
+> 검사결과 디자인(2026-11-02~, 스테이징): **정본은 랜딩 `components/survey/ResearchResult.vue`**. 앱 `SurveyResultBody.vue` 가 같은 마크업·스타일(scoped)을 쓴다 — 한쪽을 고치면 다른 쪽도. 앱 전용: 업무 환경 항목 아이콘·관문 배지·직업 누르기
+> 비로그인 직접 진입: 운영 셸 가드가 `/self-understanding/*` 를 토큰 없으면 /onboarding 으로(`shared/router/authBoundary.needsLogin`, 2026-11-02). 검사→회원가입 흐름을 열 땐 거기서 뺄 것
 | 마이페이지 | `/mypage` | ✅ |
 | 직업 검색 홈 | `/career-encyclopedia` | ✅ |
 | 추천 직업 목록 | `/career-encyclopedia/recommended` | ✅ 리디자인 완료 |
