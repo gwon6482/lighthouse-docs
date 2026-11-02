@@ -476,7 +476,7 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 **공개 템플릿 DB**: `user_data.public_career_plans` — 시드 3건 (마케팅 기획자/퍼포먼스 마케터/신입 마케터)
 **타임라인 주차 모델 (2026-08-28, `cce2853`)**: `TimelineSlotSchema.month`(required 'YYYY.MM') → **`week: Number`**(1-based 시작주차).
 `month`는 legacy optional로 잔존. **시작주만 저장하고 점유 구간은 저장하지 않는다** — 저장하면 프로젝트 기간 수정 시 둘이 어긋난다.
-주차 경계 정본은 FE `usePlanTimeline`(월~일 달력 주, `startDate`가 속한 주 = 1주차).
+주차 경계 정본은 FE `usePlanTimeline`. ~~월~일 달력 주~~ → **2026-10-30부터 계획의 시작 요일(`reviewDay`)부터 7일**(`startDate`가 속한 주 = 1주차, reviewDay 없으면 월요일).
 `_weekFromLegacyMonth`가 `week` 없는 구 문서를 read 시 환산해서 내려주고, `saveTimeline`은 week 정수·1이상·프로젝트 존재분만 저장한다.
 같은 커밋에서 `CurriculumWeekSchema.description`(주차당 설명 1건) 추가, `items`는 레거시 읽기 호환으로 유지.
 ⚠️ 주 경계가 바뀌어 기존 `WeeklySchedule.weekStart`는 새 계산과 어긋난다(구 레코드 미조회 → 새로 생성, 고아 잔존).
@@ -506,6 +506,18 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 - `status:'pending'|'reviewed'`, `reviewedAt`, `reviewNote`
 
 **구현 파일**: `models/WeeklySchedule.js`, `controllers/weeklyScheduleController.js`, `routes/careerPlan.js` (기존 라우터에 endpoint 추가)
+
+### 주간결산 기록 (WeeklyReview) — 2026-10-30 구현 ✅ 배포(`a3223df`, Lightsail v69)
+계획·주 단위 결산 기록. 주간 일정 문서에 붙이지 않고 별도 컬렉션 — 지난 주에 빈 일정 문서가 생기면 그 주 '그날 할 일'이 비어 버리기 때문.
+
+| 엔드포인트 | 설명 |
+|-----------|------|
+| `GET /api/career-plan/:planId/weekly-reviews` | 그 계획의 결산 기록 목록(모아보기) |
+| `GET /api/career-plan/:planId/weekly-reviews/:weekStart` | 특정 주 1건 |
+| `PUT /api/career-plan/:planId/weekly-reviews/:weekStart` | upsert — `prompted`(팝업 띄움) / `complete`(만족도 1~5 필수·메모·다짐·속도 변경·성과 수치) |
+
+- 스키마 `user_data.weekly_reviews`(`models/WeeklyReview.js`). purgePlan·purgeUser·단계별 리셋에 포함
+- `CareerPlan.paceKey`·`paceHours`(진행 속도) 생성·수정 수용. **reviewDay 변경도 주간 일정 초기화(services/scheduleReset) 조건**에 포함
 
 ### 진로달성 기록 (Achievement) — 2026-06-15 구현 ✅ 배포 완료
 진로달성 모듈의 실제 달성 행위(완료 토글 / 인증사진·난이도·메모 / 커리큘럼 체크)를 서버 영속화.
@@ -695,3 +707,5 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - services/scheduleReset — 계획 변경 시 이번 주 이후 결산 전 주간 일정 삭제
 - ⚠️ 운영 이미지엔 devDependencies 없음(axios 는 dev) — 서버 코드에서 쓰지 말 것
 
+## 2026-10-30
+- 주간결산 `weekly_reviews` + GET/PUT `/api/career-plan/:id/weekly-reviews[/:weekStart]`, 계획 진행 속도(paceKey·paceHours), reviewDay 변경 시 일정 초기화 — `a3223df`, Lightsail **v69 ACTIVE**
