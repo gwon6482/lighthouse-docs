@@ -16,6 +16,7 @@ src/
 │   │   ├── layout.tsx                        # Sidebar 레이아웃 ✅
 │   │   └── dashboard/
 │   │       ├── page.tsx                      # 메인 대시보드 ✅
+│   │       ├── schedule/page.tsx             # 일정관리 — 캘린더·할 일·향후 계획·개발일지 ✅ (2026-11-02)
 │   │       ├── questions/page.tsx            # 설문 문항 CRUD ✅
 │   │       ├── responses/page.tsx            # 응답 목록 + 상세 모달 ✅
 │   │       ├── reference/page.tsx            # 참조데이터 CRUD ✅
@@ -70,6 +71,7 @@ src/
 | 경로 | 설명 |
 |------|------|
 | `/login` | 로그인 (NextAuth v5) |
+| `/dashboard/schedule` | **일정관리**(사이드바 맨 위) — 팀 기록·개발일정·향후 계획·할 일(API /api/admin/schedule, DB admin_data) + 개발일지 자동 표시(/api/devlog → lighthouse-docs devlog). 담당자 = 팀원 목록 (2026-11-02) |
 | `/dashboard` | 메인 대시보드 (통계 카드) |
 | `/dashboard/questions` | T1/T21/T22/T23/T3 설문 문항 조회/편집 |
 | `/dashboard/responses` | 응답 목록 + 상세 모달 (파트별 탭) |
