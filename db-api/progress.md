@@ -6,6 +6,8 @@
 - 이미지: `ghcr.io/gwon6482/lighthouse-api`(public). CI: `main push → Docker 빌드 → ghcr push → Lightsail 자동 재배포`
 - DB는 MongoDB Atlas(클라우드), 파일 업로드는 S3. 상세는 `devlog/2026-06-25.md`
 
+> 자동로그인(2026-11-04, `25f8a85`): JWT 90일(env `JWT_EXPIRES_IN=90d`). `GET /api/auth/me` 가 발급 후 하루 지난 토큰이면 응답에 새 `token` 을 동봉 — 쓰는 동안 계속 연장. 리프레시 토큰·원격 로그아웃은 아직 없음
+
 ## 완성된 기능 ✅
 
 ### 인증 (Auth) — 2026-05-19 구현

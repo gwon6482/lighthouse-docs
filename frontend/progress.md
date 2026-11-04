@@ -5,6 +5,8 @@
 **상태**: 🟡 개발 중
 **구조**: `packages/core`(기능모듈+shared) + 두 셸 — `apps/test`(스테이징, main push → test.lighthouse.career) / `apps/app`(프로덕션, `v*` 태그 → app.lighthouse.career)
 
+> 자동로그인(2026-11-04, 스테이징 `8e7e608`): `auth.fetchMe()` → 'ok'|'invalid'|'offline'|'none'. 서버가 준 연장 토큰 저장, **로그아웃은 401·404 때만**(연결 실패로 로그아웃하지 않음). 루트 가드는 offline 이면 진로달성 홈
+
 ## ⚠️ main 에 고쳐져 있어도 프로덕션은 옛 번들일 수 있다 (2026-09-17)
 
 프로덕션은 `main` push 가 아니라 **`v*` 태그**로만 나간다. 그래서 "코드는 고쳐졌는데
