@@ -1,0 +1,171 @@
+{
+ "taken_at": "2026-11-06",
+ "source": "/api/survey/form",
+ "items": [
+  {
+   "id": "T22_BUS_1",
+   "field_name": "경영 및 행정",
+   "field_definition": "사업운영, 기획, 자원배분, 인적자원관리, 리더십, 생산기법에 대한 원리 등 경영 및 관리에 관한 지식"
+  },
+  {
+   "id": "T22_BUS_2",
+   "field_name": "고객 서비스",
+   "field_definition": "고객에게 서비스를 제공하는 데 필요한 지식(고객의 욕구평가, 고객의 만족도 평가, 서비스 기준 설정 등)"
+  },
+  {
+   "id": "T22_BUS_3",
+   "field_name": "사무",
+   "field_definition": "워드 프로세서, 문서처리 및 기타 사무절차에 관한 지식"
+  },
+  {
+   "id": "T22_BUS_4",
+   "field_name": "인사",
+   "field_definition": "채용, 훈련, 급여, 노사관계와 같은 인적자원관리에 관한 지식"
+  },
+  {
+   "id": "T22_BUS_5",
+   "field_name": "영업과 마케팅",
+   "field_definition": "상품이나 서비스를 판매하거나 판매를 촉진하는 것에 관한 지식(마케팅 전략, 상품의 전시와 판매기법, 영업관리 등)"
+  },
+  {
+   "id": "T22_BUS_6",
+   "field_name": "경제와 회계",
+   "field_definition": "돈의 흐름, 은행업무, 재무 자료의 보고·분석 등 경제 및 회계원리에 관한 지식"
+  },
+  {
+   "id": "T22_COM_1",
+   "field_name": "의사소통과 미디어",
+   "field_definition": "말, 글, 그림 등을 이메일이나 방송매체를 통해 전달하는 것에 관한 지식"
+  },
+  {
+   "id": "T22_COM_2",
+   "field_name": "국어",
+   "field_definition": "맞춤법, 작문법, 문법에 관한 지식"
+  },
+  {
+   "id": "T22_COM_3",
+   "field_name": "영어",
+   "field_definition": "영어를 읽고, 쓰고, 듣고, 말하는 데 필요한 지식"
+  },
+  {
+   "id": "T22_EDU_1",
+   "field_name": "교육 및 훈련",
+   "field_definition": "사람을 가르치고 훈련시키는 데 필요한 방법과 이론에 관한 지식"
+  },
+  {
+   "id": "T22_EDU_2",
+   "field_name": "상담",
+   "field_definition": "개인의 신상, 경력, 정신적 어려움 등을 상담하는 절차·방법·원리에 관한 지식"
+  },
+  {
+   "id": "T22_SAF_1",
+   "field_name": "안전과 보안",
+   "field_definition": "사람들과 재산을 보호하기 위해 필요한 지식"
+  },
+  {
+   "id": "T22_SCI_1",
+   "field_name": "산수와 수학",
+   "field_definition": "연산, 대수학, 통계, 기하학의 계산 및 응용에 관한 지식"
+  },
+  {
+   "id": "T22_SCI_2",
+   "field_name": "생물",
+   "field_definition": "동·식물 또는 생명현상에 관한 지식"
+  },
+  {
+   "id": "T22_SCI_3",
+   "field_name": "의료",
+   "field_definition": "질병이나 치아 질환을 진단하고 치료하는 것에 관한 지식"
+  },
+  {
+   "id": "T22_SCI_4",
+   "field_name": "식품 생산",
+   "field_definition": "식용 동식물을 기르고 수확하는 데 필요한 기법과 장비에 관한 지식"
+  },
+  {
+   "id": "T22_SCI_5",
+   "field_name": "물리",
+   "field_definition": "공기, 물, 빛, 열, 전기이론 및 자연현상에 관한 지식"
+  },
+  {
+   "id": "T22_SCI_6",
+   "field_name": "화학",
+   "field_definition": "물질의 구성, 구조, 특성, 화학적 변환과정에 관한 지식"
+  },
+  {
+   "id": "T22_SOC_1",
+   "field_name": "사회와 인류",
+   "field_definition": "집단행동, 사회적 영향, 인류의 기원 및 이동, 인종, 문화에 관한 지식"
+  },
+  {
+   "id": "T22_SOC_2",
+   "field_name": "심리",
+   "field_definition": "사람들의 행동, 성격, 흥미, 동기 등에 관한 지식"
+  },
+  {
+   "id": "T22_SOC_3",
+   "field_name": "역사",
+   "field_definition": "역사적 사건과 그 원인, 유적에 관한 지식"
+  },
+  {
+   "id": "T22_SOC_4",
+   "field_name": "예술",
+   "field_definition": "음악, 무용, 미술, 연극에 관한 지식"
+  },
+  {
+   "id": "T22_SOC_5",
+   "field_name": "지리",
+   "field_definition": "육지, 바다 그리고 하늘의 특성 및 상호관계에 관한 지식"
+  },
+  {
+   "id": "T22_SOC_6",
+   "field_name": "법",
+   "field_definition": "법률, 규정에 관한 지식"
+  },
+  {
+   "id": "T22_SOC_7",
+   "field_name": "철학과 신학",
+   "field_definition": "생활에 영향을 미치는 다양한 철학과 종교에 관한 지식"
+  },
+  {
+   "id": "T22_TEC_1",
+   "field_name": "통신",
+   "field_definition": "전화기, 네트워크, 방송 등의 통신기기를 조작하고 통제하는 데 필요한 지식"
+  },
+  {
+   "id": "T22_TEC_2",
+   "field_name": "컴퓨터와 전자공학",
+   "field_definition": "컴퓨터의 하드웨어, 회로판, 처리장치, 반도체, 전자장비에 관한 지식"
+  },
+  {
+   "id": "T22_TEC_3",
+   "field_name": "운송",
+   "field_definition": "비행기, 철도, 선박, 자동차를 통해 사람과 물품을 운송하는 원리와 방법에 관한 지식"
+  },
+  {
+   "id": "T22_TEC_4",
+   "field_name": "건축 및 설계",
+   "field_definition": "집, 빌딩, 혹은 도로를 만들고 수리하기 위해 필요한 지식"
+  },
+  {
+   "id": "T22_TEC_5",
+   "field_name": "기계",
+   "field_definition": "기계와 도구를 사용하고, 수리·유지하는 것과 관련된 지식"
+  },
+  {
+   "id": "T22_TEC_6",
+   "field_name": "디자인",
+   "field_definition": "밑그림, 제도와 같이 디자인에 필요한 기법 및 도구에 관한 지식"
+  },
+  {
+   "id": "T22_TEC_7",
+   "field_name": "상품 제조 및 공정",
+   "field_definition": "상품의 제조 및 유통을 효율적으로 하기 위해 필요한 원자재, 제조공정, 품질관리, 비용에 관한 지식"
+  },
+  {
+   "id": "T22_TEC_8",
+   "field_name": "공학과 기술",
+   "field_definition": "다양한 물건을 만들고 설계하거나 서비스를 제공하기 위해 필요한 공학적인 원리, 기법, 장비 등을 실제로 적용하는 지식"
+  }
+ ]
+}
