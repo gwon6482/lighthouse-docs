@@ -120,6 +120,12 @@ GET  /api/reference/career-attributes       🔴 미연동
 
 ---
 
+### 비회원 진입 경로 (2026-11-09, `0d7d104` 스테이징 · 운영은 11-16 처리방침 시행 뒤)
+- `features.guestEntry`(VITE_GUEST_ENTRY=1, deploy-test 에만). 진입 `/start` · `/job/:code` · `/career-encyclopedia`
+- 결과지 비회원: 성격 Top3 + 잠금(GuestLockCard), 나가면 경고·즉시 삭제. 열람 키 localStorage `lh_guest_survey`
+- 로그인·가입·OAuth 복귀 시 `linkPendingGuestSurvey()` 로 계정 연결 → 결과 `?next=1`
+- 진로백과 개요 '이 일을 하는 사람들' 아래·다른 탭 잠금. 가입 위저드 만 14세·약관 동의
+
 ### 진로백과 개요 탭 — 고용24 신규 섹션 (2026-09-28, 스테이징)
 
 직업 데이터가 고용24 공식 API 전량으로 바뀌면서 개요 탭에 4개 섹션이 추가됐다(`402037b`).
