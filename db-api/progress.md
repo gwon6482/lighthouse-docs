@@ -434,6 +434,7 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 - 직업 데이터 **10분 메모리 캐시**(`loadScoringJobs`) — 결과 화면이 직업·직무 추천을 함께 불러 조회가 두 번이 됐다. 운영 응답 ~2초의 대부분이 이 조회였다.
   리팩터링 전후 `runRecommend` 출력 12건 바이트 동일, 라이브 = 로컬 계산
 - ⚠️ 정확도는 미검증(현직자 응답 1건). 직무 Top 3 우연 적중률 3% — 현직자 30명 안팎이면 우연과 가를 수 있다
+- 연구 설문 결과 `GET /api/survey/research/result/:respondent_id` 에도 `groups`(같은 함수, `a4c5a71`, Lightsail v77) — 랜딩 결과지용. 실패해도 결과지는 준다(groups 빈 배열)
 
 ### 직업 후기 (Review) — 2026-05-07 구현
 | 엔드포인트 | 설명 |
