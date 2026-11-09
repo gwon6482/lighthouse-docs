@@ -285,6 +285,11 @@ devices:           [DeviceSchema]
 | `POST /api/survey/research/review` | **공개**, 레이트리밋 공유. 완주한 **실무자**만(403/409), 응답자당 1건(409). 직업·성격 태그(성격 상위 3)·경력은 서버가 응답에서 채움. `consent:true` 필수. `job_reviews` 에 `submittedBy:'research'`, **pending** 저장(2026-10-15~). 공개 후기 응답에서 `respondentId` 제외 |
 | `GET /api/survey/research/stats` | adminAuth. 완주본만 집계, 완주율·이탈 지점·품질·대분류 쏠림 경고. 테스트 응답(`meta.campaign:'__local_test__'`)은 **기본 제외**, `?includeTest=1` 로 포함, `testCount` 반환(2026-10-24~). 어드민 `/dashboard/research` |
 
+🗑️ **보유기간 자동 삭제(2026-11-09, `fed8da9`)** — 처리방침 제3조 그대로: 수집일(첫 저장 `submitted_at`)부터 **완주 3년 · 중간에 그만둔 응답 6개월**.
+   문서마다 `expireAt`(말일 보정, 8/31 + 6개월 = 2/28) + TTL 인덱스 `{ expireAt: 1 }` expireAfterSeconds 0. 이어 쓰기로 완주하면 같은 수집일에서 3년으로 다시 잡는다.
+   기존 문서는 서버 시작 때 `services/researchRetention.js` 가 빈 것만 채운다(멱등). 첫 실삭제 예정 2027-04-12(미완주 실응답). 직업 후기·진로과정 제출은 별도 규정이라 무관.
+   ⚠️ 보유 개월 수(`RETENTION_MONTHS`)를 바꾸려면 처리방침부터. TTL 은 값이 없는 문서를 건드리지 않는다
+
 🚨 컬렉션 `survey_results_research` 는 `survey_results` 와 **물리적으로 분리**, `survey_statistics` 를 **갱신하지 않는다**.
 설계 정본 `research/survey-collection-design.md`. 화면은 랜딩 `/survey`.
 ⚠️ 이어 쓰기 시 시작 시각은 **처음 저장값**을 쓴다(클라이언트 값을 믿으면 too_fast 판정을 피할 수 있다).
