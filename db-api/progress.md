@@ -372,6 +372,8 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 | `GET /api/job/recommend-t2/:survey_id` | T2 전용 직업 추천 (상위 5건) |
 | `GET /api/job/:jobCode/match?survey_id=` | 특정 직업 매칭 점수 |
 | `POST /api/job/:jobCode/match` | 점수 직접 전달 매칭 |
+| `GET /api/job/recommend-groups/:survey_id` | **나에게 맞는 직무 3가지** (2026-11-09, 로그인·본인 확인) |
+| `GET /api/job/groups/:code/recruitment` | 직무 단위 채용공고 (2026-11-09) |
 
 **종합 매칭 알고리즘**: T1×0.20 + T21×0.25 + T22×0.25 + T23×0.20 + T3×0.10
 **T2 전용 알고리즘**: T21(재능)×0.36 + T22(흥미)×0.36 + T23(가치관)×0.28
@@ -419,6 +421,19 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
    `VA02`·`VA13` 은 직업 속성에 없어 `?? 0` 이 0점을 먹이고 있었다
    (실측: T23 0.501 → 0.943). `recommendController` 의 중복 사본도 제거 —
    **T23 매핑 정본은 `config/matchingMaps.js` 하나뿐이다.**
+
+✅ **직무 추천 (2026-11-09, `9f93245`, Lightsail v76).** 결과지 종합 추천을 직업 Top 5 → **직무 3가지**로
+   (테스터 '엉뚱하다·뜬금없다·비현실적' 피드백). 코드 `services/jobGroups/`, 핸들러 `controllers/jobGroupController.js`.
+- 직무 = 고용24 채용 직종 **중분류**(114개). 직업 점수(537)는 직업 추천과 **같은 것**을 묶는다(`scoreJobs` 공유)
+- 고르기 = 직무별 **크기 보정 표준점수**(무작위 응답 400개의 max 분포 `config/jobGroupNullStats.json`, 대분류당 2개) / 순서 = 막대 종합(.2/.7/.1)
+  - 그냥 max·평균으로 묶으면 큰 직무가 누구에게나 뜬다(상위 10개 점유 33~45%, 고르면 10%) → 보정 후 19%
+  - 백분위로 하면 실제 응답에서 상위 직무가 100 으로 포화돼 다시 크기순이 된다 → 표준점수
+- 응답 `groups[]`: `code · name(화면) · fullName(공식) · match_detail(대표 직업 3개 평균) · reasons[0~2]{axis,code,name}(결과지 항목 이름) · jobs(직무의 직업 전부, 나와 맞는 순, 묶음은 members) · jobCount`
+- 🔁 직업 데이터·트리·채점식이 바뀌면 `node --env-file=.env scripts/job-group-null-stats.js` 로 분포를 다시 만든다
+  (안 돌려도 깨지지 않는다 — 분포 없는 직무는 전체 평균으로 견주고 경고만). 월간 자동 갱신은 이 파일을 안 고친다
+- 직업 데이터 **10분 메모리 캐시**(`loadScoringJobs`) — 결과 화면이 직업·직무 추천을 함께 불러 조회가 두 번이 됐다. 운영 응답 ~2초의 대부분이 이 조회였다.
+  리팩터링 전후 `runRecommend` 출력 12건 바이트 동일, 라이브 = 로컬 계산
+- ⚠️ 정확도는 미검증(현직자 응답 1건). 직무 Top 3 우연 적중률 3% — 현직자 30명 안팎이면 우연과 가를 수 있다
 
 ### 직업 후기 (Review) — 2026-05-07 구현
 | 엔드포인트 | 설명 |
@@ -695,6 +710,14 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - 응답에 `openings: [{ source, sourceName, total, scope: { code, name }, items: Opening[] }]` 추가 — 고용24 공채속보(210L21)
 - 직종 **중분류** 단위(세분류 0건). 세분류→중분류 = `config/work24OccupationTree.json`(재생성 `node --env-file=.env scripts/work24-occupation-tree.js`)
 - 출처 약속에 선택 메서드 `searchOpenings` 추가. Posting 의 employmentType = 고용형태(empTpCd), workSchedule = 근무형태
+
+### 채용 — 직무 단위 + 직종 트리 수정 (2026-11-09, `9f93245`)
+- `GET /api/job/groups/:code/recruitment` — 채용정보 `occupation`·공채속보 `jobsCd` 에 중분류(3자리, `01A` 포함)를 그대로(실측: 024 → 공고 139·공채 20). 응답에 `group{code,name,fullName}`. 출처 약속에 선택 메서드 `searchGroup`·`searchGroupOpenings`
+- 🐛 트리 스크립트가 **영문자 섞인 중분류 14개**(`01A`~`11A`)를 버리고 있었다(정규식 `\d+`). 대분류에 중분류가 10개 넘으면 10번째부터 문자 코드다.
+  수정 후 중분류 100 → 114, 세분류 1,130개 전부 상위 연결
+- 같은 세분류가 **여러 중분류 밑에 중복**으로 실려 있다(79개). 트리 `parents` 에 전부 남기고, 우리 직업이 걸린 것 중 엉뚱한 11개는
+  `services/jobGroups/codes.js` PARENT_OVERRIDE 로 손으로 골랐다(한식조리사 제과·제빵 → 조리사). 표에 아예 없는 직업 3개는 JOB_OVERRIDE
+- 진로백과 채용 탭 공채도 같은 규칙(`groupOf`)을 쓴다 → 직업 537개 전부 공채 분야 연결(전에는 트리 미연결·대체 코드 직업은 공채 없음)
 
 ## 설문 문항 수정 전용 키 — `QUESTION_EDITOR_KEY` (2026-10-19, `f123236`)
 - 헤더 **`x-question-key`** 로는 `PUT /api/admin/questions/:collection_type/:question_id` **만** 된다(팀원 문항 문구 수정용).

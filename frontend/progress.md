@@ -9,6 +9,8 @@
 
 > 테스트 셸 진입(2026-11-04, `13798e1`): test.lighthouse.career `/` 도 app 셸과 같은 진입 분기(`shared/router/entryGuard.ts`) — 홈 화면에 추가한 테스트 앱이 온보딩부터 열린다. **워크벤치(전체 기능 목록) 홈은 `/dev`**
 
+> 결과지 직무 추천(2026-11-09, 스테이징 `08d49c9`): `SurveyResultBody` 5구역 = **'나에게 맞는 직무 3가지'**(`GET /api/job/recommend-groups`, 로그인 필요). 카드 = 막대 3개(대표 직업 3개 평균) · 이유 한 문장(핵심어 굵은 색 글씨, 2개까지) · 대표 직업 · '직업 N개 모두 보기'(제자리 펼침) · '채용 공고'(`/career-encyclopedia/group/:code/recruitment`, RecruitmentTab 에 `groupCode`). 총점 % 없음. 예전 Top 5 는 아래 '직업 순위 보기'. 직무를 못 받으면 Top 5 로 대체(404 로 로그아웃 안 됨). 온보딩 결과는 `recruit-link=false`. PDF 5쪽(4쪽 직무 · 5쪽 직업 순위 Top 5). **앱 전용** — 랜딩 결과지(정본)는 아직 Top 5
+
 ## ⚠️ main 에 고쳐져 있어도 프로덕션은 옛 번들일 수 있다 (2026-09-17)
 
 프로덕션은 `main` push 가 아니라 **`v*` 태그**로만 나간다. 그래서 "코드는 고쳐졌는데
