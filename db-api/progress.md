@@ -272,6 +272,7 @@ devices:           [DeviceSchema]
 | `POST /api/survey/response` | 응답 제출 + 통계 자동 업데이트. 로그인 제출은 바로 계정 연결, 비회원 제출은 `guestKey`(열람 키) 반환 + 24시간 TTL(2026-11-09) |
 | `GET /api/survey/guest/:survey_id/analysis` | 비회원 결과 조회 — `x-guest-key` 필요(틀리면 404) |
 | `DELETE /api/survey/guest/:survey_id` | 비회원 결과 즉시 삭제 — `x-guest-key` 필요 |
+| `GET /api/survey/guest/:survey_id/job-groups` | 비회원 결과지 직무 맛보기 — 1위 직무 이름·직무 수·관련 직업 수만, `x-guest-key` 필요(2026-11-11) |
 | `POST /api/survey/report` | 결과 보고서 (정규화/그룹통계/상위%) |
 | `GET /api/survey/statistics` | 전체 통계 조회 |
 | `GET /api/survey/result/list` | 응답 목록 (페이지네이션) |

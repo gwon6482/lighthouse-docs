@@ -125,6 +125,7 @@ GET  /api/reference/career-attributes       🔴 미연동
 - 결과지 비회원: 성격 Top3 + 잠금(GuestLockCard), 나가면 경고·즉시 삭제. 열람 키 localStorage `lh_guest_survey`
 - 로그인·가입·OAuth 복귀 시 `linkPendingGuestSurvey()` 로 계정 연결 → 결과 `?next=1`
 - 진로백과 개요 '이 일을 하는 사람들' 아래·다른 탭 잠금. 가입 위저드 만 14세·약관 동의
+- 결과지 맛보기(2026-11-11, `eeefb07`): 성격 4위~ 흐린 줄, '가입하면 열리는 결과' 목차(구역별 내 결과 개수 + 1위만 공개), 가입 상자 A안(`SocialLoginButton` 공식 카카오·구글 버튼)
 
 ### 진로백과 개요 탭 — 고용24 신규 섹션 (2026-09-28, 스테이징)
 
