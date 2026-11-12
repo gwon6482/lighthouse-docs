@@ -89,6 +89,10 @@
 >
 > ⚠️ 랜딩 서브페이지는 CloudFront Function `lighthouse-landing-index-rewrite` 가 있어야 열린다.
 > S3 REST 오리진은 `/` 에만 index 를 해석해서, 함수가 없으면 `/privacy` 등이 **전부 403**이다.
+>
+> **검색 노출(SEO, 2026-11-12~)** — 목표는 '라이트하우스' 한 단어 검색에 서비스가 나오는 것. 브랜드 표기는 어디서나 한글 '라이트하우스'가 먼저다.
+> 랜딩: 홈 h1·canonical(`plugins/canonical.ts`)·JSON-LD(`pages/index.vue`)·공유 그림(`/og-image.png`)·`sitemap.xml`, 배포 뒤 네이버·빙 자동 알림(IndexNow).
+> 앱(app.)은 한글 제목·설명·공유 카드, 스테이징(test.)·어드민은 **noindex**. 남은 일(검색엔진 등록·공식 채널·외부 링크)은 랜딩 `BACKLOG.md` 1번.
 
 ## DB 구성 (MongoDB Atlas)
 
