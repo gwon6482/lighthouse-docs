@@ -743,3 +743,9 @@ app.options('*', cors());  // OPTIONS preflight 처리
 
 ## 2026-10-30
 - 주간결산 `weekly_reviews` + GET/PUT `/api/career-plan/:id/weekly-reviews[/:weekStart]`, 계획 진행 속도(paceKey·paceHours), reviewDay 변경 시 일정 초기화 — `a3223df`, Lightsail **v69 ACTIVE**
+
+## 진로계획 라이브러리 데이터 — 2026-11-13 (브랜치 `data/plan-library`, 배포·API 없음)
+- 직업 537개 전체의 예시 진로설계 **초안**(계획 279개 · 473갈래) + 여러 직업이 함께 쓰는 보편 프로젝트 167개. 폴더 `data/plan-library/`(README 에 구조·규칙)
+- `main` 에 없다 → 서버·DB·앱에는 아직 영향이 없다. 컬렉션·조회 API·앱 더미 교체는 사실 확인·사람 검토 뒤 별도 작업
+- 검사 `node scripts/plan-library-validate.js --table` · 작성 도우미 `scripts/plan-library-author.py`
+
