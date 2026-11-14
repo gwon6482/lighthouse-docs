@@ -751,3 +751,11 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - 2026-11-14 사실 확인 반영: 시험 과목·응시자격·교육 시간 등 233곳을 법령·공고와 대조(확인함 137 · 주의 170 · 확인 필요 0). 기록은 `data/plan-library/FACTCHECK.md`
 - 2026-11-14 갈래 세분화: 세부 카테고리가 2개 이하이던 계획 223개를 다시 보고 74개를 더 나눔(473 → 603갈래, 갈래 없는 계획 170 → 103). 세분화 뒤 표시는 확인함 146 · 주의 193 · 확인 필요 0 — 새로 쓴 갈래 내용은 일부만 법령 대조
 
+## 진로백과 검색·둘러보기·'되는 길' 덮어쓰기 — 2026-11-14 (`eb0ab04`, 운영 반영)
+- `GET /api/job/search` 세 갈래: ① `?name=` 옛 방식(이름만, 없으면 404 — 바꾸지 말 것) ② `?name=&include=classification` 넓은 검색(이름 + 2차 분류명 + 일상어 사전 `config/jobSearchAliases.js`, 맞는 분류는 `groups`, 없어도 200) ③ `?primary=` / `?secondary=` 분류의 직업 전체
+- `GET /api/job/explore?count=5` — 서로 다른 직무에서 무작위(1~12개). `data[].group{code,name}` · `data[].overview`
+- `services/jobSearch/` — 직업 이름·분류·하는 일 요약을 메모리 색인(10분, 어드민이 직업을 고치면 비움)
+- `services/jobGroups/codes.js` `OCC_OVERRIDE` — 통합조사 묶음에서 대표와 분야가 다른 직업 4개의 세분류 코드(직무 추천·채용 직종 코드가 함께 본다). 고치면 `job-group-null-stats.js` 다시
+- `config/jobWayOverrides.json` — 묶음 직업 45개의 '되는 길'을 직접 쓴 글. `GET /api/job/:jobCode` 가 `work24.way` 를 바꾸고 `work24.waySource{by, basis(law|general), sources, caution, updatedAt, reviewed}` 를 붙인다. DB 는 그대로. **검토 전 초안**
+- 점검: `node --env-file=.env scripts/job-search-check.js` · `scripts/job-way-check.js`(읽기 전용) — 직업 데이터를 다시 실은 뒤 돌릴 것
+
