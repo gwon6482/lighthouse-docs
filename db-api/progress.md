@@ -745,8 +745,9 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - 주간결산 `weekly_reviews` + GET/PUT `/api/career-plan/:id/weekly-reviews[/:weekStart]`, 계획 진행 속도(paceKey·paceHours), reviewDay 변경 시 일정 초기화 — `a3223df`, Lightsail **v69 ACTIVE**
 
 ## 진로계획 라이브러리 데이터 — 2026-11-13 (브랜치 `data/plan-library`, 배포·API 없음)
-- 직업 537개 전체의 예시 진로설계 **초안**(계획 279개 · 473갈래) + 여러 직업이 함께 쓰는 보편 프로젝트 167개. 폴더 `data/plan-library/`(README 에 구조·규칙)
+- 직업 537개 전체의 예시 진로설계 **초안**(계획 279개 · 603갈래) + 여러 직업이 함께 쓰는 보편 프로젝트 168개. 폴더 `data/plan-library/`(README 에 구조·규칙)
 - `main` 에 없다 → 서버·DB·앱에는 아직 영향이 없다. 컬렉션·조회 API·앱 더미 교체는 사실 확인·사람 검토 뒤 별도 작업
 - 검사 `node scripts/plan-library-validate.js --table` · 작성 도우미 `scripts/plan-library-author.py`
 - 2026-11-14 사실 확인 반영: 시험 과목·응시자격·교육 시간 등 233곳을 법령·공고와 대조(확인함 137 · 주의 170 · 확인 필요 0). 기록은 `data/plan-library/FACTCHECK.md`
+- 2026-11-14 갈래 세분화: 세부 카테고리가 2개 이하이던 계획 223개를 다시 보고 74개를 더 나눔(473 → 603갈래, 갈래 없는 계획 170 → 103). 세분화 뒤 표시는 확인함 146 · 주의 193 · 확인 필요 0 — 새로 쓴 갈래 내용은 일부만 법령 대조
 
