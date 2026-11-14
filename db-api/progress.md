@@ -748,4 +748,5 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - 직업 537개 전체의 예시 진로설계 **초안**(계획 279개 · 473갈래) + 여러 직업이 함께 쓰는 보편 프로젝트 167개. 폴더 `data/plan-library/`(README 에 구조·규칙)
 - `main` 에 없다 → 서버·DB·앱에는 아직 영향이 없다. 컬렉션·조회 API·앱 더미 교체는 사실 확인·사람 검토 뒤 별도 작업
 - 검사 `node scripts/plan-library-validate.js --table` · 작성 도우미 `scripts/plan-library-author.py`
+- 2026-11-14 사실 확인 반영: 시험 과목·응시자격·교육 시간 등 233곳을 법령·공고와 대조(확인함 132 · 주의 169 · 확인 필요 9). 기록은 `data/plan-library/FACTCHECK.md`
 
