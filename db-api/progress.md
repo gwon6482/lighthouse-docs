@@ -759,3 +759,10 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - `config/jobWayOverrides.json` — 묶음 직업 45개의 '되는 길'을 직접 쓴 글. `GET /api/job/:jobCode` 가 `work24.way` 를 바꾸고 `work24.waySource{by, basis(law|general), sources, caution, updatedAt, reviewed}` 를 붙인다. DB 는 그대로. **검토 전 초안**
 - 점검: `node --env-file=.env scripts/job-search-check.js` · `scripts/job-way-check.js`(읽기 전용) — 직업 데이터를 다시 실은 뒤 돌릴 것
 
+## 연구 설문의 검사·결과지 평가 — 2026-11-15 (`8eea7cf`, 운영 반영)
+- `POST /api/survey/research/feedback` `{ respondent_id, part: 'test'|'result', answers }` — 완주한 응답에만 붙는다. 같은 part 를 다시 보내면 바꿔 쓴다
+- 허용 항목·값: `controllers/researchSurveyController.js` `FEEDBACK_SPEC`(int 1~5 / enum / multi / bool / text). 모르는 항목·범위 밖 값·참여자에 맞지 않는 항목은 400
+- 저장: `survey_results_research` 문서의 `feedback.test` · `feedback.result`(+`at`). 보유기간(expireAt)을 응답과 함께 따르고, 완주본의 `updated_at`(검사일)은 바꾸지 않는다(`timestamps: false`)
+- `GET /api/survey/research/result/:id` 에 `role` · `feedbackSubmitted{test,result}` 추가
+- 아직 없는 것: 평가 집계(`/research/stats` 와 어드민 화면)
+
