@@ -23,6 +23,7 @@ src/
 │   │       ├── statistics/page.tsx           # 통계 조회 ✅
 │   │       ├── onboarding/page.tsx          # 가입 설문 Q1~Q3 분포 ✅ (2026-09-17)
 │   │       ├── research/page.tsx            # 연구 설문(/survey) 모집 현황 ✅ (2026-10-24)
+│   │       ├── research/FeedbackStats.tsx   # 검사·결과지 평가 집계 ✅ (2026-11-15)
 │   │       ├── career-path/page.tsx         # 직업인 진로과정 검수 ✅ (2026-10-26)
 │   │       ├── users/page.tsx                # 회원 관리 (목록·검색·삭제) ✅ (2026-09-25)
 │   │       ├── reviews/page.tsx              # 직업 후기 검수 (승인 대기·승인·반려·수정·삭제) ✅ (2026-10-15)
@@ -61,6 +62,7 @@ src/
 | `jobApi.search(name)` | GET | `/api/job/search?name=` |
 | `onboardingApi.getStats()` | GET | `/api/admin/onboarding/stats` (2026-09-17) |
 | `researchApi.getStats(includeTest)` | GET | `/api/survey/research/stats` (2026-10-24, 테스트 응답 기본 제외) |
+| `researchApi.getFeedbackStats(includeTest)` | GET | `/api/survey/research/feedback-stats` (2026-11-15, 검사·결과지 평가 집계) |
 | `jobApi.getOne(jobCode)` | GET | `/api/job/:jobCode` |
 
 > ⚠️ `encyclopediaApi.getReviews` 경로가 `/review`(단수)로 되어 있음 → `/reviews`로 수정 필요
@@ -81,7 +83,7 @@ src/
 | `/dashboard/encyclopedia` | 직업 검색 + 후기/준비과정/채용 탭 조회 |
 | `/dashboard/onboarding` | 회원가입 진로답변 Q1~Q3 분포 |
 | `/dashboard/career-path` | 직업인 진로과정 검수 — 승인 대기/승인/반려, 종류(나의 진로과정·템플릿 의견), 해 온 것 분류 고쳐 승인, 책·강의 '차시 조사 필요', 제출 확인 번호로 찾아 삭제(삭제 요청) |
-| `/dashboard/research` | 연구 설문 모집 현황 — 역할별 목표 대비 진척·완주율, 적합도, 불성실 의심, 직업 대분류 쏠림, 중단 지점, 테스트 응답 포함 토글 |
+| `/dashboard/research` | 연구 설문 모집 현황 — 역할별 목표 대비 진척·완주율, 적합도, 불성실 의심, 직업 대분류 쏠림, 중단 지점, 테스트 응답 포함 토글 + **검사·결과지 평가**(2026-11-15): 평가 ①·② 응답률, 문항별 분포(전체·실무자·예비 사용자), 길이 체감×실제 시간, 집중도×의심 표시, 글 답변. 문항 이름·보기는 API 가 준다 |
 | `/dashboard/users` | **회원 관리** — 목록·검색·상세 팝업·단계별 리셋·영구 삭제 (2026-09-25~26) |
 
 ### 회원 관리 (`/dashboard/users`)

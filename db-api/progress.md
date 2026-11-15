@@ -764,5 +764,5 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - 허용 항목·값: `controllers/researchSurveyController.js` `FEEDBACK_SPEC`(int 1~5 / enum / multi / bool / text). 모르는 항목·범위 밖 값·참여자에 맞지 않는 항목은 400
 - 저장: `survey_results_research` 문서의 `feedback.test` · `feedback.result`(+`at`). 보유기간(expireAt)을 응답과 함께 따르고, 완주본의 `updated_at`(검사일)은 바꾸지 않는다(`timestamps: false`)
 - `GET /api/survey/research/result/:id` 에 `role` · `feedbackSubmitted{test,result}` 추가
-- 아직 없는 것: 평가 집계(`/research/stats` 와 어드민 화면)
+- 평가 집계(2026-11-15 `84d662a`): `GET /api/survey/research/feedback-stats`(adminAuth, `?includeTest=1`) — 문항별 분포(전체·직업인·예비 사용자)·평균·판단 보류, 글 답변 최근 200건, 길이 체감×실제 시간·집중도×의심 표시. 항목 정의는 `config/researchFeedback.js` 한 곳(FEEDBACK_SPEC 도 여기서 만든다), 집계는 `services/researchFeedbackStats.js`
 
