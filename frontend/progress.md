@@ -88,7 +88,7 @@ GET  /api/job/search?name=                  ✅ 연동됨
 GET  /api/job/recommend/:survey_id          ✅ 연동됨 (경로 수정 완료)
 GET  /api/job/recommend-t2/:survey_id       ✅ 연동됨 (T2 추천)
 GET  /api/job/:jobCode/reviews              ✅ 연동됨
-GET  /api/job/:jobCode/preparation          ✅ 연동됨 (2026-11-15 — 준비과정 탭·진로설계 템플릿·도우미 추천, 스테이징. 11-16 지원 자격·과정 표시)
+GET  /api/job/:jobCode/preparation          ✅ 연동됨 (2026-11-15 — 준비과정 탭·진로설계 템플릿·도우미 추천. 11-16 지원 자격·과정 표시. 운영 `v0.1.25`)
 GET  /api/job/:jobCode/recruitment          ⬛ 미사용 — 화면은 FE 하드코딩 사용(아래 주의)
 GET  /api/user/profile                      ✅ 연동됨
 GET  /api/user/survey-results               ✅ 연동됨
@@ -119,7 +119,7 @@ GET  /api/reference/career-attributes       🔴 미연동
 > 고용24 최근 공고 10건 + 출처별 '전체 N건 보기'. 응답은 출처 공통 모양이라 사람인·잡코리아가 붙어도 화면 수정 없음.
 > 위 '채용 = SAMPLE_POSTINGS_BY_JOB' 설명은 더 이상 사실이 아니다(준비과정은 여전히 하드코딩).
 >
-> **2026-11-15 준비과정 탭 실데이터 전환** — `GET /api/job/:jobCode/preparation`(진로계획 라이브러리)을 호출한다(`30d3dcc`, 스테이징).
+> **2026-11-15 준비과정 탭 실데이터 전환** — `GET /api/job/:jobCode/preparation`(진로계획 라이브러리)을 호출한다(`30d3dcc`, 2026-11-16 운영 `v0.1.25`).
 > 직업 537개 전부에 예시 진로설계가 있다. 위 '준비과정 = SAMPLE_JOURNEYS_BY_JOB' 설명도 더 이상 사실이 아니다 — 두 탭 모두 API 를 쓴다.
 > 실제 인물 사례가 아니라 라이트하우스가 정리한 예시라 **'예시' 배지와 "현직자 검토 전" 안내를 유지한다**.
 
@@ -135,7 +135,8 @@ GET  /api/reference/career-attributes       🔴 미연동
 - 진로백과 비회원 흐림 미리보기(2026-11-11, `ee8d63a`): 개요 아래·후기·준비과정·채용을 그리되 제목·첫 항목만 또렷하게(guest-veil.scss), 안내 카드 JobGuestCta, 떠 있는 카드 GuestFloatCard(결과지와 공용)
 - 운영 태그 전 더미 정리(2026-11-12, `db9a9f1`, 스테이징): 진로계획 템플릿은 목표 직업에 템플릿이 있을 때만(B안, 없으면 바로 직접 설계·시범 5직업 고르기 제거), 진로설계 도우미 PROTOTYPE 제거(예시 없으면 '준비 중'), 진로정보 진로검사 = 자기이해 검사(다시 검사하기) + 자체 검사 4종 '준비 중'(MBTI·CliftonStrengths 제거), 회원가입 Apple 버튼 삭제(연동 안 함), 준비과정 탭 더미 예시 삭제(빈 상태 문구)
 
-### 내 진로상황 — 진로계획 개인화 단계 (2026-11-16, `b3339a8` 스테이징 · 운영 태그는 처리방침 시행일 11-23 뒤)
+### 내 진로상황 — 진로계획 개인화 단계 (2026-11-16, `b3339a8` · 운영 `v0.1.25` — 운영은 날짜 스위치로 2026-11-23 0시에 열림)
+- ⚠️ **날짜 스위치**(`e2ec5e0`): 처리방침 시행(11-23) 전이라 운영에서는 닫아 둔다 — `shared/config/features.ts` 의 `careerSituationOpen()`(`CAREER_SITUATION_OPENS_AT`). 진입(`CareerDesignPage`)·단계·고치기 화면·마이페이지 카드·템플릿의 내 상황 플랜이 이걸 본다. 닫혀 있으면 진로계획 세우기는 바로 템플릿, 단계·고치기 주소는 템플릿·마이페이지로 돌려보냄. 스테이징(`deploy-test.yml`)·로컬(`.env.development`)은 `VITE_CAREER_SITUATION_EARLY=1` 로 미리 열림. 날짜가 지나면 스위치는 지워도 된다
 - 흐름: 진로계획 세우기(`CareerDesignPage.goToTemplates`) → `/career-design/situation`(`CareerDesignSituationPage`) → 템플릿. 목표 직업에 예시 진로설계가 있을 때만. 건너뛰기 = `/career-design/templates?situation=skip`(지금처럼 비전공·전공 플랜)
 - 질문 부품 `CareerSituationForm.vue`(단계·마이페이지 공용) + `CareerRecordsEditor.vue`(경력·성과). 상태 `composables/useCareerProfile.ts`(모듈에 하나, 계정 토큰이 바뀌면 다시 불러옴), API `careerProfile.api.ts`
 - 계산 `lib/situation.ts` — `applySituation`(뺀 것·줄인 것과 이유, 과정 중 표시 재계산), `haveCandidates`·`haveLabelOf`·`haveKey`(보편 `cp.번호`·전용 `계획코드:p.번호`)·`isHad`(메모가 자격 이름이면 이름까지), `asksRelated`, `situationSentence`. 테스트 `situation.spec.ts`
@@ -143,7 +144,7 @@ GET  /api/reference/career-attributes       🔴 미연동
 - 마이페이지: '내 검사' 위 요약 카드(`AchievementMy.scss` `.mp-situ`), `/mypage/career-situation`(`MyCareerSituationPage`) 고치기·지우기
 - ⚠️ 경력·성과는 계획에 반영하지 않는다(포트폴리오용, 오너 결정). 라이트하우스 안에서 이미 끝낸 프로젝트는 사용자가 설계 과정에서 직접 고친다(오너 결정 — 자동 채우기 없음)
 
-### 진로계획 라이브러리 연결 — 준비과정 탭 · 템플릿 · 도우미 추천 (2026-11-15, `30d3dcc`·`61fa99b` 스테이징 · 운영 태그 전)
+### 진로계획 라이브러리 연결 — 준비과정 탭 · 템플릿 · 도우미 추천 (2026-11-15, `30d3dcc`·`61fa99b` · 2026-11-16 운영 `v0.1.25`)
 - 자료: `GET /api/job/:jobCode/preparation`(API 운영 반영). 타입 `JobPreparation`(types/encyclopedia.ts), 계산 `modules/encyclopedia/lib/preparation.ts`(길 고르기·기간 표시, 테스트)
 - **준비과정 탭**(`PreparationTab.vue` + `PreparationNotes.vue`): (카드 밖 맨 위) 요약 → 꼭 거쳐야 하는 것 → 갈래 단추 → 분량 → 번호를 세로줄로 이은 걸음(펼치면 주차별 할 일·법령 대조·주의) → (맨 밑) '준비과정 · 예시' 안내. 서버가 준 순서를 그대로 그린다
   - 2026-11-15 수정(`da60d1b`): 요약을 카드 밖 맨 위로(말투는 자료에서 해요체로 온다), 예시 안내를 맨 밑으로, 갈래 안내 글 삭제
@@ -158,7 +159,7 @@ GET  /api/reference/career-attributes       🔴 미연동
 - 지운 것: `data/helperExamples.mock.ts`·`data/planStages.mock.ts`(시범 5직업 더미), `useEncyclopedia.loadPreparations`(쓰이지 않던 옛 불러오기)
 - ⚠️ 라이브러리의 프로젝트에는 책·강의 이름 같은 방식 세부 값이 없다 → 담은 프로젝트를 고치려고 열면 필수 칸(책 이름 등)을 채워야 저장된다
 - ⚠️ 인턴·수련처럼 하루 8시간짜리 프로젝트가 속도 계산(주 N시간)에 그대로 들어간다 — 배치는 되지만 기간이 길게 나올 수 있다(미검토). 2026-11-16 부터 학교를 다니면서 하는 것(`during`)은 과정 기간 안에 겹쳐 놓는다
-- **2026-11-16 진로설계 검토 반영**(`ece7c22`·`a21633d`, 스테이징 · 운영 태그 전)
+- **2026-11-16 진로설계 검토 반영**(`ece7c22`·`a21633d` · 2026-11-16 운영 `v0.1.25`)
   - 준비과정 탭: '모두 약 X 분량' → '차례로 하면 약 X'(+ 학교·수련 과정이 든 길은 그 기간 한 줄), 걸음 표시 '정해진 과정'·'과정 중에'·'이미 있으면 생략', 맨 위 '경력을 쌓은 뒤에 가는 직업이에요'(먼저 거치는 직업 링크)·'대부분 일찍 시작하는 길이에요'·'지원 자격을 먼저 확인해요'(출처 함께)
   - 계산 `lib/preparation.ts` `sumWeeks` — 서버 totals 와 같은 규칙(선택 제외, 과정 중 걸음은 과정이 들어 있으면 빼기). 템플릿도 이것으로(`PlanTemplate.weeks`·`courseWeeks`, 예전 `months`(÷2 어림) 삭제)
   - 템플릿 '이미 있어요'(mayHave 프로젝트만) → 플랜·기간에서 빼고 '다시 넣기'. 갈래를 바꿔도 유지
