@@ -137,11 +137,13 @@ GET  /api/reference/career-attributes       🔴 미연동
 
 ### 진로계획 라이브러리 연결 — 준비과정 탭 · 템플릿 · 도우미 추천 (2026-11-15, `30d3dcc`·`61fa99b` 스테이징 · 운영 태그 전)
 - 자료: `GET /api/job/:jobCode/preparation`(API 운영 반영). 타입 `JobPreparation`(types/encyclopedia.ts), 계산 `modules/encyclopedia/lib/preparation.ts`(길 고르기·기간 표시, 테스트)
-- **준비과정 탭**(`PreparationTab.vue` + `PreparationNotes.vue`): 요약 → 꼭 거쳐야 하는 것 → 갈래 고르기 → 분량 → 번호를 세로줄로 이은 걸음(펼치면 주차별 할 일·법령 대조·주의). 서버가 준 순서를 그대로 그린다
+- **준비과정 탭**(`PreparationTab.vue` + `PreparationNotes.vue`): (카드 밖 맨 위) 요약 → 꼭 거쳐야 하는 것 → 갈래 단추 → 분량 → 번호를 세로줄로 이은 걸음(펼치면 주차별 할 일·법령 대조·주의) → (맨 밑) '준비과정 · 예시' 안내. 서버가 준 순서를 그대로 그린다
+  - 2026-11-15 수정(`da60d1b`): 요약을 카드 밖 맨 위로(말투는 자료에서 해요체로 온다), 예시 안내를 맨 밑으로, 갈래 안내 글 삭제
   - 전공자 전환 단추는 두지 않았다 — 전공자가 건너뛰는 항목이 길마다 한두 개라 '전공자는 생략' 표시 + 분량에 전공자 기준 한 줄로 충분
   - 진행 방식 '기타'는 적지 않고, 세부 유형(국가기술자격·어학 성적…)은 자격·채용 절차 프로젝트에만 적는다
   - 영역 색·라벨은 `career-achievement/lib/planBoard.ts` 의 `CATEGORY_META`(표를 또 복제하지 않음)
-- **템플릿**(`CareerDesignTemplatesPage.vue`, `usePlanTemplates.ts`): 목표 진로가 직업 코드면 그 직업의 계획으로 플랜을 만든다 — 갈래 고르기, 비전공/전공(차이가 없으면 기본 하나), 전공자라서 뺀 것, 지원하는 곳에 따라 더하는 것, 52주로 줄여 담은 것 안내
+- **템플릿**(`CareerDesignTemplatesPage.vue`, `usePlanTemplates.ts`): 목표 진로가 직업 코드면 그 직업의 계획으로 플랜을 만든다 — 갈래 단추, 비전공/전공(차이가 없으면 기본 하나), 전공자라서 뺀 것, 지원하는 곳에 따라 더하는 것
+- **프로젝트 길이 제한 없음**(2026-11-15 오너 결정, `da60d1b`): 한 프로젝트 최대 52주(`MAX_WEEKS`)와 타임라인 범위 최대 104주(`PROVISIONAL_MAX_WEEKS`)를 없앴다. 로스쿨(108주)·법조 경력(254주)도 그대로 담긴다. 프로젝트 작성 화면의 기간은 여전히 +/− 단추라 긴 기간을 손으로 만들기는 번거롭다
 - **도우미 추천**(`CdHelperSuggest.vue`, `useHelperExamples.ts`): 같은 직업·같은 갈래의 프로젝트를 영역별로. 새 계획은 `draftPlan.targetJobCode`, 고치는 계획은 목표 진로와 이름이 같을 때 그 코드
 - `draftPlan.targetJobCode`·`templateTrack`(로컬만). 첫 단계의 '이전'이 템플릿으로 돌아가는 기준도 `targetJobCode`
 - 지운 것: `data/helperExamples.mock.ts`·`data/planStages.mock.ts`(시범 5직업 더미), `useEncyclopedia.loadPreparations`(쓰이지 않던 옛 불러오기)

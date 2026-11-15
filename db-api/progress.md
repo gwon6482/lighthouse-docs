@@ -753,6 +753,8 @@ app.options('*', cors());  // OPTIONS preflight 처리
   - 운영 직업 목록과 대조 `node scripts/plan-library-coverage-check.js`(읽기 전용) — 537/537. 새 직업이 생기면 계획 없는 직업으로 나온다
   - 운영 이미지(공개)에는 런타임이 읽는 4종만 — 작성 기록·검토용은 `.dockerignore`. `*.md` 패턴은 루트만 걸러서 `data/plan-library/*.md` 를 따로 적었다
   - 쓰는 곳: 앱 진로백과 준비과정 탭 · 진로설계 템플릿 · 도우미 추천(모두 스테이징, 운영 태그 전)
+- **2026-11-15 수정 요청 반영**(`1004025`, 운영): 요약(summary) 279개·문장으로 쓴 관문(gate) 41개를 해요체로 / 대학 입학이 필수인 계획에 12개월 입시 준비 — 수능 세트(`cp.csat-concept` 20주 → `cp.csat-past` 16주 → `cp.csat-final` 12주 → `cp.college-apply` 4주) 31자리, 실기 입시(`cp.practical-admission` 52주) 8자리. `cp.dept-admission` 은 뺌. 분류표에 세부 유형 '대학 입시(수능·실기)'. 지금 보편 172개 · 확인함 147 · 주의 194
+  - 규칙(README): `summary`·문장 꼴 `gate` 는 해요체, 대입 필수는 12개월 준비, 프로젝트 길이는 제한하지 않는다
 - 검사 `node scripts/plan-library-validate.js --table` · 작성 도우미 `scripts/plan-library-author.py`
 - 2026-11-14 사실 확인 반영: 시험 과목·응시자격·교육 시간 등 233곳을 법령·공고와 대조(확인함 137 · 주의 170 · 확인 필요 0). 기록은 `data/plan-library/FACTCHECK.md`
 - 2026-11-14 갈래 세분화: 세부 카테고리가 2개 이하이던 계획 223개를 다시 보고 74개를 더 나눔(473 → 603갈래, 갈래 없는 계획 170 → 103). 세분화 뒤 표시는 확인함 146 · 주의 193 · 확인 필요 0 — 새로 쓴 갈래 내용은 일부만 법령 대조
