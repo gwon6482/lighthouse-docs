@@ -207,6 +207,7 @@ localhost:5173 에서 시작
 | `DELETE /api/user/devices/:deviceId` | FCM 기기 토큰 제거 |
 | `GET /api/user/target-career` | 목표 진로 조회 (2026-05-21) |
 | `PUT /api/user/target-career` | 목표 진로 설정/변경/삭제 (2026-05-21) |
+| `GET/PUT/DELETE /api/user/career-profile` | **내 진로상황**(2026-11-16, 운영) — `User.careerProfile{school, year(1~4, 4=4학년 이상), major, relatedJobs[{jobCode,name}], has[{ref,name}], records[{id,kind,title,start,end,detail}], updatedAt}`. PUT 은 통째로 바꿈(정리 규칙 `services/careerProfile.js`, 학교·학년 틀리면 400, 목록의 잘못된 줄은 버림). GET 은 가입 때 답 `onboardingStatus` 도 준다. has 열쇠는 보편 `cp.번호`·전용 `계획코드:p.번호`, 겹침은 번호+이름. ⚠️ 처리방침에 적힌 항목(2026-11-23 시행) — 칸을 늘리면 처리방침도 |
 
 **구현 파일**: `controllers/userController.js`, `routes/user.js`
 
@@ -763,6 +764,7 @@ app.options('*', cors());  // OPTIONS preflight 처리
   - 자료: 대학·석사 과정 걸음 45자리, 자기소개서·면접을 첫 지원 앞으로(117개 계획), 지원 자격 14개 계획(법령 대조), 시간 맞춤 13개, 현장 채용형 면접 → '현장 채용 지원 준비'(55), 지원·선발 준비 영역 → 자격요건(32). 규칙은 README '규칙', 근거는 FACTCHECK '2026-11-16'
   - 검사 추가: 총 시간 비교(±10%), 대입 원서 뒤 과정 걸음, 첫 지원보다 뒤의 자기소개서·면접, 과정·과정 중·갈래별 순서의 모양
   - 지금 보편 177 · 전용 801 · 확인함 169 · 주의 201
+- **2026-11-16 내 진로상황용 자료**(`7dd46e9`, 운영): 계획 `relatedMajor`(학과 질문 이름, 96개 계획 — 전공자 생략 걸음이 있으면 필수, 검사), 법조 항목 `skipFor:'any'`, 보편 자격·근무 프로젝트 `haveLabel`·`haveByNote`(47개). 응답에 `plan.relatedMajor`·항목 `skipFor`·프로젝트 `haveLabel`/`haveByNote`
 - 검사 `node scripts/plan-library-validate.js --table` · 작성 도우미 `scripts/plan-library-author.py`
 - 2026-11-14 사실 확인 반영: 시험 과목·응시자격·교육 시간 등 233곳을 법령·공고와 대조(확인함 137 · 주의 170 · 확인 필요 0). 기록은 `data/plan-library/FACTCHECK.md`
 - 2026-11-14 갈래 세분화: 세부 카테고리가 2개 이하이던 계획 223개를 다시 보고 74개를 더 나눔(473 → 603갈래, 갈래 없는 계획 170 → 103). 세분화 뒤 표시는 확인함 146 · 주의 193 · 확인 필요 0 — 새로 쓴 갈래 내용은 일부만 법령 대조

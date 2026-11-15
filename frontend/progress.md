@@ -135,6 +135,14 @@ GET  /api/reference/career-attributes       🔴 미연동
 - 진로백과 비회원 흐림 미리보기(2026-11-11, `ee8d63a`): 개요 아래·후기·준비과정·채용을 그리되 제목·첫 항목만 또렷하게(guest-veil.scss), 안내 카드 JobGuestCta, 떠 있는 카드 GuestFloatCard(결과지와 공용)
 - 운영 태그 전 더미 정리(2026-11-12, `db9a9f1`, 스테이징): 진로계획 템플릿은 목표 직업에 템플릿이 있을 때만(B안, 없으면 바로 직접 설계·시범 5직업 고르기 제거), 진로설계 도우미 PROTOTYPE 제거(예시 없으면 '준비 중'), 진로정보 진로검사 = 자기이해 검사(다시 검사하기) + 자체 검사 4종 '준비 중'(MBTI·CliftonStrengths 제거), 회원가입 Apple 버튼 삭제(연동 안 함), 준비과정 탭 더미 예시 삭제(빈 상태 문구)
 
+### 내 진로상황 — 진로계획 개인화 단계 (2026-11-16, `b3339a8` 스테이징 · 운영 태그는 처리방침 시행일 11-23 뒤)
+- 흐름: 진로계획 세우기(`CareerDesignPage.goToTemplates`) → `/career-design/situation`(`CareerDesignSituationPage`) → 템플릿. 목표 직업에 예시 진로설계가 있을 때만. 건너뛰기 = `/career-design/templates?situation=skip`(지금처럼 비전공·전공 플랜)
+- 질문 부품 `CareerSituationForm.vue`(단계·마이페이지 공용) + `CareerRecordsEditor.vue`(경력·성과). 상태 `composables/useCareerProfile.ts`(모듈에 하나, 계정 토큰이 바뀌면 다시 불러옴), API `careerProfile.api.ts`
+- 계산 `lib/situation.ts` — `applySituation`(뺀 것·줄인 것과 이유, 과정 중 표시 재계산), `haveCandidates`·`haveLabelOf`·`haveKey`(보편 `cp.번호`·전용 `계획코드:p.번호`)·`isHad`(메모가 자격 이름이면 이름까지), `asksRelated`, `situationSentence`. 테스트 `situation.spec.ts`
+- 템플릿: `buildSituationTemplate`(stage `mine`) — 펼친 채로 '내 상황이라 바뀐 것', 아래 '처음부터 전부 보기'. `buildPlanTemplates(prep, track, has)` 는 이제 내 진로상황의 has 목록을 받는다(자격·면허·어학·근무 경험 모두 '이미 있어요' 대상, 누르면 내 진로상황에도 저장)
+- 마이페이지: '내 검사' 위 요약 카드(`AchievementMy.scss` `.mp-situ`), `/mypage/career-situation`(`MyCareerSituationPage`) 고치기·지우기
+- ⚠️ 경력·성과는 계획에 반영하지 않는다(포트폴리오용, 오너 결정). 라이트하우스 안에서 이미 끝낸 프로젝트는 사용자가 설계 과정에서 직접 고친다(오너 결정 — 자동 채우기 없음)
+
 ### 진로계획 라이브러리 연결 — 준비과정 탭 · 템플릿 · 도우미 추천 (2026-11-15, `30d3dcc`·`61fa99b` 스테이징 · 운영 태그 전)
 - 자료: `GET /api/job/:jobCode/preparation`(API 운영 반영). 타입 `JobPreparation`(types/encyclopedia.ts), 계산 `modules/encyclopedia/lib/preparation.ts`(길 고르기·기간 표시, 테스트)
 - **준비과정 탭**(`PreparationTab.vue` + `PreparationNotes.vue`): (카드 밖 맨 위) 요약 → 꼭 거쳐야 하는 것 → 갈래 단추 → 분량 → 번호를 세로줄로 이은 걸음(펼치면 주차별 할 일·법령 대조·주의) → (맨 밑) '준비과정 · 예시' 안내. 서버가 준 순서를 그대로 그린다
