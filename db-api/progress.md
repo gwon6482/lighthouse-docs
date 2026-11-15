@@ -587,7 +587,7 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 | 항목 | 비고 |
 |------|------|
 | `GET /api/job/:jobCode/recruitment` | 워크넷 공식 API 연동 예정 |
-| `GET /api/job/:jobCode/preparation` | 미구현 |
+| ~~`GET /api/job/:jobCode/preparation`~~ | **구현(2026-11-15, 운영)** — 진로계획 라이브러리. 아래 '진로계획 라이브러리' 절 |
 | OAuth 로그인 | **카카오 완료(2026-09-10, 라이브)**. Google/Apple 은 `providers` 에서 false 고정, 미구현 |
 | 테스트 코드 | 없음 |
 | CORS 오리진 화이트리스트 | 현재 전체 허용(`app.use(cors())`). 모바일 오리진 확정 후 예정 |
@@ -744,9 +744,15 @@ app.options('*', cors());  // OPTIONS preflight 처리
 ## 2026-10-30
 - 주간결산 `weekly_reviews` + GET/PUT `/api/career-plan/:id/weekly-reviews[/:weekStart]`, 계획 진행 속도(paceKey·paceHours), reviewDay 변경 시 일정 초기화 — `a3223df`, Lightsail **v69 ACTIVE**
 
-## 진로계획 라이브러리 데이터 — 2026-11-13 (브랜치 `data/plan-library`, 배포·API 없음)
+## 진로계획 라이브러리 — 2026-11-13 자료 · 2026-11-15 서비스 연결(`017dfb9`, 운영 반영)
 - 직업 537개 전체의 예시 진로설계 **초안**(계획 279개 · 603갈래) + 여러 직업이 함께 쓰는 보편 프로젝트 168개. 폴더 `data/plan-library/`(README 에 구조·규칙)
-- `main` 에 없다 → 서버·DB·앱에는 아직 영향이 없다. 컬렉션·조회 API·앱 더미 교체는 사실 확인·사람 검토 뒤 별도 작업
+- **2026-11-15 main 에 합침 + `GET /api/job/:jobCode/preparation`**(공개, DB 안 거침): `services/planLibrary` 가 `taxonomy`·`common-projects`·`priority-jobs`·`plans/*.json` 을 읽어 직업 코드로 찾고 갈래별로 순서까지 풀어 준다
+  - 응답 `{ jobCode, title, shared, plan{displayName·summary·gate·caution·checked…}, tracks, defaultTrack, paths[{track, items[{ref, step, major, optional, fromTrack, skip?, note?}], totals}], projects{id→프로젝트} }` · 계획 없는 직업은 `data: null`
+  - 대표 직업이 아닌 직업(`covers`)은 대표 직업의 계획(`shared: true`), `covers[].track` 이 기본 갈래. `totals` 의 주 수는 하나씩 차례로 할 때의 합(선택 항목 제외)
+  - ⚠️ **이 폴더를 고쳐 main 에 올리면 배포와 함께 사용자 화면이 바뀐다.** `summary`·`gate`·`goal`·`note`·`skip`·`caution`·`checked` 는 그대로 보인다(내부 메모 금지). `source`·`promotedFrom`·`families`·`verify` 는 내주지 않는다
+  - 운영 직업 목록과 대조 `node scripts/plan-library-coverage-check.js`(읽기 전용) — 537/537. 새 직업이 생기면 계획 없는 직업으로 나온다
+  - 운영 이미지(공개)에는 런타임이 읽는 4종만 — 작성 기록·검토용은 `.dockerignore`. `*.md` 패턴은 루트만 걸러서 `data/plan-library/*.md` 를 따로 적었다
+  - 쓰는 곳: 앱 진로백과 준비과정 탭 · 진로설계 템플릿 · 도우미 추천(모두 스테이징, 운영 태그 전)
 - 검사 `node scripts/plan-library-validate.js --table` · 작성 도우미 `scripts/plan-library-author.py`
 - 2026-11-14 사실 확인 반영: 시험 과목·응시자격·교육 시간 등 233곳을 법령·공고와 대조(확인함 137 · 주의 170 · 확인 필요 0). 기록은 `data/plan-library/FACTCHECK.md`
 - 2026-11-14 갈래 세분화: 세부 카테고리가 2개 이하이던 계획 223개를 다시 보고 74개를 더 나눔(473 → 603갈래, 갈래 없는 계획 170 → 103). 세분화 뒤 표시는 확인함 146 · 주의 193 · 확인 필요 0 — 새로 쓴 갈래 내용은 일부만 법령 대조

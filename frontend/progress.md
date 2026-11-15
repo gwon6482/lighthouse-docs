@@ -88,7 +88,7 @@ GET  /api/job/search?name=                  ✅ 연동됨
 GET  /api/job/recommend/:survey_id          ✅ 연동됨 (경로 수정 완료)
 GET  /api/job/recommend-t2/:survey_id       ✅ 연동됨 (T2 추천)
 GET  /api/job/:jobCode/reviews              ✅ 연동됨
-GET  /api/job/:jobCode/preparation          ⬛ 미사용 — 화면은 FE 하드코딩 사용(아래 주의)
+GET  /api/job/:jobCode/preparation          ✅ 연동됨 (2026-11-15 — 준비과정 탭·진로설계 템플릿·도우미 추천, 스테이징)
 GET  /api/job/:jobCode/recruitment          ⬛ 미사용 — 화면은 FE 하드코딩 사용(아래 주의)
 GET  /api/user/profile                      ✅ 연동됨
 GET  /api/user/survey-results               ✅ 연동됨
@@ -118,6 +118,10 @@ GET  /api/reference/career-attributes       🔴 미연동
 > **2026-10-16 채용 탭 실데이터 전환** — 가짜 공고 제거(v0.1.17) 후 `GET /api/job/:jobCode/recruitment` 를 호출한다(`de7e1ba`).
 > 고용24 최근 공고 10건 + 출처별 '전체 N건 보기'. 응답은 출처 공통 모양이라 사람인·잡코리아가 붙어도 화면 수정 없음.
 > 위 '채용 = SAMPLE_POSTINGS_BY_JOB' 설명은 더 이상 사실이 아니다(준비과정은 여전히 하드코딩).
+>
+> **2026-11-15 준비과정 탭 실데이터 전환** — `GET /api/job/:jobCode/preparation`(진로계획 라이브러리)을 호출한다(`30d3dcc`, 스테이징).
+> 직업 537개 전부에 예시 진로설계가 있다. 위 '준비과정 = SAMPLE_JOURNEYS_BY_JOB' 설명도 더 이상 사실이 아니다 — 두 탭 모두 API 를 쓴다.
+> 실제 인물 사례가 아니라 라이트하우스가 정리한 예시라 **'예시' 배지와 "현직자 검토 전" 안내를 유지한다**.
 
 ---
 
@@ -130,6 +134,19 @@ GET  /api/reference/career-attributes       🔴 미연동
 - 떠 있는 가입 카드(2026-11-11, `ef931d9`): 성격 유형을 지나면 올라오고 맨 아래 가입 상자가 보이면 내려감(시안 ② 작은 카드)
 - 진로백과 비회원 흐림 미리보기(2026-11-11, `ee8d63a`): 개요 아래·후기·준비과정·채용을 그리되 제목·첫 항목만 또렷하게(guest-veil.scss), 안내 카드 JobGuestCta, 떠 있는 카드 GuestFloatCard(결과지와 공용)
 - 운영 태그 전 더미 정리(2026-11-12, `db9a9f1`, 스테이징): 진로계획 템플릿은 목표 직업에 템플릿이 있을 때만(B안, 없으면 바로 직접 설계·시범 5직업 고르기 제거), 진로설계 도우미 PROTOTYPE 제거(예시 없으면 '준비 중'), 진로정보 진로검사 = 자기이해 검사(다시 검사하기) + 자체 검사 4종 '준비 중'(MBTI·CliftonStrengths 제거), 회원가입 Apple 버튼 삭제(연동 안 함), 준비과정 탭 더미 예시 삭제(빈 상태 문구)
+
+### 진로계획 라이브러리 연결 — 준비과정 탭 · 템플릿 · 도우미 추천 (2026-11-15, `30d3dcc`·`61fa99b` 스테이징 · 운영 태그 전)
+- 자료: `GET /api/job/:jobCode/preparation`(API 운영 반영). 타입 `JobPreparation`(types/encyclopedia.ts), 계산 `modules/encyclopedia/lib/preparation.ts`(길 고르기·기간 표시, 테스트)
+- **준비과정 탭**(`PreparationTab.vue` + `PreparationNotes.vue`): 요약 → 꼭 거쳐야 하는 것 → 갈래 고르기 → 분량 → 번호를 세로줄로 이은 걸음(펼치면 주차별 할 일·법령 대조·주의). 서버가 준 순서를 그대로 그린다
+  - 전공자 전환 단추는 두지 않았다 — 전공자가 건너뛰는 항목이 길마다 한두 개라 '전공자는 생략' 표시 + 분량에 전공자 기준 한 줄로 충분
+  - 진행 방식 '기타'는 적지 않고, 세부 유형(국가기술자격·어학 성적…)은 자격·채용 절차 프로젝트에만 적는다
+  - 영역 색·라벨은 `career-achievement/lib/planBoard.ts` 의 `CATEGORY_META`(표를 또 복제하지 않음)
+- **템플릿**(`CareerDesignTemplatesPage.vue`, `usePlanTemplates.ts`): 목표 진로가 직업 코드면 그 직업의 계획으로 플랜을 만든다 — 갈래 고르기, 비전공/전공(차이가 없으면 기본 하나), 전공자라서 뺀 것, 지원하는 곳에 따라 더하는 것, 52주로 줄여 담은 것 안내
+- **도우미 추천**(`CdHelperSuggest.vue`, `useHelperExamples.ts`): 같은 직업·같은 갈래의 프로젝트를 영역별로. 새 계획은 `draftPlan.targetJobCode`, 고치는 계획은 목표 진로와 이름이 같을 때 그 코드
+- `draftPlan.targetJobCode`·`templateTrack`(로컬만). 첫 단계의 '이전'이 템플릿으로 돌아가는 기준도 `targetJobCode`
+- 지운 것: `data/helperExamples.mock.ts`·`data/planStages.mock.ts`(시범 5직업 더미), `useEncyclopedia.loadPreparations`(쓰이지 않던 옛 불러오기)
+- ⚠️ 라이브러리의 프로젝트에는 책·강의 이름 같은 방식 세부 값이 없다 → 담은 프로젝트를 고치려고 열면 필수 칸(책 이름 등)을 채워야 저장된다
+- ⚠️ 인턴·수련처럼 하루 8시간짜리 프로젝트가 속도 계산(주 N시간)에 그대로 들어간다 — 배치는 되지만 기간이 길게 나올 수 있다(미검토)
 
 ### 진로백과 개요 탭 — 고용24 신규 섹션 (2026-09-28, 스테이징)
 
