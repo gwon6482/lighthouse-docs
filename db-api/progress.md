@@ -481,6 +481,7 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 
 | 엔드포인트 | 설명 |
 |-----------|------|
+> 프로젝트 과정 표시(2026-11-16~): `course`·`during`(Boolean, 있을 때만) — 진로계획 라이브러리 템플릿에서 온 프로젝트. 앱 자동 배치가 과정 중 프로젝트를 과정 끝에 맞춰 겹쳐 놓고, 주간결산 재배치 때도 과정을 따라 옮긴다. 추가·일괄·수정 모두 `projectSettings` 가 true 만 받는다(수정은 false 로 끌 수 있다)
 > 프로젝트 진행 방식(2026-10-27~): `method`(config/projectMethods.js 17종, 없으면 null = 방식 미정) + `methodDetail`(title·link·org·target·deadline·resultUrl·note, 300자). 추가·일괄·수정 모두 `CareerPlan.cleanMethod` — 수정($set)은 스키마 검증을 안 거치므로 컨트롤러가 정리. 방식 없이 수정하면 기존 값 유지
 | `POST /api/career-plan` | 계획 생성 (STEP1 — name/targetJob/startDate/endDate) |
 | `GET /api/career-plan` | 내 계획 목록 |
@@ -756,6 +757,12 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - **2026-11-15 수정 요청 반영**(`1004025`, 운영): 요약(summary) 279개·문장으로 쓴 관문(gate) 41개를 해요체로 / 대학 입학이 필수인 계획에 12개월 입시 준비 — 수능 세트(`cp.csat-concept` 20주 → `cp.csat-past` 16주 → `cp.csat-final` 12주 → `cp.college-apply` 4주) 31자리, 실기 입시(`cp.practical-admission` 52주) 8자리. `cp.dept-admission` 은 뺌. 분류표에 세부 유형 '대학 입시(수능·실기)'. 지금 보편 172개 · 확인함 147 · 주의 194
   - 규칙(README): `summary`·문장 꼴 `gate` 는 해요체, 대입 필수는 12개월 준비, 프로젝트 길이는 제한하지 않는다
 - **2026-11-15 직업마다 제 갈래만**(`c8b66f2`, 운영): 갈래에 '세부 분야'와 '같은 계획에 묶인 다른 직업의 길'이 섞여 있어 변호사·판사·검사가 세 길을 다 보여 주던 것(같은 꼴 95개 계획). `priority-jobs.json` 에 대표 직업의 `ownTracks`, 함께 덮는 직업의 `covers[].tracks` — 함께 덮는 직업 + `track` 은 그 갈래 하나만, `track` 없으면 통째로(`shared: true`). 응답에 `displayName` 추가. `cp.major-grades`(전공 성적 관리) 삭제. 지금 보편 171개
+- **2026-11-16 진로설계 검토 반영**(`b62589d`, 운영): '지금 고칠 수 있는 것' 12가지
+  - 새 필드 — 프로젝트 `course`(학교·수련 과정) · `mayHave`(이미 있을 수 있는 것) · `statedHours`(법정 총 시간, 검사용·안 내줌) / 항목 `during`(앞의 과정 기간 안에 하는 일) · `stepByTrack`(공통 항목의 갈래별 순서) / 계획 `eligibility{lines, checked, tracks?}`(지원 자격) · `reality{kind: career|early, text, via[]}`(먼저 알아 둘 것)
+  - 응답: `plan.eligibility`·`plan.reality`, 항목 `during`, 프로젝트 `course`·`mayHave`, `totals.*.courseWeeks`. `totals.*.weeks` 는 과정 중 걸음을 빼고 센다(그 과정이 그 대상에게 들어 있을 때만 — 전공자는 대학 과정을 건너뛰므로 그대로 센다)
+  - 자료: 대학·석사 과정 걸음 45자리, 자기소개서·면접을 첫 지원 앞으로(117개 계획), 지원 자격 14개 계획(법령 대조), 시간 맞춤 13개, 현장 채용형 면접 → '현장 채용 지원 준비'(55), 지원·선발 준비 영역 → 자격요건(32). 규칙은 README '규칙', 근거는 FACTCHECK '2026-11-16'
+  - 검사 추가: 총 시간 비교(±10%), 대입 원서 뒤 과정 걸음, 첫 지원보다 뒤의 자기소개서·면접, 과정·과정 중·갈래별 순서의 모양
+  - 지금 보편 177 · 전용 801 · 확인함 169 · 주의 201
 - 검사 `node scripts/plan-library-validate.js --table` · 작성 도우미 `scripts/plan-library-author.py`
 - 2026-11-14 사실 확인 반영: 시험 과목·응시자격·교육 시간 등 233곳을 법령·공고와 대조(확인함 137 · 주의 170 · 확인 필요 0). 기록은 `data/plan-library/FACTCHECK.md`
 - 2026-11-14 갈래 세분화: 세부 카테고리가 2개 이하이던 계획 223개를 다시 보고 74개를 더 나눔(473 → 603갈래, 갈래 없는 계획 170 → 103). 세분화 뒤 표시는 확인함 146 · 주의 193 · 확인 필요 0 — 새로 쓴 갈래 내용은 일부만 법령 대조

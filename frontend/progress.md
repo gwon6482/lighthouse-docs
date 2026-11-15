@@ -88,7 +88,7 @@ GET  /api/job/search?name=                  ✅ 연동됨
 GET  /api/job/recommend/:survey_id          ✅ 연동됨 (경로 수정 완료)
 GET  /api/job/recommend-t2/:survey_id       ✅ 연동됨 (T2 추천)
 GET  /api/job/:jobCode/reviews              ✅ 연동됨
-GET  /api/job/:jobCode/preparation          ✅ 연동됨 (2026-11-15 — 준비과정 탭·진로설계 템플릿·도우미 추천, 스테이징)
+GET  /api/job/:jobCode/preparation          ✅ 연동됨 (2026-11-15 — 준비과정 탭·진로설계 템플릿·도우미 추천, 스테이징. 11-16 지원 자격·과정 표시)
 GET  /api/job/:jobCode/recruitment          ⬛ 미사용 — 화면은 FE 하드코딩 사용(아래 주의)
 GET  /api/user/profile                      ✅ 연동됨
 GET  /api/user/survey-results               ✅ 연동됨
@@ -149,7 +149,14 @@ GET  /api/reference/career-attributes       🔴 미연동
 - `draftPlan.targetJobCode`·`templateTrack`(로컬만). 첫 단계의 '이전'이 템플릿으로 돌아가는 기준도 `targetJobCode`
 - 지운 것: `data/helperExamples.mock.ts`·`data/planStages.mock.ts`(시범 5직업 더미), `useEncyclopedia.loadPreparations`(쓰이지 않던 옛 불러오기)
 - ⚠️ 라이브러리의 프로젝트에는 책·강의 이름 같은 방식 세부 값이 없다 → 담은 프로젝트를 고치려고 열면 필수 칸(책 이름 등)을 채워야 저장된다
-- ⚠️ 인턴·수련처럼 하루 8시간짜리 프로젝트가 속도 계산(주 N시간)에 그대로 들어간다 — 배치는 되지만 기간이 길게 나올 수 있다(미검토)
+- ⚠️ 인턴·수련처럼 하루 8시간짜리 프로젝트가 속도 계산(주 N시간)에 그대로 들어간다 — 배치는 되지만 기간이 길게 나올 수 있다(미검토). 2026-11-16 부터 학교를 다니면서 하는 것(`during`)은 과정 기간 안에 겹쳐 놓는다
+- **2026-11-16 진로설계 검토 반영**(`ece7c22`·`a21633d`, 스테이징 · 운영 태그 전)
+  - 준비과정 탭: '모두 약 X 분량' → '차례로 하면 약 X'(+ 학교·수련 과정이 든 길은 그 기간 한 줄), 걸음 표시 '정해진 과정'·'과정 중에'·'이미 있으면 생략', 맨 위 '경력을 쌓은 뒤에 가는 직업이에요'(먼저 거치는 직업 링크)·'대부분 일찍 시작하는 길이에요'·'지원 자격을 먼저 확인해요'(출처 함께)
+  - 계산 `lib/preparation.ts` `sumWeeks` — 서버 totals 와 같은 규칙(선택 제외, 과정 중 걸음은 과정이 들어 있으면 빼기). 템플릿도 이것으로(`PlanTemplate.weeks`·`courseWeeks`, 예전 `months`(÷2 어림) 삭제)
+  - 템플릿 '이미 있어요'(mayHave 프로젝트만) → 플랜·기간에서 빼고 '다시 넣기'. 갈래를 바꿔도 유지
+  - 자동 배치 `autoSchedule`: 과정(`course`) 뒤의 과정 중 프로젝트(`during`)는 과정이 끝나는 주에 맞춰 차례로 겹쳐 놓는다(예산·순서 규칙 밖). `rescheduleFrom` 도 과정을 따라 옮긴다. `duringOwners` = 순서에서 바로 앞의 과정이 주인
+  - 요일 `pickDays(count, recent)`: 앞 프로젝트와 겹치지 않게(주 5회 이상은 기본 요일, 일요일은 비움). 템플릿·도우미 추천이 쓴다
+  - 완료 기준: 자격요건 + 기타 = '스스로 정한 기준을 채우면 완료'(자기소개서·면접 준비가 자격요건으로 옮겨 와서). 속도 화면 기간은 2년이 넘으면 '약 5년 2개월'
 
 ### 진로백과 개요 탭 — 고용24 신규 섹션 (2026-09-28, 스테이징)
 
