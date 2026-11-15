@@ -699,7 +699,7 @@ export const updateTargetCareer = (data) => req.put('/api/user/target-career', d
 
 ### T23 가치관 검사 UI 전면 교체
 - 텍스트 리스트 → **4열 이미지 카드 그리드**
-- 이미지: `/public/t23_img/{VALUE_CODE}_transparent.png` (13개)
+- 이미지: `/public/t23_img/{VALUE_CODE}_transparent.png` (13개) — 2026-11-15 부터 앱 화면은 안 씀(랜딩 /survey 가 불러와 파일만 유지)
 - 상단 슬롯 3개: 선택한 순위 이미지 + 정의 문장 표시
 - 순위 배지 (보라색 원형), 카드 내부는 이름 아닌 **정의 문장** 표시
 - API response에 `value_code`, `value_name` 필드 추가 (백엔드 배포 완료)
@@ -1190,4 +1190,5 @@ CI 는 워크플로우(`deploy-test.yml`/`deploy-app.yml`)가 `VITE_API` 를 직
 - 업무환경(T3, `ThreeChoiceQuestion.vue`): 단계 세로 목록 + 왼쪽 단계 숫자 원(노랑), 사진·파트 상자 제거, 소제목 '1 · 소통 강도'(영역색 글자)
 - 헤더(`SurveyHeader.vue`): '업무환경' 한 줄, `--geunmu` 예외 삭제
 - 검사 문항 버튼은 이제 모두 노랑 선택 + `font-family: inherit` + 결과지 회색 토큰(흥미·가치관·업무환경)
-- 남은 것: iPhone Safari 실기기 확인, 안 쓰는 `public/t23_img`·`t3_img` 정리 여부
+- 그림 정리(`0b8df76`): `public/t3_img` 삭제. `public/t23_img` 는 랜딩 /survey 가 app 도메인에서 불러와 유지, PWA 미리 받기에서만 제외
+- 남은 것: iPhone Safari 실기기 확인, 랜딩이 t23 그림을 자기 도메인으로 옮기면 앱 t23_img 삭제
