@@ -143,6 +143,7 @@ GET  /api/reference/career-attributes       🔴 미연동
   - 진행 방식 '기타'는 적지 않고, 세부 유형(국가기술자격·어학 성적…)은 자격·채용 절차 프로젝트에만 적는다
   - 영역 색·라벨은 `career-achievement/lib/planBoard.ts` 의 `CATEGORY_META`(표를 또 복제하지 않음)
 - **템플릿**(`CareerDesignTemplatesPage.vue`, `usePlanTemplates.ts`): 목표 진로가 직업 코드면 그 직업의 계획으로 플랜을 만든다 — 갈래 단추, 비전공/전공(차이가 없으면 기본 하나), 전공자라서 뺀 것, 지원하는 곳에 따라 더하는 것
+- **직업마다 제 갈래만**(2026-11-15, `8c195ed`): API 가 그 직업이 보여 줄 갈래만 준다 — 하나뿐이면 단추도, 걸음의 갈래 이름표도 그리지 않는다. 템플릿·도우미의 이름은 `prep.displayName`(판사 플랜). `prep.shared` 는 대표 직업의 계획을 통째로 빌려 보는 직업만 true
 - **프로젝트 길이 제한 없음**(2026-11-15 오너 결정, `da60d1b`): 한 프로젝트 최대 52주(`MAX_WEEKS`)와 타임라인 범위 최대 104주(`PROVISIONAL_MAX_WEEKS`)를 없앴다. 로스쿨(108주)·법조 경력(254주)도 그대로 담긴다. 프로젝트 작성 화면의 기간은 여전히 +/− 단추라 긴 기간을 손으로 만들기는 번거롭다
 - **도우미 추천**(`CdHelperSuggest.vue`, `useHelperExamples.ts`): 같은 직업·같은 갈래의 프로젝트를 영역별로. 새 계획은 `draftPlan.targetJobCode`, 고치는 계획은 목표 진로와 이름이 같을 때 그 코드
 - `draftPlan.targetJobCode`·`templateTrack`(로컬만). 첫 단계의 '이전'이 템플릿으로 돌아가는 기준도 `targetJobCode`
