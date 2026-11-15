@@ -1182,4 +1182,12 @@ CI 는 워크플로우(`deploy-test.yml`/`deploy-app.yml`)가 `VITE_API` 를 직
 
 - 항목 버튼 Pretendard 적용(Arial 로 나오던 것), 분야명 16px, 설명 모바일 14px·데스크탑 13px, 선택 체크 표시
 - 문구는 같은 날 DB 에서 수정: `research/question-edits/2026-11-06/`
-- 남은 것: 가치관 카드(`.pq-card`) 글꼴 확인, iPhone Safari 실기기 확인
+- 남은 것: ~~가치관 카드(`.pq-card`) 글꼴 확인~~(2026-11-15 해결), iPhone Safari 실기기 확인
+
+## 자기이해 가치관·업무환경 화면 사진 제거 + 헤더 한 줄 (2026-11-15, `31c9f15`·`7034b3e`·`f21b9b1` — dev)
+
+- 가치관(T23, `PriorityQuestion.vue`): 문장 목록 + 왼쪽 순위 원(노랑), 위쪽 슬롯·사진 제거, 가치관 이름은 넣지 않음. 지시문은 흥미 화면과 같게, 데스크탑만 지시문→목록 32px
+- 업무환경(T3, `ThreeChoiceQuestion.vue`): 단계 세로 목록 + 왼쪽 단계 숫자 원(노랑), 사진·파트 상자 제거, 소제목 '1 · 소통 강도'(영역색 글자)
+- 헤더(`SurveyHeader.vue`): '업무환경' 한 줄, `--geunmu` 예외 삭제
+- 검사 문항 버튼은 이제 모두 노랑 선택 + `font-family: inherit` + 결과지 회색 토큰(흥미·가치관·업무환경)
+- 남은 것: iPhone Safari 실기기 확인, 안 쓰는 `public/t23_img`·`t3_img` 정리 여부
