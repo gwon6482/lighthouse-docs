@@ -135,8 +135,8 @@ GET  /api/reference/career-attributes       🔴 미연동
 - 진로백과 비회원 흐림 미리보기(2026-11-11, `ee8d63a`): 개요 아래·후기·준비과정·채용을 그리되 제목·첫 항목만 또렷하게(guest-veil.scss), 안내 카드 JobGuestCta, 떠 있는 카드 GuestFloatCard(결과지와 공용)
 - 운영 태그 전 더미 정리(2026-11-12, `db9a9f1`, 스테이징): 진로계획 템플릿은 목표 직업에 템플릿이 있을 때만(B안, 없으면 바로 직접 설계·시범 5직업 고르기 제거), 진로설계 도우미 PROTOTYPE 제거(예시 없으면 '준비 중'), 진로정보 진로검사 = 자기이해 검사(다시 검사하기) + 자체 검사 4종 '준비 중'(MBTI·CliftonStrengths 제거), 회원가입 Apple 버튼 삭제(연동 안 함), 준비과정 탭 더미 예시 삭제(빈 상태 문구)
 
-### 내 진로상황 — 진로계획 개인화 단계 (2026-11-16, `b3339a8` · 운영 `v0.1.25` — 운영은 날짜 스위치로 2026-11-23 0시에 열림)
-- ⚠️ **날짜 스위치**(`e2ec5e0`): 처리방침 시행(11-23) 전이라 운영에서는 닫아 둔다 — `shared/config/features.ts` 의 `careerSituationOpen()`(`CAREER_SITUATION_OPENS_AT`). 진입(`CareerDesignPage`)·단계·고치기 화면·마이페이지 카드·템플릿의 내 상황 플랜이 이걸 본다. 닫혀 있으면 진로계획 세우기는 바로 템플릿, 단계·고치기 주소는 템플릿·마이페이지로 돌려보냄. 스테이징(`deploy-test.yml`)·로컬(`.env.development`)은 `VITE_CAREER_SITUATION_EARLY=1` 로 미리 열림. 날짜가 지나면 스위치는 지워도 된다
+### 내 진로상황 — 진로계획 개인화 단계 (2026-11-16, `b3339a8` · 운영 `v0.1.26`)
+- (v0.1.25 에 넣었던 날짜 스위치 `careerSituationOpen` 은 같은 날 오너 지시로 `8634c26` 에서 되돌림 — 운영도 바로 열림)
 - 흐름: 진로계획 세우기(`CareerDesignPage.goToTemplates`) → `/career-design/situation`(`CareerDesignSituationPage`) → 템플릿. 목표 직업에 예시 진로설계가 있을 때만. 건너뛰기 = `/career-design/templates?situation=skip`(지금처럼 비전공·전공 플랜)
 - 질문 부품 `CareerSituationForm.vue`(단계·마이페이지 공용) + `CareerRecordsEditor.vue`(경력·성과). 상태 `composables/useCareerProfile.ts`(모듈에 하나, 계정 토큰이 바뀌면 다시 불러옴), API `careerProfile.api.ts`
 - 계산 `lib/situation.ts` — `applySituation`(뺀 것·줄인 것과 이유, 과정 중 표시 재계산), `haveCandidates`·`haveLabelOf`·`haveKey`(보편 `cp.번호`·전용 `계획코드:p.번호`)·`isHad`(메모가 자격 이름이면 이름까지), `asksRelated`, `situationSentence`. 테스트 `situation.spec.ts`
