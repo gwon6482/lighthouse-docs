@@ -152,6 +152,7 @@ GET  /api/reference/career-attributes       🔴 미연동
 - 진로달성: 오늘 할 일의 과정 줄 = 루틴처럼 '완료' 한 번(`toggleProject`, 집중모드 없음), 이번 주 목표 = 다닌 날 n/m일, 쉬는 주엔 일정 안 생김(`generateItemsForWeek`), 로드맵 꼬리표·그 주 이름·'그만둠', 진행률(%)에는 저절로 빠짐(항목이 없어서)
 - 주간결산 3단계(`PeriodReviewCard.vue`, `useWeekReview` periodCards·periodDrafts·periodChanges): 진행 중인 과정마다 카드 — 점검(점검 주 + 지난주에 못 한 것 한 번 더) · 일정 그대로/바뀌었어요 · 바뀌면 한 줄 미리보기(끝 주차·옮겨지는 프로젝트·완료 예정). 마칠 때 과정 PUT → 타임라인 → 계획(완료 예정) → 결산 기록(`periodChecks`·`periodChanges`). 템포 안내에 '과정은 그대로', 속도 짐작에서 과정 뺌
 - ⚠️ 이미 만든 계획(과정 표시 없음)은 그대로 진도처럼 보인다 — 새로 세우는 계획부터. 진도의 주차별 다시 쓰기(할 일 수 = 주당 횟수)는 자료 작업으로 남음
+- 등록 화면(`b642d6c`·`b7a957d`, 등록 시안 정할 것 1~7 결정): 첫 화면 맨 위 '프로젝트 종류'(진도·과정, 기본 진도) — 과정이면 다니는 요일·하루 다니는 시간(1~10시간, 30분, 진도 범위 값이면 4시간으로)·다니는 기간(빠른 선택 1개월·3개월·6개월·1년·4년)·완료 기준, 다음 → 새 화면 `/career-design/project/period` '다니는 방식'(미리보기·단계 이름/기간/점검 3개·시작 준비/마무리 주 넣기·단계 추가/지우기·점검 주 자동). 예시 계획 과정은 단계 그대로(`phasesFromCurriculum`), 쉬는 주는 저장 때 같은 주차에 다시(`rebuildPeriodCurriculum`). 고칠 때 종류 바꾸기(진도→과정 확인 후 할 일 비움, 과정→진도 `period:false`). 진행 방식별 기본 이름·점검 `PERIOD_DEFAULTS` — ⚠️ 문장 내용은 오너와 고심 중. `resetDraftProject` 가 과정·학교 과정 표시를 지우게 고침(새 프로젝트에 따라붙던 빈틈)
 
 ### 진로계획 라이브러리 연결 — 준비과정 탭 · 템플릿 · 도우미 추천 (2026-11-15, `30d3dcc`·`61fa99b` · 2026-11-16 운영 `v0.1.25`)
 - 자료: `GET /api/job/:jobCode/preparation`(API 운영 반영). 타입 `JobPreparation`(types/encyclopedia.ts), 계산 `modules/encyclopedia/lib/preparation.ts`(길 고르기·기간 표시, 테스트)
