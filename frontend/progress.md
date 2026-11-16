@@ -144,6 +144,14 @@ GET  /api/reference/career-attributes       🔴 미연동
 - 마이페이지: '내 검사' 위 요약 카드(`AchievementMy.scss` `.mp-situ`), `/mypage/career-situation`(`MyCareerSituationPage`) 고치기·지우기
 - ⚠️ 경력·성과는 계획에 반영하지 않는다(포트폴리오용, 오너 결정). 라이트하우스 안에서 이미 끝낸 프로젝트는 사용자가 설계 과정에서 직접 고친다(오너 결정 — 자동 채우기 없음)
 
+### 프로젝트 종류 '과정' — 진도(기본)·과정(특별) (2026-11-16, `1b188ad` 스테이징 · 운영 태그 전)
+- 진로설계 검토 정할 것 1번 결정: 과정 = 정해진 곳에 다니는 기간(학교·실습·근무·수련·법정 교육). 진도는 꼬리표 없음, 과정만 꼬리표(`career-design/components/PeriodTag.vue`, 아이콘 `kind-period`). 훈련 종류는 두지 않음(반복 연습은 이후 '루틴 리뉴얼')
+- 규칙 정본 `career-design/lib/period.ts`(테스트 `period.spec.ts`): 과정 커리큘럼 = 주마다 title 이 '오늘 할 일' 이름(라이브러리 단계 제목), items 없음, 점검 주에만 `checks`(첫 단계 4주 이하면 그 끝 · 26주 이하 과정은 가장 긴 단계 가운데 · 더 길면 26주마다 · 마지막 주). '근무 6/12주' 표시, 일정 바꾸기 `applyPeriodChange`(끝나는 주 ±·잠시 쉬어요 = `pause` 주 끼우기·요일·그만뒀어요 = `stoppedAt` + 자르기)
+- 자동 배치·속도 재배치(`usePlanTimeline.autoSchedule`·`usePlanPace.rescheduleFrom`): 과정의 주당 시간은 예산에 세지 않고 문이 된다 — 과정은 앞이 다 끝난 뒤, 뒤 프로젝트는 과정이 끝난 뒤(과정 중에 하는 것 예외). 과정 없는 계획은 배치 그대로
+- 진로달성: 오늘 할 일의 과정 줄 = 루틴처럼 '완료' 한 번(`toggleProject`, 집중모드 없음), 이번 주 목표 = 다닌 날 n/m일, 쉬는 주엔 일정 안 생김(`generateItemsForWeek`), 로드맵 꼬리표·그 주 이름·'그만둠', 진행률(%)에는 저절로 빠짐(항목이 없어서)
+- 주간결산 3단계(`PeriodReviewCard.vue`, `useWeekReview` periodCards·periodDrafts·periodChanges): 진행 중인 과정마다 카드 — 점검(점검 주 + 지난주에 못 한 것 한 번 더) · 일정 그대로/바뀌었어요 · 바뀌면 한 줄 미리보기(끝 주차·옮겨지는 프로젝트·완료 예정). 마칠 때 과정 PUT → 타임라인 → 계획(완료 예정) → 결산 기록(`periodChecks`·`periodChanges`). 템포 안내에 '과정은 그대로', 속도 짐작에서 과정 뺌
+- ⚠️ 이미 만든 계획(과정 표시 없음)은 그대로 진도처럼 보인다 — 새로 세우는 계획부터. 진도의 주차별 다시 쓰기(할 일 수 = 주당 횟수)는 자료 작업으로 남음
+
 ### 진로계획 라이브러리 연결 — 준비과정 탭 · 템플릿 · 도우미 추천 (2026-11-15, `30d3dcc`·`61fa99b` · 2026-11-16 운영 `v0.1.25`)
 - 자료: `GET /api/job/:jobCode/preparation`(API 운영 반영). 타입 `JobPreparation`(types/encyclopedia.ts), 계산 `modules/encyclopedia/lib/preparation.ts`(길 고르기·기간 표시, 테스트)
 - **준비과정 탭**(`PreparationTab.vue` + `PreparationNotes.vue`): (카드 밖 맨 위) 요약 → 꼭 거쳐야 하는 것 → 갈래 단추 → 분량 → 번호를 세로줄로 이은 걸음(펼치면 주차별 할 일·법령 대조·주의) → (맨 밑) '준비과정 · 예시' 안내. 서버가 준 순서를 그대로 그린다

@@ -320,6 +320,12 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 { item_id, value_code, value_name, item_text, item_definition }
 ```
 
+### 진로계획 — 프로젝트 종류 '과정'(period) (2026-11-16, `45dd68b` 운영)
+- 라이브러리: 보편 29 + 직업 전용 78 프로젝트에 `period: true`(학위·교육기관 과정, 기관 실습, 인턴·아르바이트·수습·근무·경력, 수련, 법정·양성 교육, 정기 봉사, 교환학생, 부트캠프·국비 훈련). 검사: period 는 true 만, `course` 면 period 필수, 과정 단계 제목 20자 이하. `GET /api/job/:jobCode/preparation` 이 period 를 싣는다
+- CareerPlan: 프로젝트 `period`·`stoppedAt`(그만둔 날), 커리큘럼 주 `checks`(그 주 결산 점검)·`pause`(쉬는 주). `projectSettings` 가 period·stoppedAt 를 받는다(추가·일괄·수정)
+- WeeklyReview: `periodChecks[{projectId, week, items, done}]` · `periodChanges[{projectId, name, kind: end|pause|days|stop, weeks, days}]` — 기록만(계획 변경은 프로젝트·타임라인 API)
+- 모두 칸을 더한 것 — 운영 앱(v0.1.26)은 그대로 동작
+
 ### 직업 (Job)
 | 엔드포인트 | 설명 |
 |-----------|------|
