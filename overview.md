@@ -2,7 +2,7 @@
 
 > 서브 프로젝트가 공유하는 진행상황 및 설계 문서.
 > 각 Claude는 작업 시작 시 이 문서를 참조하고, 작업 완료 시 업데이트합니다.
-> 최종 갱신: **2026-09-26**
+> 최종 갱신: **2026-11-17**
 >
 > 개발일지는 `devlog/` 목록에서 **가장 최근 날짜 파일**을 볼 것 — 특정 날짜 URL을 박아두지 말 것
 > (파일명이 `YYYY-MM-DD.md`라 사전순 = 시간순).
@@ -50,13 +50,13 @@
 | Frontend | Vue 3.5 + TypeScript 5.9 + Vite 7.3 + Pinia + Capacitor 8 |
 | Admin | Next.js + NextAuth v5 |
 | 랜딩 | Nuxt (SSG, `npm run generate`) |
-| 인증 | JWT Bearer Token (7일) |
+| 인증 | JWT Bearer Token (90일 + `GET /api/auth/me` 때 연장 — 자동로그인 2026-11-04, API `25f8a85`) |
 
 ## 배포 인프라 (2026-06-25 클라우드 이전 완료)
 
 | 대상 | 방식 |
 |---|---|
-| **API** | `main` push → GitHub Actions → Docker → `ghcr.io/gwon6482/lighthouse-api` → **AWS Lightsail 컨테이너**(ap-northeast-2, nano, port 8080) |
+| **API** | `main` push → GitHub Actions → Docker → **Lightsail 자체 이미지 저장소**(2026-11-17~, 그 전 ghcr) → **AWS Lightsail 컨테이너**(ap-northeast-2, nano, port 8080). 레포는 2026-11-17부터 비공개 |
 | **Admin** | `main` push → **Vercel** Git 연동 자동 빌드/배포 |
 | **FE test** | `main` push → S3 `lighthouse-career-fe` → CF `EYU43VZ4GPE7Q` |
 | **FE app** | `v*` 태그 → S3 `lighthouse-career-app` → CF `E3LGZIV007TKVC` |
@@ -92,7 +92,7 @@
 >
 > **검색 노출(SEO, 2026-11-12~)** — 목표는 '라이트하우스' 한 단어 검색에 서비스가 나오는 것. 브랜드 표기는 어디서나 한글 '라이트하우스'가 먼저다.
 > 랜딩: 홈 h1·canonical(`plugins/canonical.ts`)·JSON-LD(`pages/index.vue`)·공유 그림(`/og-image.png`)·`sitemap.xml`, 배포 뒤 네이버·빙 자동 알림(IndexNow).
-> 앱(app.)은 한글 제목·설명·공유 카드, 스테이징(test.)·어드민은 **noindex**. 남은 일(검색엔진 등록·공식 채널·외부 링크)은 랜딩 `BACKLOG.md` 1번.
+> 앱(app.)은 한글 제목·설명·공유 카드, 스테이징(test.)·어드민은 **noindex**. 검색엔진 등록(네이버·구글·다음, 사이트맵 제출)은 2026-11-12 끝. 남은 일(공식 채널·외부 링크)은 랜딩 `BACKLOG.md` 1번.
 
 ## DB 구성 (MongoDB Atlas)
 
@@ -103,6 +103,7 @@
 | `survey_data` | 응답 결과 및 통계 |
 | `job_data` | 직업 정보 537건 + 후기 |
 | `reference_data` | 공통 참조 코드 (설문 요소, 진로백과 속성, T1 유형) |
+| `admin_data` | 어드민 일정관리(2026-11-02~) — `team_schedule_items`(기록·개발일정·향후 계획·할 일)·`team_members`(담당자). 서비스 사용자 데이터가 아니라 따로 둔다(API `models/TeamSchedule.js`) |
 
 ## 공통 규칙
 
@@ -115,17 +116,20 @@
 
 | 순서 | 항목 | 설명 |
 |---|---|---|
-| 1 | 워크넷 API 채용정보 | 직업 상세 채용 탭 실데이터 연동 |
-| 2 | ~~직업 준비정보 API~~ | **완료(2026-11-15)** — `GET /api/job/:jobCode/preparation` 이 진로계획 라이브러리(직업 537개의 예시 진로설계)를 내준다. API 운영 반영, 앱 준비과정 탭·진로설계 템플릿은 스테이징(운영 태그 전) |
+| 1 | ~~워크넷 API 채용정보~~ | **완료(2026-10-15)** — `GET /api/job/:jobCode/recruitment`(API `411b019`, 고용24 채용정보·공채속보). 앱 채용 탭 `RecruitmentTab.vue` 운영 `v0.1.18`(공채 섹션 `v0.1.19`) |
+| 2 | ~~직업 준비정보 API~~ | **완료(2026-11-15)** — `GET /api/job/:jobCode/preparation` 이 진로계획 라이브러리(직업 537개의 예시 진로설계)를 내준다. API 운영 반영, 앱 준비과정 탭·진로설계 템플릿·도우미 추천은 2026-11-16 운영 `v0.1.25` |
 | 4 | 진로달성 피드 | 사용자 인증 기록 모아보기 |
 | 5 | SNS 로그인 | **카카오·구글 모두 프로덕션 완료** (카카오 v0.1.9~ / 구글 **v0.1.11**, 2026-09-25 구글 동의화면 프로덕션 게시). Apple 미구현 |
 
 > 구 로드맵의 "진로달성 생성"·"메인페이지 종합"·"랜딩+도메인 정리"는 완료되어 제외.
 > **"회원가입 진로답변 서버 저장"도 2026-09-09 완료**되어 제외했다(`User.onboarding`).
-> 단 **저장만 되고 읽는 곳은 아직 없다** — 통계·개인화 활용은 별도 과제다.
+> 읽는 곳: 어드민 '가입 설문' 분포 화면(`/dashboard/onboarding`, 2026-09-17)·회원 상세 팝업(2026-09-26),
+> 앱 '내 진로상황'이 가입 때 고른 지금 상황(Q1)으로 학교 칸을 미리 채운다(`GET /api/user/career-profile` 의 `onboardingStatus`, 2026-11-16 `v0.1.26`).
+> (예전에 "저장만 되고 읽는 곳은 아직 없다"고 적혀 있었다 — 2026-11-17 바로잡음)
 
 ## 📌 문서 신뢰도 주의
 
 각 progress.md의 "미완성" 목록은 실제 코드보다 뒤처지는 일이 잦다.
 착수 전 **코드/프로덕션 실측으로 확인**할 것. (2026-08-07에 3건이 이미 완료된 상태로 잘못 남아있는 것을 발견해 정정함.
-2026-08-17에는 "백엔드 미구현"으로 적힌 preparation/recruitment가 실제로는 **FE가 호출조차 하지 않는 경로**임을 확인해 정정함)
+2026-08-17에는 "백엔드 미구현"으로 적힌 preparation/recruitment가 실제로는 **FE가 호출조차 하지 않는 경로**임을 확인해 정정함.
+그 뒤 두 경로 모두 구현됨 — 채용 2026-10-15, 준비과정 2026-11-15. 2026-11-17에는 '스테이징·미출시'로 남은 항목을 운영 태그 이력과 대조해 바로잡음)

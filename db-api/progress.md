@@ -3,7 +3,7 @@
 **프로젝트**: lighthouse-api
 **스택**: Node.js + Express + MongoDB (Mongoose) + Docker
 **배포**: ~~홈서버(port 3000) → CloudFront~~ → **AWS Lightsail 컨테이너(서울, port 8080)** → api.lighthouse.career (2026-06-25 클라우드 이전)
-- 이미지: `ghcr.io/gwon6482/lighthouse-api`(public). CI: `main push → Docker 빌드 → ghcr push → Lightsail 자동 재배포`
+- 이미지: **Lightsail 자체 저장소** `:lighthouse-api.app.N`(2026-11-17~, 비공개). CI: `main push → Docker 빌드 → push-container-image → Lightsail 자동 재배포`. 그 전엔 공개 `ghcr.io/gwon6482/lighthouse-api`였다(폐기). 레포도 2026-11-17부터 비공개
 - DB는 MongoDB Atlas(클라우드), 파일 업로드는 S3. 상세는 `devlog/2026-06-25.md`
 
 > 자동로그인(2026-11-04, `25f8a85`): JWT 90일(env `JWT_EXPIRES_IN=90d`). `GET /api/auth/me` 가 발급 후 하루 지난 토큰이면 응답에 새 `token` 을 동봉 — 쓰는 동안 계속 연장. 리프레시 토큰·원격 로그아웃은 아직 없음
@@ -124,7 +124,8 @@ localhost:5173 에서 시작
 | 계정 생성 시점 | 위저드 **끝** | 위저드 **전**(콜백) |
 
 > ⚠️ 카카오는 계정이 먼저 생기므로 위저드 도중 이탈하면 **나이·성별·진로답변이 빈 계정이 남는다.**
-> 재진입 가드는 `apps/app` 라우터에만 있어 **test 셸에서는 검증이 불가능**하다.
+> 재진입 가드는 처음엔 `apps/app` 라우터에만 있어 test 셸에서 검증할 수 없었다.
+> 2026-11-04(앱 `13798e1`)부터 두 셸이 같은 진입 분기(`shared/router/entryGuard.ts`)를 써서 test 셸에서도 확인된다.
 
 > ⚠️ `lastLoginAt` 갱신은 `save()` 가 아니라 `updateOne` 이다. `save()` 는 문서 전체 검증을
 > 다시 돌려서, 옛 계정에 스키마와 어긋난 값이 하나라도 있으면 **로그인 자체가 실패한다.**
@@ -238,7 +239,8 @@ localhost:5173 에서 시작
 > ⚠️ 후기는 지우지 않는다. 본문은 다른 이용자가 보는 공개 정보이고 개인 식별자는
 > `submitterEmail` 하나뿐이라 그것만 비운다.
 
-> ⚠️ **FE 에 계정 삭제 UI 가 아직 없다.** 이 엔드포인트를 호출하는 코드가 FE 전체에 0건이다.
+> 앱 탈퇴 화면: 마이페이지 맨 아래 '계정' → `AccountDeleteSheet.vue`('삭제' 직접 입력)가 이 엔드포인트를 부른다 —
+> 앱 `ba1c4ce`, 운영 `v0.1.16`(2026-10-05). (예전에 "FE 에 계정 삭제 UI 가 아직 없다"고 적혀 있었다 — 2026-11-17 바로잡음)
 
 점검용 읽기 전용 스크립트: `scripts/inspect-deletion-scope.js`, `scripts/inspect-orphans.js`.
 ⚠️ 후자는 버킷을 **프로덕션 값으로 명시**한다 — `config/s3.js` 기본값(`lighthouse-career-fe`)에
@@ -594,9 +596,9 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 
 | 항목 | 비고 |
 |------|------|
-| `GET /api/job/:jobCode/recruitment` | 워크넷 공식 API 연동 예정 |
+| ~~`GET /api/job/:jobCode/recruitment`~~ | **구현(2026-10-15 `411b019`, 운영)** — 고용24 채용정보·공채속보. 아래 '진로백과 채용' 절. 앱 채용 탭 운영 `v0.1.18` |
 | ~~`GET /api/job/:jobCode/preparation`~~ | **구현(2026-11-15, 운영)** — 진로계획 라이브러리. 아래 '진로계획 라이브러리' 절 |
-| OAuth 로그인 | **카카오 완료(2026-09-10, 라이브)**. Google/Apple 은 `providers` 에서 false 고정, 미구현 |
+| OAuth 로그인 | **카카오 완료(2026-09-10)** · **구글 완료**(API 2026-09-17 `8d91ddc`, 앱 운영 `v0.1.11` 2026-09-25 — 동의화면 프로덕션 게시). **Apple 만** `providers` 에서 false 고정, 미구현 |
 | 테스트 코드 | 없음 |
 | CORS 오리진 화이트리스트 | 현재 전체 허용(`app.use(cors())`). 모바일 오리진 확정 후 예정 |
 
@@ -634,9 +636,9 @@ Lightsail 은 **한 번에 하나의 deployment 만** 허용한다. 커밋을 �
 > 판정할 것 — uptime 이 낮아도 그게 *이전* 배포의 교체일 수 있다.
 
 ### 배포 방식
-- GitHub `main` 브랜치 push → `.github/workflows/deploy.yml` 자동 실행
-- 홈서버: `git pull` → `npm install --omit=dev` → `pm2 reload lighthouse-db-api --update-env`
-- SSH 인증: `SSH_HOST`, `SSH_USER=root`, `SSH_PASSWORD`
+- GitHub `main` 브랜치 push → `.github/workflows/deploy.yml`(Build & Deploy API) 자동 실행. `**.md`·`docs/**` 만 바뀐 push 는 건너뛴다(`paths-ignore`)
+- Docker 빌드 → **Lightsail 자체 저장소**(`:lighthouse-api.app.N`, 로그에 커밋 sha 대응) → AWS Lightsail 컨테이너 `lighthouse-api` 새 배포(env 는 워크플로가 GitHub Secrets 에서 한 줄씩 넣는다). 2026-11-17 전에는 공개 ghcr(커밋 sha + latest)였다
+- ~~홈서버 `git pull` → `pm2 reload` · SSH 인증~~ — 2026-06-25 클라우드 이전으로 폐기(2026-11-17 바로잡음)
 
 ### 라이브 로그 (2026-09-23 정리)
 
@@ -713,7 +715,7 @@ app.options('*', cors());  // OPTIONS preflight 처리
 | `POST /api/admin/work24/call` | adminAuth. `{ apiId, params }` → 허용 목록 주소만, **키는 서버에서만** 붙임(화면 authKey 무시). 응답 `{ httpStatus, ms, apiError, body, url(키 가림) }` |
 - 허용 목록 `config/work24Endpoints.js`(명세에서 생성), 심리검사 결과 37·38 제외. 키 `WORK24_KEY_*` 13개 GitHub Secrets → deploy.yml(선택 항목)
 
-## 진로백과 채용 — `GET /api/job/:jobCode/recruitment` (2026-10-16, `411b019`)
+## 진로백과 채용 — `GET /api/job/:jobCode/recruitment` (2026-10-15 커밋 `411b019` · 일지 `devlog/2026-10-16.md`)
 
 - 쿼리 `limit` 1~20(기본 10). 응답 `{ postings[], sources[], cached }` — 출처가 달라도 공고 모양은 같다
   (`id '<출처>:<번호>'`·회사·제목·지역·급여·경력·학력·등록일·마감{date, untilFilled, label}·원문 URL)
@@ -723,7 +725,7 @@ app.options('*', cors());  // OPTIONS preflight 처리
   `job_info.work24.keco.code`(4자리)+'00' = 상위 직종 → 하위 직종 공고까지 포함. 537개 중 534개 연결, 미연결은 `skipped`
 - 키 `WORK24_KEY_RECRUIT`(Secrets). 출처가 하나라도 성공했을 때만 캐시
 
-### 채용 — 기업 공채 `openings` (2026-10-16, `c0408c8`)
+### 채용 — 기업 공채 `openings` (2026-10-15 커밋 `c0408c8`)
 - 응답에 `openings: [{ source, sourceName, total, scope: { code, name }, items: Opening[] }]` 추가 — 고용24 공채속보(210L21)
 - 직종 **중분류** 단위(세분류 0건). 세분류→중분류 = `config/work24OccupationTree.json`(재생성 `node --env-file=.env scripts/work24-occupation-tree.js`)
 - 출처 약속에 선택 메서드 `searchOpenings` 추가. Posting 의 employmentType = 고용형태(empTpCd), workSchedule = 근무형태
@@ -743,6 +745,12 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - 문항 수정 로그: `[question-edit] key=question-editor|admin|none status=… PUT …` (컨테이너 로그, 3일 보관, 키 값은 안 남김)
 - Secret `QUESTION_EDITOR_KEY`(사용자 등록) → deploy.yml 선택 항목으로 전달
 
+## 어드민 일정관리 — `/api/admin/schedule/*` (2026-11-02, `32070e1`·`76180c5`)
+- DB `admin_data`(서비스 사용자 데이터와 분리) — `team_schedule_items`(kind `record`·`schedule`·`plan`·`todo`, category 8개, 담당자, 기간, 완료) · `team_members`. 모델 `models/TeamSchedule.js`, 핸들러 `controllers/teamScheduleController.js`
+- `GET/POST /schedule/items`(`?from=&to=` 기간이 겹치는 것) · `PUT/DELETE /schedule/items/:id` · `GET/POST /schedule/members` · `DELETE /schedule/members/:id` — 모두 `/api/admin` 아래(adminAuth)
+- 일정 전용 키: 헤더 **`x-schedule-key`**(Secret `SCHEDULE_WRITE_KEY`)로는 **일정 항목 조회·추가·수정만** 된다(삭제·팀원·다른 관리자 경로는 401). 배포 워크플로·개발일지 기록용. 키가 서버에 없으면 이 경로는 닫힌다(`middleware/scheduleKeyAuth.js`)
+- 항목 `source`(고유, 예: 태그 자동 기록) — 같은 출처로 다시 오면 새로 만들지 않고 기존 것을 돌려준다(워크플로 재실행 대비). 개발일지는 여기 저장하지 않는다(어드민이 lighthouse-docs 에서 읽음)
+
 ## 2026-10-29
 - 진로 뉴스 `GET /api/news/career`(routes/news.js, services/news) — 진로엔뉴스 RSS 제목·링크만, 1시간 캐시
 - 프로젝트 실행 설정(duration·priority·notification·missedNotification·notificationTime·memo) 저장(addProject·bulkAddProjects·updateProject)
@@ -760,7 +768,7 @@ app.options('*', cors());  // OPTIONS preflight 처리
   - ⚠️ **이 폴더를 고쳐 main 에 올리면 배포와 함께 사용자 화면이 바뀐다.** `summary`·`gate`·`goal`·`note`·`skip`·`caution`·`checked` 는 그대로 보인다(내부 메모 금지). `source`·`promotedFrom`·`families`·`verify` 는 내주지 않는다
   - 운영 직업 목록과 대조 `node scripts/plan-library-coverage-check.js`(읽기 전용) — 537/537. 새 직업이 생기면 계획 없는 직업으로 나온다
   - 운영 이미지(공개)에는 런타임이 읽는 4종만 — 작성 기록·검토용은 `.dockerignore`. `*.md` 패턴은 루트만 걸러서 `data/plan-library/*.md` 를 따로 적었다
-  - 쓰는 곳: 앱 진로백과 준비과정 탭 · 진로설계 템플릿 · 도우미 추천(모두 스테이징, 운영 태그 전)
+  - 쓰는 곳: 앱 진로백과 준비과정 탭 · 진로설계 템플릿 · 도우미 추천(모두 2026-11-16 운영 `v0.1.25`)
 - **2026-11-15 수정 요청 반영**(`1004025`, 운영): 요약(summary) 279개·문장으로 쓴 관문(gate) 41개를 해요체로 / 대학 입학이 필수인 계획에 12개월 입시 준비 — 수능 세트(`cp.csat-concept` 20주 → `cp.csat-past` 16주 → `cp.csat-final` 12주 → `cp.college-apply` 4주) 31자리, 실기 입시(`cp.practical-admission` 52주) 8자리. `cp.dept-admission` 은 뺌. 분류표에 세부 유형 '대학 입시(수능·실기)'. 지금 보편 172개 · 확인함 147 · 주의 194
   - 규칙(README): `summary`·문장 꼴 `gate` 는 해요체, 대입 필수는 12개월 준비, 프로젝트 길이는 제한하지 않는다
 - **2026-11-15 직업마다 제 갈래만**(`c8b66f2`, 운영): 갈래에 '세부 분야'와 '같은 계획에 묶인 다른 직업의 길'이 섞여 있어 변호사·판사·검사가 세 길을 다 보여 주던 것(같은 꼴 95개 계획). `priority-jobs.json` 에 대표 직업의 `ownTracks`, 함께 덮는 직업의 `covers[].tracks` — 함께 덮는 직업 + `track` 은 그 갈래 하나만, `track` 없으면 통째로(`shared: true`). 응답에 `displayName` 추가. `cp.major-grades`(전공 성적 관리) 삭제. 지금 보편 171개

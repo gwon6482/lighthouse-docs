@@ -43,7 +43,7 @@ src/
 
 ## lib/api.ts API 함수 목록
 
-**BASE URL**: `process.env.NEXT_PUBLIC_API_URL || "https://api.lighthouse.career"`
+**BASE URL**: `/api/proxy`(이 앱의 서버 프록시 — 세션 검증 + `x-admin-key` 주입, 2026-07-31~). 프록시가 `API_BASE_URL || NEXT_PUBLIC_API_URL || "https://api.lighthouse.career"` 로 넘긴다(`src/app/api/proxy/[...path]/route.ts`)
 
 | export | 메서드 | 엔드포인트 |
 |--------|--------|-----------|
@@ -56,17 +56,24 @@ src/
 | `referenceApi.getSurveyElements(params)` | GET | `/api/reference/survey-elements` |
 | `referenceApi.getCareerAttributes(params)` | GET | `/api/reference/career-attributes` |
 | `referenceApi.create/update/delete(...)` | POST/PUT/DELETE | `/api/reference/...` |
-| `encyclopediaApi.getReviews(jobCode)` | GET | `/api/job/:jobCode/review` ⚠️ |
-| `encyclopediaApi.getPreparation(jobCode)` | GET | `/api/job/:jobCode/preparation` |
-| `encyclopediaApi.getRecruitment(jobCode)` | GET | `/api/job/:jobCode/recruitment` |
+| `encyclopediaApi.getReviews(jobCode)` | GET | `/api/job/:jobCode/reviews` (2026-09-09 `28ff3cc` 에서 `/review` → `/reviews`) |
+| `encyclopediaApi.getPreparation(jobCode)` | GET | `/api/job/:jobCode/preparation` (API 2026-11-15~) |
+| `encyclopediaApi.getRecruitment(jobCode)` | GET | `/api/job/:jobCode/recruitment` (API 2026-10-15~) |
+| `reviewsApi.list/update/remove` | GET/PUT/DELETE | `/api/admin/reviews`, `/api/admin/reviews/:id` (2026-10-15 `a00960f`) |
+| `usersApi.list/detail/reset/remove` | GET/POST/DELETE | `/api/admin/users`, `/:uid`, `/:uid/reset` (2026-09-25~26) |
+| `careerPathApi.list/update/remove` | GET/PATCH/DELETE | `/api/admin/career-path`, `/:id` (2026-10-26) |
+| `scheduleApi.*` | GET/POST/PUT/DELETE | `/api/admin/schedule/items[/:id]`, `/api/admin/schedule/members[/:id]` (2026-11-02) |
+| `work24Api.endpoints/call` | GET/POST | `/api/admin/work24/endpoints`, `/api/admin/work24/call` (2026-10-16) |
+| `devlogApi.month(month)` | GET | 이 앱의 서버 라우트 `/api/devlog` — lighthouse-docs devlog 를 읽는다 (2026-11-02) |
 | `jobApi.search(name)` | GET | `/api/job/search?name=` |
 | `onboardingApi.getStats()` | GET | `/api/admin/onboarding/stats` (2026-09-17) |
 | `researchApi.getStats(includeTest)` | GET | `/api/survey/research/stats` (2026-10-24, 테스트 응답 기본 제외) |
 | `researchApi.getFeedbackStats(includeTest)` | GET | `/api/survey/research/feedback-stats` (2026-11-15, 검사·결과지 평가 집계) |
 | `jobApi.getOne(jobCode)` | GET | `/api/job/:jobCode` |
 
-> ⚠️ `encyclopediaApi.getReviews` 경로가 `/review`(단수)로 되어 있음 → `/reviews`로 수정 필요
-> 후기 관리(승인/반려) API 함수도 미추가 상태
+> ✅ 두 가지 모두 해결됨(2026-11-17 바로잡음 — 예전엔 아래 둘이 '수정 필요·미추가'로 남아 있었다)
+> - `encyclopediaApi.getReviews` 경로 `/review`(단수) → `/reviews` — 2026-09-09 `28ff3cc`
+> - 후기 관리(승인/반려) API 함수 `reviewsApi` — 2026-10-15 `a00960f`(화면 `/dashboard/reviews`)
 
 ## 완성된 기능 ✅
 
@@ -85,6 +92,8 @@ src/
 | `/dashboard/career-path` | 직업인 진로과정 검수 — 승인 대기/승인/반려, 종류(나의 진로과정·템플릿 의견), 해 온 것 분류 고쳐 승인, 책·강의 '차시 조사 필요', 제출 확인 번호로 찾아 삭제(삭제 요청) |
 | `/dashboard/research` | 연구 설문 모집 현황 — 역할별 목표 대비 진척·완주율, 적합도, 불성실 의심, 직업 대분류 쏠림, 중단 지점, 테스트 응답 포함 토글 + **검사·결과지 평가**(2026-11-15): 평가 ①·② 응답률, 문항별 분포(전체·실무자·예비 사용자), 길이 체감×실제 시간, 집중도×의심 표시, 글 답변. 문항 이름·보기는 API 가 준다 |
 | `/dashboard/users` | **회원 관리** — 목록·검색·상세 팝업·단계별 리셋·영구 삭제 (2026-09-25~26) |
+| `/dashboard/reviews` | **직업 후기 검수** — 승인 대기 → 승인·반려·수정·삭제 (2026-10-15 `a00960f`). 연구 설문 실무자 후기가 pending 으로 들어오고, 승인 전엔 진로백과에 안 보인다 |
+| `/dashboard/work24` | 고용24 API 탐색기 — 41개 API 호출, 키는 API 서버에서만 붙는다 (2026-10-16) |
 
 ### 회원 관리 (`/dashboard/users`)
 
@@ -97,7 +106,7 @@ src/
 | `signup` 가입 직후 | 이름·나이·성별·가입설문 **+ survey + design** |
 
 > 🚨 **`signup` 리셋이 가입 위저드를 다시 띄우는 것은 소셜 계정뿐이다.**
-> 앱 진입 가드(`lighthouse-test shared/router/app.ts`)가 `socialOnly && !onboarding.answeredAt`
+> 앱 진입 가드(`lighthouse-test shared/router/entryGuard.ts` — 2026-11-04 까지는 `app.ts`)가 `socialOnly && !onboarding.answeredAt`
 > 일 때만 위저드로 보낸다. 이메일 계정은 onboarding 을 지워도 `/main/before` 로 간다.
 > 가드를 "local 이 없으면 소셜"로 뒤집으면 **authProviders 가 빈 옛 계정이 위저드에 갇힌다**
 > (2026-09-09 이전 이메일 가입자). 그래서 가드는 두고, 응답 `wizardWillShow` 와 모달 배너로 알린다.
@@ -115,8 +124,8 @@ src/
 
 | 기능 | 비고 |
 |------|------|
-| 후기 관리 UI | 승인/반려 버튼, 어드민 직접 등록 폼 미구현 |
-| 준비과정·채용 탭 | API 엔드포인트 자체가 없음(라이브 404). 현재 '준비 중' 안내 표시 — 로드맵 1·2번 |
+| 후기 직접 등록 폼 | 검수 화면(승인 대기 → 승인·반려·수정·삭제)은 2026-10-15 `a00960f` 로 완성(위 '프로젝트 구조'·'완성된 기능'의 `/dashboard/reviews`). 남은 것은 어드민이 후기를 **직접 등록**하는 폼뿐 — API `POST /api/admin/reviews` 는 있고 `reviewsApi` 에 create 가 없다 |
+| 진로백과 준비과정·채용 탭 화면 | API 는 생겼다(채용 2026-10-15 `411b019` · 준비과정 2026-11-15, 둘 다 운영). 어드민 탭은 응답 JSON 을 그대로 찍는다(`TabContent`) — 전용 화면 없음. '준비 중' 안내는 404 일 때만 뜬다. ⚠️ `lib/api.ts` 의 "두 경로는 API 에 아직 없다" 주석과 안내 문구 '로드맵 1·2번'은 옛 내용 |
 
 > ✅ **해결됨(2026-09-09)**: `getReviews` 경로 오타(`/review`)를 `/reviews` 로 수정(`28ff3cc`).
 > dead code 가 아니라 실제 호출 경로였고 직업 선택 시 기본 탭이라 매번 404 였다.
@@ -135,7 +144,8 @@ src/
 > ⚠️ 무한 로딩 **자체는 재현하지 못했다.** 원인 특정이 아니라 다음에 원인이 보이게 만든 것이다.
 
 ### ⚠️ 알려진 위험 — 관리자 비밀번호 (조치 보류)
-프로덕션 admin.lighthouse.career는 `admin@lighthouse.com` / `changeme`로 로그인된다(2026-08-07 실측).
+프로덕션 admin.lighthouse.career는 **처음 정한 기본 관리자 계정·비밀번호 그대로** 로그인된다(2026-08-07 실측).
+값은 공개 문서에 적지 않는다(이 레포는 공개 — 2026-11-17 이 자리에 적혀 있던 계정·비밀번호를 지움).
 비밀번호는 DB가 아니라 Vercel production env `ADMIN_PASSWORD`와 평문 비교(`auth.ts`)이며, 아직 교체되지 않았다.
 **사용자가 위험을 인지한 상태에서 현행 유지를 선택**했으므로 방치가 아니라 보류다.
 

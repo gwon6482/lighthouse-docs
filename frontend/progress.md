@@ -5,11 +5,11 @@
 **상태**: 🟡 개발 중
 **구조**: `packages/core`(기능모듈+shared) + 두 셸 — `apps/test`(스테이징, main push → test.lighthouse.career) / `apps/app`(프로덕션, `v*` 태그 → app.lighthouse.career)
 
-> 자동로그인(2026-11-04, 스테이징 `8e7e608`): `auth.fetchMe()` → 'ok'|'invalid'|'offline'|'none'. 서버가 준 연장 토큰 저장, **로그아웃은 401·404 때만**(연결 실패로 로그아웃하지 않음). 루트 가드는 offline 이면 진로달성 홈
+> 자동로그인(2026-11-04 `8e7e608`, 운영 `v0.1.21` 2026-11-12): `auth.fetchMe()` → 'ok'|'invalid'|'offline'|'none'. 서버가 준 연장 토큰 저장, **로그아웃은 401·404 때만**(연결 실패로 로그아웃하지 않음). 루트 가드는 offline 이면 진로달성 홈
 
 > 테스트 셸 진입(2026-11-04, `13798e1`): test.lighthouse.career `/` 도 app 셸과 같은 진입 분기(`shared/router/entryGuard.ts`) — 홈 화면에 추가한 테스트 앱이 온보딩부터 열린다. **워크벤치(전체 기능 목록) 홈은 `/dev`**
 
-> 결과지 직무 추천(2026-11-09, 스테이징 `08d49c9`): `SurveyResultBody` 5구역 = **'나에게 맞는 직무 3가지'**(`GET /api/job/recommend-groups`, 로그인 필요). 카드 = 막대 3개(대표 직업 3개 평균) · 이유 한 문장(핵심어 굵은 색 글씨 + 회색 영역 괄호 '지적 추구(가치관)', 2개까지, `9710fdc`) · 대표 직업 · '직업 N개 모두 보기'(제자리 펼침) · '채용 공고'(`/career-encyclopedia/group/:code/recruitment`, RecruitmentTab 에 `groupCode`). 총점 % 없음. 예전 Top 5 는 아래 '직업 순위 보기'. 직무를 못 받으면 Top 5 로 대체(404 로 로그아웃 안 됨). 온보딩 결과는 `recruit-link=false`. PDF 4쪽 — 4쪽에 직무 3가지 + 직업 순위 Top 5 요약 띠(순위·직업·매칭도, `SecJobsStrip`) + 안내(`65b255f`, 시안 비교 후 사용자 선택). 직무 실패 시 같은 자리에 예전 Top 5 표. **랜딩 결과지(www /survey, 정본)에도 같은 날 반영**(랜딩 `75ba003` — 직업 줄은 글씨만, 채용 공고는 고용24 검색 새 탭)
+> 결과지 직무 추천(2026-11-09 `08d49c9`, 운영 `v0.1.21` 2026-11-12): `SurveyResultBody` 5구역 = **'나에게 맞는 직무 3가지'**(`GET /api/job/recommend-groups`, 로그인 필요). 카드 = 막대 3개(대표 직업 3개 평균) · 이유 한 문장(핵심어 굵은 색 글씨 + 회색 영역 괄호 '지적 추구(가치관)', 2개까지, `9710fdc`) · 대표 직업 · '직업 N개 모두 보기'(제자리 펼침) · '채용 공고'(`/career-encyclopedia/group/:code/recruitment`, RecruitmentTab 에 `groupCode`). 총점 % 없음. 예전 Top 5 는 아래 '직업 순위 보기'. 직무를 못 받으면 Top 5 로 대체(404 로 로그아웃 안 됨). 온보딩 결과는 `recruit-link=false`. PDF 4쪽 — 4쪽에 직무 3가지 + 직업 순위 Top 5 요약 띠(순위·직업·매칭도, `SecJobsStrip`) + 안내(`65b255f`, 시안 비교 후 사용자 선택). 직무 실패 시 같은 자리에 예전 Top 5 표. **랜딩 결과지(www /survey, 정본)에도 같은 날 반영**(랜딩 `75ba003` — 직업 줄은 글씨만, 채용 공고는 고용24 검색 새 탭)
 
 ## ⚠️ main 에 고쳐져 있어도 프로덕션은 옛 번들일 수 있다 (2026-09-17)
 
@@ -56,9 +56,9 @@
 | 설문 진행 | `/self-understanding/test` | ✅ |
 | 설문 결과 보고서 | `/result/:survey_id` | ✅ |
 
-> 검사결과 디자인(2026-11-02~, 스테이징): **정본은 랜딩 `components/survey/ResearchResult.vue`**. 앱 `SurveyResultBody.vue` 가 같은 마크업·스타일(scoped)을 쓴다 — 한쪽을 고치면 다른 쪽도. 앱 전용: 업무 환경 항목 아이콘·관문 배지·직업 누르기
+> 검사결과 디자인(2026-11-02~ `0b9acc9`, 운영 `v0.1.21`): **정본은 랜딩 `components/survey/ResearchResult.vue`**. 앱 `SurveyResultBody.vue` 가 같은 마크업·스타일(scoped)을 쓴다 — 한쪽을 고치면 다른 쪽도. 앱 전용: 업무 환경 항목 아이콘·관문 배지·직업 누르기
 > 예외 — 직무 카드 '대표 직업' 목록은 **일부러 다르게** 간다(2026-11-16): 랜딩은 누를 곳이 없어 글씨 목록(연노랑 상자 #fffdf0 · 금색 라벨 · 노란 점 · 14px·500·#333, 랜딩 `65fc821`), 앱은 진로백과로 가는 버튼이라 누를 수 있어 보이는 모양을 따로 잡는다(앱 쪽은 아직 손대지 않음 — 다음 작업)
-> 비로그인 직접 진입: 운영 셸 가드가 `/self-understanding/*` 를 토큰 없으면 /onboarding 으로(`shared/router/authBoundary.needsLogin`, 2026-11-02). 검사→회원가입 흐름을 열 땐 거기서 뺄 것
+> 비로그인 직접 진입: 운영 셸 가드가 `/self-understanding/*` 를 토큰 없으면 /onboarding 으로(`shared/router/authBoundary.needsLogin`, 2026-11-02). 검사→회원가입 흐름을 열 땐 거기서 뺄 것 → 2026-11-12 `v0.1.21` 부터 운영 빌드도 `features.guestEntry` 가 켜져 `needsLogin` 이 막지 않는다 — 검사는 비로그인으로 열린다(아래 '비회원 진입 경로')
 | 마이페이지 | `/mypage` | ✅ |
 | 직업 검색 홈 | `/career-encyclopedia` | ✅ |
 | 추천 직업 목록 | `/career-encyclopedia/recommended` | ✅ 리디자인 완료 |
@@ -67,11 +67,11 @@
 | 진로계획 작성 | `/career-design/plan/new` | 🟡 개발 중 |
 
 > 프로젝트 분류 5개(2026-10-25): 자격요건 #1DB95A · 분야지식 #F47820 · 직무기술 #A855F7 · 포트폴리오 #4480F5 · **실무경험 #F0507E**(인턴·현장실습·대외활동, 아이콘 `public/career-design/icon-experience.svg`). ⚠️ 색·라벨 표가 18곳에 복제돼 있다 — 분류를 바꿀 땐 `grep -rn "experience"` 로 전부 찾을 것(공용화 과제)
-> 프로젝트 진행 방식(2026-10-27~, 스테이징): `composables/projectMethods.ts` — 영역별 방식(학습 수단은 여러 영역 공용, 모두 기타), 방식별 입력·완료 기준. 작성 화면 필수, 목록·템플릿·도우미 표시, 방식 없는 프로젝트 '진행 방식을 정해주세요'. ⚠️ 커리큘럼 저장(saveProject)은 필드를 골라 담는다 — Project 필드를 늘리면 거기도. 템플릿 단계는 비전공·전공('이직' 제거)
+> 프로젝트 진행 방식(2026-10-27~ `70823ff`, 운영 `v0.1.21`): `composables/projectMethods.ts` — 영역별 방식(학습 수단은 여러 영역 공용, 모두 기타), 방식별 입력·완료 기준. 작성 화면 필수, 목록·템플릿·도우미 표시, 방식 없는 프로젝트 '진행 방식을 정해주세요'. ⚠️ 커리큘럼 저장(saveProject)은 필드를 골라 담는다 — Project 필드를 늘리면 거기도. 템플릿 단계는 비전공·전공('이직' 제거)
 > 진로백과 검색·둘러보기(2026-11-14, 운영 `v0.1.24`): 검색은 넓은 검색(`searchJobsWide`) — 시작할 때 이전 결과를 비우고, 검색어가 들어간 분류를 '분류로 찾기' 칩으로(`SearchResult`, 1차는 모두·2차는 직업 2개 이상), 누르면 그 분류의 직업 전체. 검색 상태는 `useEncyclopedia` 의 searchGroups·searchScope·scopeResults·searchFailed·isSearching(직업 상세의 isLoading 과 분리). 둘러보기는 `/api/job/explore` 무작위 5개 + '다른 직업 보기'(모듈 상태라 직업을 눌렀다 돌아와도 같은 목록, 못 받으면 예전 3개), 카드는 직업 이름 → 하는 일(최대 두 줄) → 직무 이름·관문 배지 한 줄. 진로정보 탭은 노란 '진로백과 바로가기' 버튼(`.ci-enc`). 직업 상세 '되는 길'은 `work24.waySource` 가 오면 '라이트하우스가 정리한 내용이에요' 표시
-> 직업 진입 관문 배지(2026-10-28~, 스테이징): `shared/jobGates/`(gateBadges.ts 배지 5개 정의 한 곳 · jobGates.data.ts 111개 · useJobGate). 직업이 나오는 모든 화면에 배지(최대 2), 진로백과 '이 직업이 되려면', 템플릿 '이렇게 준비해요'. 데이터는 앱 정적 → 평가 후 서버
-> 자체 아이콘(2026-10-28~, 스테이징): `public/icons/*.svg`(24×24 currentColor) → `pnpm icons` → `shared/icons/icons.generated.ts` → `<AppIcon name size>`. 이모지·기호 → 139종 교체 완료(0~5단계). ⚠️ 아이콘은 글자색을 따른다 — 어두운 배경·큰 그림은 color 를 지정할 것. 이모지를 새로 쓰지 말 것 — 필요하면 아이콘 키로 요청. 펼침 토글은 ui-chevron-down 회전(.chevron-toggle)
-> 진로달성 개편(2026-10-28~30, **2026-11-03 스테이징 반영 — 운영 태그 전**. 하단 탭 화면 글씨 기준 $tw-* 700/600/500/400): 하단 탭 5개(진로정보 `/career-info`·로드맵 `/career-achievement/roadmap`·홈·로그 `/career-achievement/records`·마이), 홈 재구성(계산은 `career-achievement/lib/planBoard.ts`), 주간 일정 조정(수정하기/취소), **주간결산 5단계** `/career-achievement/review/:step`(성과·성장·평가·템포=속도 변경 시 남은 프로젝트 재배치·다음 주) + 팝업(시작 요일 전날/시작일) + 모아보기 `/career-achievement/reviews`(지나간 주 전체·최신순, 결산 건너뛴 주는 기록으로 계산해 '결산 안 함' 표시 — 2026-11-04). 집중모드 `/career-achievement/start/:type/:id` 2026-11-04 개편(C안 '채움'·L1 크림 — 목표 시간 설정→전체 화면 타이머→판정 없는 완료, 다른 시안은 레포 docs/design/focus-mode-mockup.html). ⚠️ 스테이징 main 의 진로달성 메인은 팀원 하드코딩 더미 — 운영 태그 전에 이 브랜치 병합 필요
+> 직업 진입 관문 배지(2026-10-28~, 운영 `v0.1.21`): `shared/jobGates/`(gateBadges.ts 배지 5개 정의 한 곳 · jobGates.data.ts 111개 · useJobGate). 직업이 나오는 모든 화면에 배지(최대 2), 진로백과 '이 직업이 되려면', 템플릿 '이렇게 준비해요'. 데이터는 앱 정적 → 평가 후 서버
+> 자체 아이콘(2026-10-28~, 운영 `v0.1.21`): `public/icons/*.svg`(24×24 currentColor) → `pnpm icons` → `shared/icons/icons.generated.ts` → `<AppIcon name size>`. 이모지·기호 → 139종 교체 완료(0~5단계). ⚠️ 아이콘은 글자색을 따른다 — 어두운 배경·큰 그림은 color 를 지정할 것. 이모지를 새로 쓰지 말 것 — 필요하면 아이콘 키로 요청. 펼침 토글은 ui-chevron-down 회전(.chevron-toggle)
+> 진로달성 개편(2026-10-28~30, 2026-11-03 스테이징 반영 → **운영 `v0.1.21`(2026-11-12)**. 하단 탭 화면 글씨 기준 $tw-* 700/600/500/400): 하단 탭 5개(진로정보 `/career-info`·로드맵 `/career-achievement/roadmap`·홈·로그 `/career-achievement/records`·마이), 홈 재구성(계산은 `career-achievement/lib/planBoard.ts`), 주간 일정 조정(수정하기/취소), **주간결산 5단계** `/career-achievement/review/:step`(성과·성장·평가·템포=속도 변경 시 남은 프로젝트 재배치·다음 주) + 팝업(시작 요일 전날/시작일) + 모아보기 `/career-achievement/reviews`(지나간 주 전체·최신순, 결산 건너뛴 주는 기록으로 계산해 '결산 안 함' 표시 — 2026-11-04). 집중모드 `/career-achievement/start/:type/:id` 2026-11-04 개편(C안 '채움'·L1 크림 — 목표 시간 설정→전체 화면 타이머→판정 없는 완료, 다른 시안은 레포 docs/design/focus-mode-mockup.html). ~~⚠️ 스테이징 main 의 진로달성 메인은 팀원 하드코딩 더미 — 운영 태그 전에 이 브랜치 병합 필요~~ → 2026-11-03 병합(`2e9cc14`, 팀원 더미를 `3620dad` 화면으로 대체)되어 v0.1.21 로 나감(2026-11-17 바로잡음)
 > ⚠️ **주 경계 = 계획 시작 요일(reviewDay)부터 7일**(2026-10-30, `cc8175e`). 2026-08-28~10-30 은 월~일 고정이었다(화면 안내와 불일치). 주 계산 함수는 마지막 인자 start(없으면 월). 기존 사용자는 저장된 주간 일정 없는 지난 날의 '그날 할 일'이 다시 계산돼 연속 달성 수치가 바뀔 수 있다
 | 진로달성 메인 | `/career-achievement` | ✅ (단계 1) |
 | 진로달성 집중 모드 | `/career-achievement/start/:type/:id` | ✅ (단계 2) |
@@ -90,7 +90,7 @@ GET  /api/job/recommend/:survey_id          ✅ 연동됨 (경로 수정 완료)
 GET  /api/job/recommend-t2/:survey_id       ✅ 연동됨 (T2 추천)
 GET  /api/job/:jobCode/reviews              ✅ 연동됨
 GET  /api/job/:jobCode/preparation          ✅ 연동됨 (2026-11-15 — 준비과정 탭·진로설계 템플릿·도우미 추천. 11-16 지원 자격·과정 표시. 운영 `v0.1.25`)
-GET  /api/job/:jobCode/recruitment          ⬛ 미사용 — 화면은 FE 하드코딩 사용(아래 주의)
+GET  /api/job/:jobCode/recruitment          ✅ 연동됨 (채용 탭 RecruitmentTab.vue — 2026-10-15 de7e1ba·7e4db1d, 운영 v0.1.18·v0.1.19)
 GET  /api/user/profile                      ✅ 연동됨
 GET  /api/user/survey-results               ✅ 연동됨
 GET  /api/user/bookmarks                    ✅ 연동됨
@@ -99,18 +99,20 @@ DELETE /api/user/bookmarks/:jobCode         ✅ 연동됨
 GET  /api/user/target-career               ✅ 연동됨 (2026-05-21)
 PUT  /api/user/target-career               ✅ 연동됨 (2026-05-21)
 GET  /api/reference/survey-elements         🔴 미연동
-GET  /api/reference/career-attributes       🔴 미연동
+GET  /api/reference/career-attributes       ✅ 연동됨 (2026-10-05 a4a180f — 진로백과 속성 칩 설명, useCareerAttributes.ts, 운영 v0.1.16)
 ```
 
-> ⚠️ **진로백과 준비과정·채용 탭 주의 (2026-08-17 정정)**
-> 두 탭은 API를 **호출하지 않는다**. 데이터는 컴포넌트 내 jobCode 하드코딩 맵에 있다.
+> ✅ **지금(2026-11-17 확인): 두 탭 모두 API 를 쓴다.** 채용 = `GET /api/job/:jobCode/recruitment`(API `411b019`, 앱 `RecruitmentTab.vue` 운영 `v0.1.18`),
+> 준비과정 = `GET /api/job/:jobCode/preparation`(앱 `PreparationTab.vue` 운영 `v0.1.25`). 하드코딩 맵은 없다. 아래는 그 전 기록이다.
+>
+> ⚠️ **진로백과 준비과정·채용 탭 주의 (2026-08-17 정정 — 당시 상태)**
+> 두 탭은 API를 **호출하지 않았다**. 데이터는 컴포넌트 내 jobCode 하드코딩 맵에 있었다.
 > - 준비과정 = `PreparationTab.vue`의 `SAMPLE_JOURNEYS_BY_JOB`
 > - 채용 = `RecruitmentTab.vue`의 `SAMPLE_POSTINGS_BY_JOB`
 >
-> `encyclopedia.api.ts`에 preparation/recruitment 호출 함수가 있으나 **어떤 컴포넌트도 쓰지 않는
-> dead code**이며 API는 두 경로 모두 404. 기존에 "백엔드 미구현"으로 적혀 있던 항목의 실체가 이것이다.
-> 현재 데이터가 들어 있는 jobCode는 **013601, 024101** 둘뿐. 신규 직업 추가는 백엔드가 아니라
-> 위 두 맵을 수정하는 작업이다. DB 이관은 미착수 별도 과제.
+> `encyclopedia.api.ts`에 preparation/recruitment 호출 함수가 있었으나 **어떤 컴포넌트도 쓰지 않는
+> dead code**였고 API는 두 경로 모두 404였다. 기존에 "백엔드 미구현"으로 적혀 있던 항목의 실체가 이것이다.
+> 당시 데이터가 들어 있던 jobCode는 **013601, 024101** 둘뿐이었다.
 >
 > **2026-09-28 후속** — 고용24 공식 API 에도 **대응 데이터가 없다**(전환해도 못 채운다).
 > 지우는 대신 제목을 "준비과정 **예시**"로 바꾸고 예시 배지를 달았다(`9ec019f`).
@@ -118,7 +120,7 @@ GET  /api/reference/career-attributes       🔴 미연동
 >
 > **2026-10-16 채용 탭 실데이터 전환** — 가짜 공고 제거(v0.1.17) 후 `GET /api/job/:jobCode/recruitment` 를 호출한다(`de7e1ba`).
 > 고용24 최근 공고 10건 + 출처별 '전체 N건 보기'. 응답은 출처 공통 모양이라 사람인·잡코리아가 붙어도 화면 수정 없음.
-> 위 '채용 = SAMPLE_POSTINGS_BY_JOB' 설명은 더 이상 사실이 아니다(준비과정은 여전히 하드코딩).
+> 위 '채용 = SAMPLE_POSTINGS_BY_JOB' 설명은 더 이상 사실이 아니다(이때 준비과정은 아직 하드코딩 — 2026-11-12 더미 삭제, 11-15 API 전환).
 >
 > **2026-11-15 준비과정 탭 실데이터 전환** — `GET /api/job/:jobCode/preparation`(진로계획 라이브러리)을 호출한다(`30d3dcc`, 2026-11-16 운영 `v0.1.25`).
 > 직업 537개 전부에 예시 진로설계가 있다. 위 '준비과정 = SAMPLE_JOURNEYS_BY_JOB' 설명도 더 이상 사실이 아니다 — 두 탭 모두 API 를 쓴다.
@@ -126,15 +128,16 @@ GET  /api/reference/career-attributes       🔴 미연동
 
 ---
 
-### 비회원 진입 경로 (2026-11-09, `0d7d104` 스테이징 · 운영은 11-16 처리방침 시행 뒤)
-- `features.guestEntry`(VITE_GUEST_ENTRY=1, deploy-test 에만). 진입 `/start`(→ 검사 소개 `/self-understanding` + 비회원 안내) · `/job/:code` · `/career-encyclopedia`. 옛 intro·guide 페이지는 삭제(`89659fa`)
+### 비회원 진입 경로 (2026-11-09 `0d7d104` 스테이징 → 2026-11-12 운영 `v0.1.21`)
+- (예전 제목은 "운영은 11-16 처리방침 시행 뒤"였다. 오너 결정으로 시행일 전에 열었다 — 2026-11-17 바로잡음)
+- `features.guestEntry`(VITE_GUEST_ENTRY=1 — `deploy-test.yml`·`deploy-app.yml` 둘 다, 운영 빌드는 `b544215`부터). 진입 `/start`(→ 검사 소개 `/self-understanding` + 비회원 안내) · `/job/:code` · `/career-encyclopedia`. 옛 intro·guide 페이지는 삭제(`89659fa`)
 - 결과지 비회원: 성격 Top3 + 잠금(GuestLockCard), 나가면 경고·즉시 삭제. 열람 키 localStorage `lh_guest_survey`
 - 로그인·가입·OAuth 복귀 시 `linkPendingGuestSurvey()` 로 계정 연결 → 결과 `?next=1`
 - 진로백과 개요 '이 일을 하는 사람들' 아래·다른 탭 잠금. 가입 위저드 만 14세·약관 동의
 - 결과지 맛보기(2026-11-11, `eeefb07`): 성격 4위~ 흐린 줄, '가입하면 열리는 결과' 목차(구역별 내 결과 개수 + 1위만 공개), 가입 상자 A안(`SocialLoginButton` 공식 카카오·구글 버튼)
 - 떠 있는 가입 카드(2026-11-11, `ef931d9`): 성격 유형을 지나면 올라오고 맨 아래 가입 상자가 보이면 내려감(시안 ② 작은 카드)
 - 진로백과 비회원 흐림 미리보기(2026-11-11, `ee8d63a`): 개요 아래·후기·준비과정·채용을 그리되 제목·첫 항목만 또렷하게(guest-veil.scss), 안내 카드 JobGuestCta, 떠 있는 카드 GuestFloatCard(결과지와 공용)
-- 운영 태그 전 더미 정리(2026-11-12, `db9a9f1`, 스테이징): 진로계획 템플릿은 목표 직업에 템플릿이 있을 때만(B안, 없으면 바로 직접 설계·시범 5직업 고르기 제거), 진로설계 도우미 PROTOTYPE 제거(예시 없으면 '준비 중'), 진로정보 진로검사 = 자기이해 검사(다시 검사하기) + 자체 검사 4종 '준비 중'(MBTI·CliftonStrengths 제거), 회원가입 Apple 버튼 삭제(연동 안 함), 준비과정 탭 더미 예시 삭제(빈 상태 문구)
+- 운영 태그 전 더미 정리(2026-11-12, `db9a9f1` → 같은 날 운영 `v0.1.21`): 진로계획 템플릿은 목표 직업에 템플릿이 있을 때만(B안, 없으면 바로 직접 설계·시범 5직업 고르기 제거), 진로설계 도우미 PROTOTYPE 제거(예시 없으면 '준비 중'), 진로정보 진로검사 = 자기이해 검사(다시 검사하기) + 자체 검사 4종 '준비 중'(MBTI·CliftonStrengths 제거), 회원가입 Apple 버튼 삭제(연동 안 함), 준비과정 탭 더미 예시 삭제(빈 상태 문구)
 
 ### 내 진로상황 — 진로계획 개인화 단계 (2026-11-16, `b3339a8` · 운영 `v0.1.26`)
 - (v0.1.25 에 넣었던 날짜 스위치 `careerSituationOpen` 은 같은 날 오너 지시로 `8634c26` 에서 되돌림 — 운영도 바로 열림)
@@ -177,7 +180,7 @@ GET  /api/reference/career-attributes       🔴 미연동
   - 요일 `pickDays(count, recent)`: 앞 프로젝트와 겹치지 않게(주 5회 이상은 기본 요일, 일요일은 비움). 템플릿·도우미 추천이 쓴다
   - 완료 기준: 자격요건 + 기타 = '스스로 정한 기준을 채우면 완료'(자기소개서·면접 준비가 자격요건으로 옮겨 와서). 속도 화면 기간은 2년이 넘으면 '약 5년 2개월'
 
-### 진로백과 개요 탭 — 고용24 신규 섹션 (2026-09-28, 스테이징)
+### 진로백과 개요 탭 — 고용24 신규 섹션 (2026-09-28 `402037b`, 같은 날 운영 `v0.1.13`)
 
 직업 데이터가 고용24 공식 API 전량으로 바뀌면서 개요 탭에 4개 섹션이 추가됐다(`402037b`).
 
@@ -193,7 +196,7 @@ GET  /api/reference/career-attributes       🔴 미연동
 ⚠️ 타입 수정 동반: `relatedMajors` 가 `string[]` 이 아니라 `RelatedMajor[]` 였다.
    `RatioItem` · `ProspectBucket` · `JobWork24` · `dataSource` · `sharedWith` 신설.
 
-### 회원 탈퇴 UI (2026-10-05, `ba1c4ce`, **미출시**)
+### 회원 탈퇴 UI (2026-10-05, `ba1c4ce`, 운영 **`v0.1.16`**)
 
 `DELETE /api/user` 는 2026-09-25 부터 하드 삭제인데 **앱에 화면이 없었다** —
 처리방침에 '파기'를 명시해놓고 탈퇴할 길이 없었다.
@@ -210,7 +213,7 @@ GET  /api/reference/career-attributes       🔴 미연동
 
 ---
 
-### 항목 설명문 툴팁 (2026-10-05, `a4a180f`, **미출시**)
+### 항목 설명문 툴팁 (2026-10-05, `a4a180f`, 운영 **`v0.1.16`**)
 
 진로백과 개요 탭 속성 칩을 누르면 설명이 펼쳐진다. 한 번에 하나.
 설명문은 **이미 `reference_data.career_attributes` 에 202건 있었다**(definition 누락 0).
@@ -726,7 +729,7 @@ export const updateTargetCareer = (data) => req.put('/api/user/target-career', d
 
 ### T23 가치관 검사 UI 전면 교체
 - 텍스트 리스트 → **4열 이미지 카드 그리드**
-- 이미지: `/public/t23_img/{VALUE_CODE}_transparent.png` (13개) — 2026-11-15 부터 앱 화면은 안 씀(랜딩 /survey 가 불러와 파일만 유지)
+- 이미지: `/public/t23_img/{VALUE_CODE}_transparent.png` (13개) — 2026-11-15 `dev` 브랜치(`31c9f15`)에서 앱 화면이 안 쓰게 바꿈. **main·운영은 아직 이 그림을 쓴다**(2026-11-17 확인, 아래 맨 끝 절)
 - 상단 슬롯 3개: 선택한 순위 이미지 + 정의 문장 표시
 - 순위 배지 (보라색 원형), 카드 내부는 이름 아닌 **정의 문장** 표시
 - API response에 `value_code`, `value_name` 필드 추가 (백엔드 배포 완료)
@@ -795,7 +798,8 @@ src/modules/
 - [x] 회원가입 진로답변(Q1/Q2/Q3) 백엔드 저장 — **2026-09-09 완료**. `User.onboarding`
   (`status`/`concerns`/`selfAwareness`/`answeredAt`)에 저장. API `be045f3`+`2c49ea3`, FE `42d433c`.
   실상은 '임시 저장'이 아니라 **write-only**였다 — `lh_onboarding_v1`을 읽는 코드가 레포 전체에 0곳이었다.
-  ⚠️ **저장한 답을 쓰는 곳은 아직 없다.** 기존 가입자에겐 필드가 없다(백필 안 함)
+  읽는 곳: 어드민 '가입 설문' 분포(2026-09-17)·회원 상세(2026-09-26), 앱 '내 진로상황'의 학교 칸 미리 채움(Q1, `onboardingStatus`, `v0.1.26`).
+  (예전엔 "저장한 답을 쓰는 곳은 아직 없다"고 적혀 있었다 — 2026-11-17 바로잡음) 기존 가입자에겐 필드가 없다(백필 안 함)
 - [ ] 메인페이지 종합 (홈 화면에 각 섹션 요약 연결)
 - [ ] 랜딩페이지 연결 (www.lighthouse.career)
 - [x] 소셜 로그인(카카오·구글) / SNS OAuth — **카카오·구글 모두 프로덕션 반영 완료**
@@ -824,7 +828,8 @@ src/modules/
   루트/홈(`/`, `/career-achievement`, `/main/before`, `/onboarding`)에서는 "한 번 더 누르면 종료", 그 외엔 라우터 뒤로.
   (2026-08-07 갱신: `/main` 제거, 설계 전 메인 `/main/before`도 루트 취급에 추가)
 - **R5 — 인증 경계**: 로그인 페이지(`/onboarding/auth`)에 **로그인 상태로** 닿으면 그 자리에 머물지 않는다.
-  판정은 `shared/router/authBoundary.ts`(순수 함수, 회귀 테스트 5건), 실행은 `shared/router/app.ts` beforeEach.
+  판정은 `shared/router/authBoundary.ts`(순수 함수, 회귀 테스트 5건), 실행은 `shared/router/entryGuard.ts` beforeEach
+  (2026-11-04 `13798e1` 부터 app·test 두 셸 공용. 그 전에는 `shared/router/app.ts` 안에 있었다).
 
   | 상황 | 동작 |
   |---|---|
@@ -1198,20 +1203,20 @@ CI 는 워크플로우(`deploy-test.yml`/`deploy-app.yml`)가 `VITE_API` 를 직
 테스트가 `useWeeklySchedule` → `@/shared/api` 를 끌어오는데 거기서 `import.meta.env` 를 쓴다.
 
 
-## 진로백과 후기 탭 보완 (2026-10-15, `12e6185` — 스테이징만, 프로덕션 태그 전)
+## 진로백과 후기 탭 보완 (2026-10-15, `12e6185` — 같은 날 운영 `v0.1.17`에 포함. 예전 표기 '스테이징만'은 2026-11-17 바로잡음)
 
 - 현직자 후기(랜딩 연구 설문 → 어드민 승인)가 싣는 값 표시: 경력 배지 "현직 3~5년", 선택 서술 '준비'·'하루'
 - ⚠️ 성격 태그 이름이 **옛 표기**(C 성실성·S 민감성·I 지성 …)로 남아 결과 화면과 달랐다 → 검사 결과와 같은 이름으로 정정
 - 실데이터 현황: `job_reviews` 8건 = 전부 어드민 더미. 진짜 후기는 연구 설문 경로로만 들어온다
 
 
-## 자기이해 흥미 화면 글씨 정리 (2026-11-06, `8175acd` — dev)
+## 자기이해 흥미 화면 글씨 정리 (2026-11-06, `8175acd` — `dev` 브랜치에만. main(스테이징)·운영 미반영, 2026-11-17 확인)
 
 - 항목 버튼 Pretendard 적용(Arial 로 나오던 것), 분야명 16px, 설명 모바일 14px·데스크탑 13px, 선택 체크 표시
 - 문구는 같은 날 DB 에서 수정: `research/question-edits/2026-11-06/`
 - 남은 것: ~~가치관 카드(`.pq-card`) 글꼴 확인~~(2026-11-15 해결), iPhone Safari 실기기 확인
 
-## 자기이해 가치관·업무환경 화면 사진 제거 + 헤더 한 줄 (2026-11-15, `31c9f15`·`7034b3e`·`f21b9b1` — dev)
+## 자기이해 가치관·업무환경 화면 사진 제거 + 헤더 한 줄 (2026-11-15, `31c9f15`·`7034b3e`·`f21b9b1` — `dev` 브랜치에만. main(스테이징)·운영 미반영, 2026-11-17 확인)
 
 - 가치관(T23, `PriorityQuestion.vue`): 문장 목록 + 왼쪽 순위 원(노랑), 위쪽 슬롯·사진 제거, 가치관 이름은 넣지 않음. 지시문은 흥미 화면과 같게, 데스크탑만 지시문→목록 32px
 - 업무환경(T3, `ThreeChoiceQuestion.vue`): 단계 세로 목록 + 왼쪽 단계 숫자 원(노랑), 사진·파트 상자 제거, 소제목 '1 · 소통 강도'(영역색 글자)
