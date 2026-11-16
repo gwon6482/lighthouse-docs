@@ -139,6 +139,13 @@ GET  /api/reference/career-attributes       ✅ 연동됨 (2026-10-05 a4a180f �
 - 진로백과 비회원 흐림 미리보기(2026-11-11, `ee8d63a`): 개요 아래·후기·준비과정·채용을 그리되 제목·첫 항목만 또렷하게(guest-veil.scss), 안내 카드 JobGuestCta, 떠 있는 카드 GuestFloatCard(결과지와 공용)
 - 운영 태그 전 더미 정리(2026-11-12, `db9a9f1` → 같은 날 운영 `v0.1.21`): 진로계획 템플릿은 목표 직업에 템플릿이 있을 때만(B안, 없으면 바로 직접 설계·시범 5직업 고르기 제거), 진로설계 도우미 PROTOTYPE 제거(예시 없으면 '준비 중'), 진로정보 진로검사 = 자기이해 검사(다시 검사하기) + 자체 검사 4종 '준비 중'(MBTI·CliftonStrengths 제거), 회원가입 Apple 버튼 삭제(연동 안 함), 준비과정 탭 더미 예시 삭제(빈 상태 문구)
 
+### 핫픽스 — 아이폰 사파리 화면 넘김 멈춤 · 진로 여정 시작 로그아웃 · 검사 '이전' (2026-11-17, 운영 `v0.1.27`)
+- `shared/router/chunkReload.ts`·`createRouter.ts`: 화면 파일이 실패하면 같은 화면 안에서 다시 받고 한 번 더(`retryChunk`, 모든 lazy 라우트) → 새로고침 → 앱 캐시 비우기 → 멈춤. 사파리 MIME 문구 인식
+- `MainBeforePage.vue`: 머리 오른쪽 로그아웃(마이페이지와 같은 확인)
+- `SelfUnderstandingTestPage.vue`: 첫 페이지 '이전'은 바로 앞이 선택 화면이면 뒤로, 아니면 바꿔치기
+- 배포 워크플로(`deploy-app`·`deploy-test`): 새 파일 먼저 → 시작 파일 나중(no-cache) · assets/ 는 지우지 않음
+- 운영 태그는 release 브랜치(v0.1.26 + 핫픽스)에서 냈다 — main 의 '과정'은 아직 스테이징
+
 ### 내 진로상황 — 진로계획 개인화 단계 (2026-11-16, `b3339a8` · 운영 `v0.1.26`)
 - (v0.1.25 에 넣었던 날짜 스위치 `careerSituationOpen` 은 같은 날 오너 지시로 `8634c26` 에서 되돌림 — 운영도 바로 열림)
 - 흐름: 진로계획 세우기(`CareerDesignPage.goToTemplates`) → `/career-design/situation`(`CareerDesignSituationPage`) → 템플릿. 목표 직업에 예시 진로설계가 있을 때만. 건너뛰기 = `/career-design/templates?situation=skip`(지금처럼 비전공·전공 플랜)
