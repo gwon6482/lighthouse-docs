@@ -57,6 +57,7 @@
 | 설문 결과 보고서 | `/result/:survey_id` | ✅ |
 
 > 검사결과 디자인(2026-11-02~, 스테이징): **정본은 랜딩 `components/survey/ResearchResult.vue`**. 앱 `SurveyResultBody.vue` 가 같은 마크업·스타일(scoped)을 쓴다 — 한쪽을 고치면 다른 쪽도. 앱 전용: 업무 환경 항목 아이콘·관문 배지·직업 누르기
+> 예외 — 직무 카드 '대표 직업' 목록은 **일부러 다르게** 간다(2026-11-16): 랜딩은 누를 곳이 없어 글씨 목록(연노랑 상자 #fffdf0 · 금색 라벨 · 노란 점 · 14px·500·#333, 랜딩 `65fc821`), 앱은 진로백과로 가는 버튼이라 누를 수 있어 보이는 모양을 따로 잡는다(앱 쪽은 아직 손대지 않음 — 다음 작업)
 > 비로그인 직접 진입: 운영 셸 가드가 `/self-understanding/*` 를 토큰 없으면 /onboarding 으로(`shared/router/authBoundary.needsLogin`, 2026-11-02). 검사→회원가입 흐름을 열 땐 거기서 뺄 것
 | 마이페이지 | `/mypage` | ✅ |
 | 직업 검색 홈 | `/career-encyclopedia` | ✅ |
