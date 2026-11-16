@@ -3,7 +3,7 @@
 **프로젝트**: lighthouse-api
 **스택**: Node.js + Express + MongoDB (Mongoose) + Docker
 **배포**: ~~홈서버(port 3000) → CloudFront~~ → **AWS Lightsail 컨테이너(서울, port 8080)** → api.lighthouse.career (2026-06-25 클라우드 이전)
-- 이미지: **Lightsail 자체 저장소** `:lighthouse-api.app.N`(2026-11-17~, 비공개). CI: `main push → Docker 빌드 → push-container-image → Lightsail 자동 재배포`. 그 전엔 공개 `ghcr.io/gwon6482/lighthouse-api`였다(폐기). 레포도 2026-11-17부터 비공개
+- 이미지: **Lightsail 자체 저장소** `:lighthouse-api.app.N`(2026-11-17~, 비공개). CI: `main push → Docker 빌드 → push-container-image → Lightsail 자동 재배포`. 그 전엔 공개 `ghcr.io/gwon6482/lighthouse-api`였다(폐기, 2026-11-17 삭제). 레포도 2026-11-17부터 비공개
 - DB는 MongoDB Atlas(클라우드), 파일 업로드는 S3. 상세는 `devlog/2026-06-25.md`
 
 > 자동로그인(2026-11-04, `25f8a85`): JWT 90일(env `JWT_EXPIRES_IN=90d`). `GET /api/auth/me` 가 발급 후 하루 지난 토큰이면 응답에 새 `token` 을 동봉 — 쓰는 동안 계속 연장. 리프레시 토큰·원격 로그아웃은 아직 없음
