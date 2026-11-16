@@ -18,9 +18,9 @@
 | `POST /api/auth/logout` | 로그아웃 (클라이언트 토큰 삭제 안내) |
 | `GET /api/auth/me` | 현재 유저 정보 조회 (토큰 검증) |
 
-**인증 방식**: JWT Bearer Token (7일 유효, `process.env.JWT_SECRET`)
+**인증 방식**: JWT Bearer Token (90일 유효 + `/api/auth/me` 호출 때 연장 — 2026-11-04~, `process.env.JWT_SECRET`)
 **구현 파일**: `middleware/auth.js`, `controllers/authController.js`, `routes/auth.js`
-**테스트 계정**: email: `test`, password: `test`
+**테스트 계정**: 공개 문서에 적지 않는다(이 레포는 공개). 필요하면 오너에게 묻는다.
 
 ### 소셜 로그인 (OAuth) — 카카오 2026-09-10 / 구글 2026-09-17 배포
 | 엔드포인트 | 설명 |
