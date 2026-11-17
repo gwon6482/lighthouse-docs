@@ -139,6 +139,10 @@ GET  /api/reference/career-attributes       ✅ 연동됨 (2026-10-05 a4a180f �
 - 진로백과 비회원 흐림 미리보기(2026-11-11, `ee8d63a`): 개요 아래·후기·준비과정·채용을 그리되 제목·첫 항목만 또렷하게(guest-veil.scss), 안내 카드 JobGuestCta, 떠 있는 카드 GuestFloatCard(결과지와 공용)
 - 운영 태그 전 더미 정리(2026-11-12, `db9a9f1` → 같은 날 운영 `v0.1.21`): 진로계획 템플릿은 목표 직업에 템플릿이 있을 때만(B안, 없으면 바로 직접 설계·시범 5직업 고르기 제거), 진로설계 도우미 PROTOTYPE 제거(예시 없으면 '준비 중'), 진로정보 진로검사 = 자기이해 검사(다시 검사하기) + 자체 검사 4종 '준비 중'(MBTI·CliftonStrengths 제거), 회원가입 Apple 버튼 삭제(연동 안 함), 준비과정 탭 더미 예시 삭제(빈 상태 문구)
 
+### 가입 흐름 다듬기 (2026-11-17, `d7267ea` 스테이징 · 다음 운영 태그)
+- `OAuthReturnPage.vue`: `?error=` 복귀라도 로그인돼 있으면 앱으로(연결 문제면 연결 문구, 로그인 유지)
+- `SignupWizardPage.vue` + `onboarding/lib/signupWizard.ts`: 입력 임시 보관(이 탭 sessionStorage, 1시간, 비밀번호·동의 제외), 가입 마친 계정·로그인된 채 이메일 위저드 → 앱, 위저드 모드가 바뀌는 이동은 새로 불러옴
+
 ### 핫픽스 — 아이폰 사파리 화면 넘김 멈춤 · 진로 여정 시작 로그아웃 · 검사 '이전' (2026-11-17, 운영 `v0.1.27`)
 - `shared/router/chunkReload.ts`·`createRouter.ts`: 화면 파일이 실패하면 같은 화면 안에서 다시 받고 한 번 더(`retryChunk`, 모든 lazy 라우트) → 새로고침 → 앱 캐시 비우기 → 멈춤. 사파리 MIME 문구 인식
 - `MainBeforePage.vue`: 머리 오른쪽 로그아웃(마이페이지와 같은 확인)
