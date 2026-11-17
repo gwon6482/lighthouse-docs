@@ -334,6 +334,8 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 | `GET /api/job/list` | 전체 직업 목록 (페이지네이션, 필터) |
 | `GET /api/job/classifications` | 대분류→소분류 트리 |
 | `GET /api/job/majors` | 관련학과 전체 목록 |
+| `GET /api/job/browse/axes` | **분류로 찾기** 고르기 화면용 축·보기·보기마다 줄 수(2026-11-17, 배포 98) |
+| `GET /api/job/browse` | **분류로 찾기** 목록 — `group·interest·talent·value·env·salary`(코드, 쉼표로 여럿)·`sort`·`limit≤60`·`offset`. 0~4줄이면 `relax`(하나 빼면)·`near`(하나만 빼고 맞음) |
 | `GET /api/job/search?name=` | 직업명 검색 |
 | `GET /api/job/:jobCode` | 직업 단건 상세 조회 |
 | `POST /api/job` | 직업 생성 |
@@ -380,6 +382,13 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
    변환식이 없어 `services/work24/jobMapping.json` 에 **536건 수작업 매핑**(미매핑 1건: 경기심판 420301).
 
 구현·함정은 `devlog/2026-09-28.md`, 명세·비교분석은 `reference/work24-open-api.md`.
+
+### 진로백과 '분류로 찾기' (2026-11-17, API 배포 98 · 앱은 스테이징)
+- 판정 규칙 정본 `services/jobBrowse`(순수 함수, 서버에만 — 앱 레포는 공개라 기준값을 두지 않는다). 숫자는 묶음 직업(work24-shared)을 `work24.jobCd`로 접은 줄 수
+- 축: 직무(대분류 13 짧은 이름 `jobGroups/codes.js` topInfo → 직무 112) · 관심 분야(검사 T22 33개 = 직업 지식 33개, 정본 `config/matchingMaps.js` T22_TO_KN) · 업무 환경(직업내 값 묶음 — 자세·고객 상대 하나씩, 켜기 3·빼기 3) · 재능 7(자기성찰 제외) · 가치관 9(경제적 보상은 연봉으로 안내) · 연봉(중간값 4·5·6·8천 이상)
+- 자료 없음(영역 값이 비었거나 전부 0)·크롤링본은 해당 속성 분류에서 빠진다(직무로는 찾음)
+- 이름은 검사 DB에서 읽는다(T2_2_interest·survey_elements T21·T2_3_values). 색인 10분, 어드민 직업 수정 때 `dropJobCaches`로 검색 색인과 함께 비움
+- 점검: `node scripts/job-browse-check.js --file <jobs.json>` 또는 `--db`(읽기만)
 
 ### 직업 추천 / 매칭 (Recommend)
 | 엔드포인트 | 설명 |
@@ -452,6 +461,11 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
   리팩터링 전후 `runRecommend` 출력 12건 바이트 동일, 라이브 = 로컬 계산
 - ⚠️ 정확도는 미검증(현직자 응답 1건). 직무 Top 3 우연 적중률 3% — 현직자 30명 안팎이면 우연과 가를 수 있다
 - 연구 설문 결과 `GET /api/survey/research/result/:respondent_id` 에도 `groups`(같은 함수, `a4c5a71`, Lightsail v77) — 랜딩 결과지용. 실패해도 결과지는 준다(groups 빈 배열)
+
+### 추천 손보기 (2026-11-17, API 배포 97)
+- 자료 없는 영역(빈 배열·값 전부 0 — 34개 직업): 그 사용자에게 다른 직업들이 받은 그 축 평균으로 채운다(5축·t2·결과지 직무 이유). 자료 0 직업의 추천 상위 10 점유 6.4~42.8% → 0.2~1.4%. 응답에 `match_missing`·`t2_match_missing`(칸 더하기)
+- 적재(`services/work24/transform.js`): 빈 값('')·null 은 건너뛰고 전부 0인 영역은 저장하지 않음, jobStatus 를 글로 저장(다음 월간 적재부터)
+- WE49 '규칙적인 근무'는 값이 클수록 불규칙 — T3(업무 변화 강도) 계산에서 뒤집어 쓴다. 직업 속성 표시는 `config/attributeDisplayOverrides.js`로 '불규칙한 근무'(관리 키 요청은 DB 원값 — name 칸은 월간 적재 열쇠)
 
 ### 직업 후기 (Review) — 2026-05-07 구현
 | 엔드포인트 | 설명 |
