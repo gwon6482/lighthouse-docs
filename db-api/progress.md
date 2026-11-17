@@ -767,8 +767,10 @@ app.options('*', cors());  // OPTIONS preflight 처리
   - 대표 직업이 아닌 직업(`covers`)은 대표 직업의 계획(`shared: true`), `covers[].track` 이 기본 갈래. `totals` 의 주 수는 하나씩 차례로 할 때의 합(선택 항목 제외)
   - ⚠️ **이 폴더를 고쳐 main 에 올리면 배포와 함께 사용자 화면이 바뀐다.** `summary`·`gate`·`goal`·`note`·`skip`·`caution`·`checked` 는 그대로 보인다(내부 메모 금지). `source`·`promotedFrom`·`families`·`verify` 는 내주지 않는다
   - 운영 직업 목록과 대조 `node scripts/plan-library-coverage-check.js`(읽기 전용) — 537/537. 새 직업이 생기면 계획 없는 직업으로 나온다
-  - 운영 이미지(공개)에는 런타임이 읽는 4종만 — 작성 기록·검토용은 `.dockerignore`. `*.md` 패턴은 루트만 걸러서 `data/plan-library/*.md` 를 따로 적었다
+  - 운영 이미지(비공개, 2026-11-17~ Lightsail 저장소)에는 런타임이 읽는 5종만(`pass-stats.json` 더함) — 작성 기록·검토용은 `.dockerignore`. `*.md` 패턴은 루트만 걸러서 `data/plan-library/*.md` 를 따로 적었다
   - 쓰는 곳: 앱 진로백과 준비과정 탭 · 진로설계 템플릿 · 도우미 추천(모두 2026-11-16 운영 `v0.1.25`)
+- **2026-11-17 큰 시험 분량 · 필기·실기 나누기(운영, 배포 95)**: 프로젝트 `studyHours`(전업 주 48시간 기준 — 주 6회·480분으로 적어 옛 앱도 읽힘)·`minAge`(응시 나이)·`firstPassRounds`(1차 합격 효력), 항목 `alongside`·`passStat`, 응답 `passStats`(쓰인 것만). 갈래 totals 에 `selfWeeks`·`periodWeeks`·`duringCount`(+ 큰 시험이 있으면 `examHours`·`selfWeeksPart`), 기존 `count`·`weeks`·`courseWeeks` 뜻은 그대로. 9급 합본·결과 보고 다시 정하기·임용은 졸업 뒤. 필기·실기(1·2차) 30개를 두 걸음으로(뒤 걸음이 옛 id, 앞 걸음 `-written`·`-first`), 보건 6직업 `cp.license-written`·`cp.license-practical`
+  - CareerPlan 프로젝트에 `studyHours`(0 = 분량 연결 끊김)·`alongside`. `npm test` = `node --test`
 - **2026-11-15 수정 요청 반영**(`1004025`, 운영): 요약(summary) 279개·문장으로 쓴 관문(gate) 41개를 해요체로 / 대학 입학이 필수인 계획에 12개월 입시 준비 — 수능 세트(`cp.csat-concept` 20주 → `cp.csat-past` 16주 → `cp.csat-final` 12주 → `cp.college-apply` 4주) 31자리, 실기 입시(`cp.practical-admission` 52주) 8자리. `cp.dept-admission` 은 뺌. 분류표에 세부 유형 '대학 입시(수능·실기)'. 지금 보편 172개 · 확인함 147 · 주의 194
   - 규칙(README): `summary`·문장 꼴 `gate` 는 해요체, 대입 필수는 12개월 준비, 프로젝트 길이는 제한하지 않는다
 - **2026-11-15 직업마다 제 갈래만**(`c8b66f2`, 운영): 갈래에 '세부 분야'와 '같은 계획에 묶인 다른 직업의 길'이 섞여 있어 변호사·판사·검사가 세 길을 다 보여 주던 것(같은 꼴 95개 계획). `priority-jobs.json` 에 대표 직업의 `ownTracks`, 함께 덮는 직업의 `covers[].tracks` — 함께 덮는 직업 + `track` 은 그 갈래 하나만, `track` 없으면 통째로(`shared: true`). 응답에 `displayName` 추가. `cp.major-grades`(전공 성적 관리) 삭제. 지금 보편 171개
