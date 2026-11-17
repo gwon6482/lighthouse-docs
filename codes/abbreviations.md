@@ -36,16 +36,18 @@
 
 ## 3. T21 재능 그룹 코드 (8가지)
 
+> 2026-11-17 정정: 예전 표(T=기술, L=논리수학, M=음악, N=자연, A=추상/언어)는 틀렸다. 정본은 앱 결과지 `SurveyResultBody.vue`의 `T21_LABEL`·`T21_DEFINITIONS`이고, 추천기 `config/matchingMaps.js`의 `T21_AB_MAP`도 이 뜻을 따른다.
+
 | 코드 | 의미 |
 |------|------|
-| T21_T | Technical (기술) |
-| T21_L | Logic/Mathematics (논리수학) |
-| T21_M | Music (음악) |
-| T21_B | Bodily (신체운동) |
-| T21_S | Spatial (공간) |
-| T21_I | Interpersonal (대인관계) |
-| T21_N | Naturalistic (자연) |
-| T21_A | Abstract/Linguistic (추상/언어) |
+| T21_L | Linguistic (언어) — 읽고 쓰고 말 |
+| T21_M | Logical-Mathematical (논리수학) — 논리적으로 분석하고 설계 |
+| T21_S | Spatial (공간) — 시각적으로 구성하고 표현 |
+| T21_A | Musical (음악) — 소리와 리듬으로 창작 |
+| T21_B | Bodily (신체운동) — 직접 몸으로 만들고 행동 |
+| T21_I | Interpersonal (대인관계) — 사람을 이해하고 소통 |
+| T21_N | Intrapersonal (자기성찰) — 깊이 사유하고 성찰 |
+| T21_T | Naturalistic (자연) — 자연을 관찰하고 탐구 |
 
 ---
 
