@@ -334,10 +334,10 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 | `GET /api/job/list` | 전체 직업 목록 (페이지네이션, 필터) |
 | `GET /api/job/classifications` | 대분류→소분류 트리 |
 | `GET /api/job/majors` | 관련학과 전체 목록 |
-| `GET /api/job/browse/axes` | **분류로 찾기** 고르기 화면용 축·보기·보기마다 줄 수(2026-11-17, 배포 98) |
-| `GET /api/job/browse` | **분류로 찾기** 목록 — `group·interest·talent·value·env·salary`(코드, 쉼표로 여럿)·`sort`·`limit≤60`·`offset`. 0~4줄이면 `relax`(하나 빼면)·`near`(하나만 빼고 맞음) |
+| `GET /api/job/browse/axes` | **분류로 찾기** 고르기 화면용 축·보기·보기마다 줄 수(2026-11-17, 배포 98). 가치관 보기에 짧은 설명 `desc`(배포 99) |
+| `GET /api/job/browse` | **분류로 찾기** 목록 — `group·interest·talent·value·env·salary`(코드, 쉼표로 여럿)·`sort`·`order`·`limit≤150`(배포 99, 전엔 60)·`offset`. 0~4줄이면 `relax`(하나 빼면)·`near`(하나만 빼고 맞음, `nearTotal`) |
 | `GET /api/job/search?name=` | 직업명 검색 |
-| `GET /api/job/:jobCode` | 직업 단건 상세 조회 |
+| `GET /api/job/:jobCode` | 직업 단건 상세 조회. `outlook`(일자리 전망 자료)·`relatedJobs`(비슷한 직업 이름) 칸(2026-11-18, 배포 99 — 자료 전에는 `null`) |
 | `POST /api/job` | 직업 생성 |
 | `PUT /api/job/:jobCode` | 직업 수정 |
 | `DELETE /api/job/:jobCode` | 직업 삭제 |
@@ -355,7 +355,7 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 | 인증키 | GitHub Secrets `WORK24_KEY` **만**. Lightsail env 에는 없다(API 컨테이너가 안 쓴다) |
 | 적재 방식 | 스왑 — 새 컬렉션 완성·검증 후 rename. 중간 상태 노출 없음 |
 | 백업 | `job_info_backup_YYYYMMDD` 최신 2개 유지 |
-| `dataSource` | `work24` 451 · `work24-shared` 85 · `crawled` 1 |
+| `dataSource` | `work24` 451 · `work24-shared` 82 · `crawled` 4(경기심판 + 2026-11-18 되돌린 매핑 오류 3개) |
 
 🔒 **`job_info_backup_20260926`(전환 전 크롤링본)은 영구 보존.**
    진로백과가 이미 개편돼 다시 만들 수 없는 데이터다.
@@ -379,7 +379,8 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
    ⚠️ 결과는 눈으로 확인한다 — `<Fortune>`(잡지명)을 HTML 태그로 오탐한다.
 
 ⚠️ 코드 체계가 셋이다 — 우리 `jobCode`(KECO 6자리) ≠ 직업사전(KSCO) ≠ Work24 `jobCd`(`K`+9자리).
-   변환식이 없어 `services/work24/jobMapping.json` 에 **536건 수작업 매핑**(미매핑 1건: 경기심판 420301).
+   변환식이 없어 `services/work24/jobMapping.json` 에 **533건 수작업 매핑**(미매핑 4건: 경기심판 420301 + 2026-11-18 매핑 오류로 판정한 보험상품개발자 031301·금융상품개발자 031302·통계사무원 029303).
+   매핑 오류 3건은 다른 직업(여행상품 개발자·회계사무원) 자료를 받고 있었다. 전환 전 보존본으로 되돌리는 Actions 'Restore unmapped jobs'(수동, 기본 미리 보기 — `scripts/restore-unmapped-from-backup.js`)를 11-18에 실행했다.
 
 구현·함정은 `devlog/2026-09-28.md`, 명세·비교분석은 `reference/work24-open-api.md`.
 
@@ -389,6 +390,13 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 - 자료 없음(영역 값이 비었거나 전부 0)·크롤링본은 해당 속성 분류에서 빠진다(직무로는 찾음)
 - 이름은 검사 DB에서 읽는다(T2_2_interest·survey_elements T21·T2_3_values). 색인 10분, 어드민 직업 수정 때 `dropJobCaches`로 검색 색인과 함께 비움
 - 점검: `node scripts/job-browse-check.js --file <jobs.json>` 또는 `--db`(읽기만)
+- **사용성 확인 반영(2026-11-18, 배포 99):** 탭 하나 = 조건 하나(업무 환경은 탭 안에서 함께, 조건 id `env`) · 보기 옆 숫자 = 지금 목록에 넣었을 때 남는 수 · '하나만 빼고 맞아요'는 나중에 더한 조건이 빠진 직업부터(`order` = 탭을 고른 순서) · 이유 줄 한 조건 한 줄 · 묶음 줄 설명은 묶음 이름과 같은 구성원의 하는 일(없으면 null) · 가치관 `desc`. 앱은 브랜치 `feat/job-browse-2`
+
+### 진로백과 '일자리 전망' (2026-11-18, API 배포 99 — 앱·자료 진행 중)
+- 결정: 옛 전망 글(고용24 Open API, 2016년 무렵)은 앱이 그리지 않는다. 공식 판정은 한 단어 + 연도 + 출처 + 링크만(글은 옮기지 않음), 조사로 알 수 있는 사실은 자체 자료로(출처·확인 날짜, '검토 전')
+- `services/jobOutlook`: `data/job-outlook/outlook.json`을 읽어 직업 상세에 `outlook`을 싣는다(6자리 코드만, 파일이 없거나 깨지면 `null`). `related` 코드에는 이름을 붙인 `relatedJobs`. DB에 넣지 않는 까닭 — 월간 적재가 `job_info`를 통째로 바꾼다('되는 길'·진로계획 라이브러리와 같은 방식)
+- 자료 모양: `{ "<jobCode>": { title, status: official|group|ours|none, official{verdict, period, written, scope, groupName, source, checkedAt}, ours{lines, facts[], reviewed, writtenAt}, related[], hiring } }`
+- 월간 적재: 묶음 직업 전망 첫 문장 이름 바꾸기(`fixProspectLead`, 30건)를 그만뒀다(이용 조건 변경 금지)
 
 ### 직업 추천 / 매칭 (Recommend)
 | 엔드포인트 | 설명 |
