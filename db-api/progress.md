@@ -384,19 +384,21 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 
 구현·함정은 `devlog/2026-09-28.md`, 명세·비교분석은 `reference/work24-open-api.md`.
 
-### 진로백과 '분류로 찾기' (2026-11-17, API 배포 98 · 앱은 스테이징)
+### 진로백과 '분류로 찾기' (2026-11-17, API 배포 98·99·101 · 앱 운영 v0.1.31)
 - 판정 규칙 정본 `services/jobBrowse`(순수 함수, 서버에만 — 앱 레포는 공개라 기준값을 두지 않는다). 숫자는 묶음 직업(work24-shared)을 `work24.jobCd`로 접은 줄 수
 - 축: 직무(대분류 13 짧은 이름 `jobGroups/codes.js` topInfo → 직무 112) · 관심 분야(검사 T22 33개 = 직업 지식 33개, 정본 `config/matchingMaps.js` T22_TO_KN) · 업무 환경(직업내 값 묶음 — 자세·고객 상대 하나씩, 켜기 3·빼기 3) · 재능 7(자기성찰 제외) · 가치관 9(경제적 보상은 연봉으로 안내) · 연봉(중간값 4·5·6·8천 이상)
 - 자료 없음(영역 값이 비었거나 전부 0)·크롤링본은 해당 속성 분류에서 빠진다(직무로는 찾음)
 - 이름은 검사 DB에서 읽는다(T2_2_interest·survey_elements T21·T2_3_values). 색인 10분, 어드민 직업 수정 때 `dropJobCaches`로 검색 색인과 함께 비움
 - 점검: `node scripts/job-browse-check.js --file <jobs.json>` 또는 `--db`(읽기만)
-- **사용성 확인 반영(2026-11-18, 배포 99):** 탭 하나 = 조건 하나(업무 환경은 탭 안에서 함께, 조건 id `env`) · 보기 옆 숫자 = 지금 목록에 넣었을 때 남는 수 · '하나만 빼고 맞아요'는 나중에 더한 조건이 빠진 직업부터(`order` = 탭을 고른 순서) · 이유 줄 한 조건 한 줄 · 묶음 줄 설명은 묶음 이름과 같은 구성원의 하는 일(없으면 null) · 가치관 `desc`. 앱은 브랜치 `feat/job-browse-2`
+- **사용성 확인 반영(2026-11-18, 배포 99):** 탭 하나 = 조건 하나(업무 환경은 탭 안에서 함께, 조건 id `env`) · 보기 옆 숫자 = 지금 목록에 넣었을 때 남는 수 · '하나만 빼고 맞아요'는 나중에 더한 조건이 빠진 직업부터(`order` = 탭을 고른 순서) · 이유 줄 한 조건 한 줄 · 묶음 줄 설명은 묶음 이름과 같은 구성원의 하는 일(없으면 null) · 가치관 `desc`
+- **3차(2026-11-19, 배포 101):** '하나만 빼고 맞아요'를 빠진 조건마다 앞 10줄씩 섞고(상한 30), `nearGroups`(조건·total·shown)와 묶음 하나 더 받기(`nearMore`·`nearOffset`·`nearLimit` → `nearPage`) · 관심 분야 묶음 전체 코드도 `next`에서 셈 · 해요체 변환 `toHaeyo`를 음절 규칙으로('여깁니다→여겨요') · 업무 환경 칩 글에 '빼기: '
 
-### 진로백과 '일자리 전망' (2026-11-18, API 배포 99 — 앱·자료 진행 중)
+### 진로백과 '일자리 전망' (2026-11-18 배포 99 코드 · 2026-11-19 배포 100 자료 · 앱 운영 v0.1.31)
 - 결정: 옛 전망 글(고용24 Open API, 2016년 무렵)은 앱이 그리지 않는다. 공식 판정은 한 단어 + 연도 + 출처 + 링크만(글은 옮기지 않음), 조사로 알 수 있는 사실은 자체 자료로(출처·확인 날짜, '검토 전')
 - `services/jobOutlook`: `data/job-outlook/outlook.json`을 읽어 직업 상세에 `outlook`을 싣는다(6자리 코드만, 파일이 없거나 깨지면 `null`). `related` 코드에는 이름을 붙인 `relatedJobs`. DB에 넣지 않는 까닭 — 월간 적재가 `job_info`를 통째로 바꾼다('되는 길'·진로계획 라이브러리와 같은 방식)
 - 자료 모양: `{ "<jobCode>": { title, status: official|group|ours|none, official{verdict, period, written, scope, groupName, source, checkedAt}, ours{lines, facts[], reviewed, writtenAt}, related[], hiring } }`
 - 월간 적재: 묶음 직업 전망 첫 문장 이름 바꾸기(`fixProspectLead`, 30건)를 그만뒀다(이용 조건 변경 금지)
+- **자료(2026-11-19, 배포 100):** 537개 — 공식 481(2025~2035판 171·통합본 310) · 묶음 32(전문의 13 등) · 없음 24(관리자, 비슷한 직업 잇기) · 자체 조사 41직업 사실 174개(`reviewed: false`) · 공채 19. 판정 분포 유지 273·다소 증가 140·다소 감소 63·증가 26·감소 11. 링크 워크피디아 467·한국고용정보원 46. 통합본의 직업 코드가 우리 jobCode와 같아 묶음 직업도 대부분 직업별 판정을 받았다. 검사 `node scripts/job-outlook-validate.js`, 만드는 순서 `data/job-outlook/tools/run.sh`, 출처 `FACTCHECK.md`
 
 ### 직업 추천 / 매칭 (Recommend)
 | 엔드포인트 | 설명 |
