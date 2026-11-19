@@ -842,3 +842,4 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - 108 (`b9346a7`): 직업 상세 관련 직업에 우리 `jobCode`(고용24 코드로 잇기). 2,408개 중 2,334개, 잘못 잇기 0. 묶음 이름·우리에게 없는 직업은 글로 남김
 - 109 (`ec132a7`): '되는 길' 직접 쓴 글 45개(`jobWayOverrides`) — 진로상담 검토 반영 · 해요체 · 직업별 `reviewed`·`reviewedAt`(모두 꺼 둠) · 출처 시행일. 읽기는 `services/jobWay.js`, 검사 `scripts/job-way-check.js --offline`
 - 110 (`7112b9a`): 진로계획 자료 원문 확인·진로상담 검토 반영(헬리콥터·자전거·해상 관제 갈래, 집배원 공무직 전형 등). 9급 합본을 보편 걸음 `cp.civil9-admin-exam`으로. 일자리 전망 `outlook.official.subjectName`
+- 111 (`d119fc9`, 2026-11-20): 분류로 찾기 다듬기 3차 — 업무 환경에 '근무 장소' 칸(실외 근무가 많은 직업 / 적은 직업, 하나만). 판정 기준 그대로. 옛 주소에 실외·재택이 함께 있으면 '그리고'로 읽음
