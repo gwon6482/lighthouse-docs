@@ -384,13 +384,14 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 
 구현·함정은 `devlog/2026-09-28.md`, 명세·비교분석은 `reference/work24-open-api.md`.
 
-### 진로백과 '분류로 찾기' (2026-11-17, API 배포 98·99·101 · 앱 운영 v0.1.31)
+### 진로백과 '분류로 찾기' (2026-11-17, API 배포 98·99·101·103 · 앱 운영 v0.1.31~32)
 - 판정 규칙 정본 `services/jobBrowse`(순수 함수, 서버에만 — 앱 레포는 공개라 기준값을 두지 않는다). 숫자는 묶음 직업(work24-shared)을 `work24.jobCd`로 접은 줄 수
 - 축: 직무(대분류 13 짧은 이름 `jobGroups/codes.js` topInfo → 직무 112) · 관심 분야(검사 T22 33개 = 직업 지식 33개, 정본 `config/matchingMaps.js` T22_TO_KN) · 업무 환경(직업내 값 묶음 — 자세·고객 상대 하나씩, 켜기 3·빼기 3) · 재능 7(자기성찰 제외) · 가치관 9(경제적 보상은 연봉으로 안내) · 연봉(중간값 4·5·6·8천 이상)
 - 자료 없음(영역 값이 비었거나 전부 0)·크롤링본은 해당 속성 분류에서 빠진다(직무로는 찾음)
 - 이름은 검사 DB에서 읽는다(T2_2_interest·survey_elements T21·T2_3_values). 색인 10분, 어드민 직업 수정 때 `dropJobCaches`로 검색 색인과 함께 비움
 - 점검: `node scripts/job-browse-check.js --file <jobs.json>` 또는 `--db`(읽기만)
 - **사용성 확인 반영(2026-11-18, 배포 99):** 탭 하나 = 조건 하나(업무 환경은 탭 안에서 함께, 조건 id `env`) · 보기 옆 숫자 = 지금 목록에 넣었을 때 남는 수 · '하나만 빼고 맞아요'는 나중에 더한 조건이 빠진 직업부터(`order` = 탭을 고른 순서) · 이유 줄 한 조건 한 줄 · 묶음 줄 설명은 묶음 이름과 같은 구성원의 하는 일(없으면 null) · 가치관 `desc`
+- **다듬기(2026-11-19, 배포 103):** 업무 환경 빼기 보기에 '바깥 일이 잦은 일 빼기'(`no-outdoor`, WE24 직업내 ≥3.5 = '바깥에서 자주 일해요'와 같은 `OUTDOOR_RULE`)
 - **3차(2026-11-19, 배포 101):** '하나만 빼고 맞아요'를 빠진 조건마다 앞 10줄씩 섞고(상한 30), `nearGroups`(조건·total·shown)와 묶음 하나 더 받기(`nearMore`·`nearOffset`·`nearLimit` → `nearPage`) · 관심 분야 묶음 전체 코드도 `next`에서 셈 · 해요체 변환 `toHaeyo`를 음절 규칙으로('여깁니다→여겨요') · 업무 환경 칩 글에 '빼기: '
 
 ### 진로백과 '일자리 전망' (2026-11-18 배포 99 코드 · 2026-11-19 배포 100 자료 · 앱 운영 v0.1.31)
@@ -825,3 +826,10 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - `GET /api/survey/research/result/:id` 에 `role` · `feedbackSubmitted{test,result}` 추가
 - 평가 집계(2026-11-15 `84d662a`): `GET /api/survey/research/feedback-stats`(adminAuth, `?includeTest=1`) — 문항별 분포(전체·직업인·예비 사용자)·평균·판단 보류, 글 답변 최근 200건, 길이 체감×실제 시간·집중도×의심 표시. 항목 정의는 `config/researchFeedback.js` 한 곳(FEEDBACK_SPEC 도 여기서 만든다), 집계는 `services/researchFeedbackStats.js`
 
+
+
+### 진로계획 '학위를 따는 다른 길' (2026-11-19, API 배포 102)
+- `data/plan-library/degree-routes.json`(길 9가지: 학점은행제·독학학위제·방송통신대학·사이버대학·편입·전공심화·대학원·교육대학원·일한 경력으로, 비용은 공식 원문 숫자만) + 계획의 `degreeRoutes`(`for`·`lines[{route, ok: yes|no|if, text}]`·`common`·`tracks`·`checked`)
+- `GET /api/job/:jobCode/preparation`에 `plan.degreeRoutes`·`degreeRouteItems`(그 상자에 쓰인 길만, 비회원도 같음). 칸 더하기
+- 계획 69(면허·자격 32 · 기사 17 · 대학원 공통 20), 줄 113. 검사 `plan-library-validate.js`에 길 id·ok·해요체·checked·for·tracks 규칙
+- 임상영양사 `p.nt-clinical` 42주 → 106주(국민영양관리법 시행규칙 제24조①)
