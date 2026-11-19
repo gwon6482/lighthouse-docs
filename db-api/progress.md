@@ -399,7 +399,7 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 - `services/jobOutlook`: `data/job-outlook/outlook.json`을 읽어 직업 상세에 `outlook`을 싣는다(6자리 코드만, 파일이 없거나 깨지면 `null`). `related` 코드에는 이름을 붙인 `relatedJobs`. DB에 넣지 않는 까닭 — 월간 적재가 `job_info`를 통째로 바꾼다('되는 길'·진로계획 라이브러리와 같은 방식)
 - 자료 모양: `{ "<jobCode>": { title, status: official|group|ours|none, official{verdict, period, written, scope, groupName, source, checkedAt}, ours{lines, facts[], reviewed, writtenAt}, related[], hiring } }`
 - 월간 적재: 묶음 직업 전망 첫 문장 이름 바꾸기(`fixProspectLead`, 30건)를 그만뒀다(이용 조건 변경 금지)
-- **자료(2026-11-19, 배포 100):** 537개 — 공식 481(2025~2035판 171·통합본 310) · 묶음 32(전문의 13 등) · 없음 24(관리자, 비슷한 직업 잇기) · 자체 조사 41직업 사실 174개(`reviewed: false`) · 공채 19. 판정 분포 유지 273·다소 증가 140·다소 감소 63·증가 26·감소 11. 링크 워크피디아 467·한국고용정보원 46. 통합본의 직업 코드가 우리 jobCode와 같아 묶음 직업도 대부분 직업별 판정을 받았다. 검사 `node scripts/job-outlook-validate.js`, 만드는 순서 `data/job-outlook/tools/run.sh`, 출처 `FACTCHECK.md`
+- **자료(2026-11-19, 배포 100):** 537개 — 공식 481(2025~2035판 171·통합본 310) · 묶음 32(전문의 13 등) · 없음 24(관리자, 비슷한 직업 잇기) · 자체 조사 41직업 사실 176개(배포 104에서 검토 반영 · 배포 105에서 `reviewed: true`) · 공채 19. 판정 분포 유지 273·다소 증가 140·다소 감소 63·증가 26·감소 11. 링크 워크피디아 467·한국고용정보원 46. 통합본의 직업 코드가 우리 jobCode와 같아 묶음 직업도 대부분 직업별 판정을 받았다. 검사 `node scripts/job-outlook-validate.js`, 만드는 순서 `data/job-outlook/tools/run.sh`, 출처 `FACTCHECK.md`
 
 ### 직업 추천 / 매칭 (Recommend)
 | 엔드포인트 | 설명 |
