@@ -833,3 +833,6 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - `GET /api/job/:jobCode/preparation`에 `plan.degreeRoutes`·`degreeRouteItems`(그 상자에 쓰인 길만, 비회원도 같음). 칸 더하기
 - 계획 69(면허·자격 32 · 기사 17 · 대학원 공통 20), 줄 113. 검사 `plan-library-validate.js`에 길 id·ok·해요체·checked·for·tracks 규칙
 - 임상영양사 `p.nt-clinical` 42주 → 106주(국민영양관리법 시행규칙 제24조①)
+- **진로상담 검토 반영(2026-11-19, 배포 106 `81cabe7`, 앱 v0.1.33 뒤):** 동물보건사(수의사법 제16조의2①2호)·교원 3계획(교육대학원은 학부 전공 학점이 있어야)·기사 17계획(별표 4의2 비고 2) 고침 · 학원 강사 214101·예체능 강사 214401 상자 · 임상영양사 '영양사로 1년 이상'
+  - 공통 걸음 `cp.credit-bank-associate`(학점은행으로 전문학사 받기, 104주, `skipFor: any`, **`replacesCollege: true`** — 앱이 대학생·졸업자면 빼고 겹친 과목 이수는 따로 센다). 사회복지사 공통 첫 걸음·보육교사 학점은행 갈래 첫 걸음. 아동·청소년 고졸 149주(대학 2학년·졸업 118주)
+  - 기록물관리사 413202 갈래 두 개: '석사' / '학사 + 교육과정'(`p.ar-course` 54주, 시행규칙 별표 16)
