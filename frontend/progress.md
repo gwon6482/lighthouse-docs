@@ -152,7 +152,7 @@ GET  /api/reference/career-attributes       ✅ 연동됨 (2026-10-05 a4a180f �
 ### 진로백과 핫픽스 · 분류로 찾기 2차 · '되는 길' 검토 전 줄 (2026-11-19, 운영 `v0.1.34`·`v0.1.35`)
 - 진로백과 핫픽스(`v0.1.34` `e2fa09d`): 항목 설명은 누른 칸만 열린다(펼침 상태를 카드마다 따로 기억). 관련 직업은 API 108의 `jobCode`가 있으면 링크로 그린다. 직업 상세에서 다른 직업 상세로 가면 내용을 새로 불러온다.
 - 분류로 찾기 2차(`v0.1.34`): 조건 칩에 탭 이름과 '또는', '하나만 빼고 맞아요' 카드의 '안 맞아요' 줄(API 107 `missing.parts`·`noData`)과 붙는 묶음 제목
-  - 가입 화면 '가입 전에 둘러봐도 돼요'와 진로백과 홈 아래 탭은 `features.browsePolish2`(`VITE_BROWSE_POLISH2`)로 스테이징만 켰다. 운영 번들은 `browsePolish2:!1`. 운영 스위치는 오너 지시 뒤
+  - 가입 화면 '가입 전에 둘러봐도 돼요'와 진로백과 홈 아래 탭은 `features.browsePolish2`(`VITE_BROWSE_POLISH2`)로 스테이징 먼저 켰고, 운영은 `v0.1.36`(2026-11-19, 오너 '바로 켜자', 번들 `browsePolish2:!0`)부터 켰다. 같은 날 오너가 '내부 점검 끝, 그냥 적용' — 운영에서 켜진 스위치 4개(guestEntry·jobBrowse·focusPause·browsePolish2)는 코드에서 없애는 중
 - '되는 길'(`v0.1.35` `15149f1`): 검토 전 초안 줄을 보이고, caution·근거 문구를 낮췄다
 - 일자리 전망: 공식 칸 이름을 `official.subjectName` 한 줄로 보인다(API 110, `v0.1.35`)
 - 안 쓰는 진로설계 더미 `DUMMY_PLANS`를 지웠다(`v0.1.34`)
