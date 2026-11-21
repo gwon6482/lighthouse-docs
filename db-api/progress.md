@@ -528,6 +528,8 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 | `POST /api/career-plan/:planId/routines` | 루틴 추가 (2026-05-26) |
 | `PUT /api/career-plan/:planId/routines/:routineId` | 루틴 수정 (2026-05-26) |
 | `DELETE /api/career-plan/:planId/routines/:routineId` | 루틴 삭제 (2026-05-26) |
+| `PUT /api/career-plan/:planId/routines/:routineId/records/:week` | 루틴 주 1회 기록 저장 — 값만(`value`, 분수는 `total`), 메모 칸 없음 (2026-11-22, 배포 113) |
+| `DELETE /api/career-plan/:planId/routines/:routineId/records/:week` | 루틴 주 1회 기록 지우기 (2026-11-22, 배포 113) |
 | `PUT /api/career-plan/:planId/timeline` | 타임라인 저장 (STEP3) |
 | `GET /api/career-plan/templates?q=` | 공개 진로계획 템플릿 목록 (인증 불필요, 2026-05-21) |
 
@@ -548,6 +550,13 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 점검은 `scripts/inspect-timeline-week-data.js`(읽기 전용)로 언제든 다시 셀 수 있다.
 
 **reviewDay 필드 (2026-05-28)**: `CareerPlan.reviewDay: String` 추가. 일주일의 끝이자 시작이 되는 요일 ('월'~'일'). create/update 모두 수용.
+
+### 루틴 리뉴얼 (2026-11-22, API 배포 113 · 앱 운영 v0.1.42)
+- `RoutineSchema` 칸 더하기(모두 선택 — 옛 루틴·옛 앱 그대로): `kind`(target·level·keep) · `projectId` · `measure{label, unit, better, suffix}` · `minMinutes` · `safety`(body·voice·start 목록, 옛 문자열도 받음) · `onCourseDays` · `pauseWeeks` · `endedAt` · `records[{week, date, value}]` — `7e17e8d`
+- 기간 칸은 두지 않는다 — 붙은 루틴은 그 프로젝트가 놓인 주를 따른다. 주 1회 기록은 루틴 안(주차가 열쇠)에 둬 계획과 함께 읽히고 지워진다
+- `cleanRoutine`·`cleanRecord`: 추가·수정 모두 칸·값을 거른다(수정의 `$set` 이 스키마 검사를 거치지 않던 구멍). 일정에 영향 있는 칸이 바뀌면 이번 주부터 일정 다시 만들기. 기록 방향은 단위로 정한다(시간은 낮을수록)
+- 진로계획 라이브러리 `data/plan-library/routines.json` — 반복 연습 프로젝트의 루틴 제안 14개(쓰는 계획 64곳), 갈래별 제안(`tracks`). 응답 `projects[ref].routine`. 자료의 프로젝트 분량은 그대로(앱이 넣을 때만 줄임) — 비회원 응답은 원래 규칙대로 첫 걸음 밖 프로젝트를 비우므로 제안도 없다
+- 진로상담 검토 반영 `b8af632`(체력 기록 단위 `measure.choices`, 코딩 분수 기록 `unit ratio`, 연주·무용 제안), 법률 검토 반영 `a23b872`(메모 칸 없앰 — 화면에 없는 칸은 받지 않는다)
 
 ### 주간 일정 (WeeklySchedule) — 2026-05-28 Phase 1
 진로계획 본체는 마스터 데이터로 가볍게 두고, 매주 한 번씩 그 주에 실제로 잡힌 일정만 별도 컬렉션에 저장한다.
