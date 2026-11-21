@@ -551,6 +551,14 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 
 **reviewDay 필드 (2026-05-28)**: `CareerPlan.reviewDay: String` 추가. 일주일의 끝이자 시작이 되는 요일 ('월'~'일'). create/update 모두 수용.
 
+### 진로계획 라이브러리 — 긴 단계 분량 기준 (2026-11-22, API 배포 114 · 앱 운영 v0.1.44)
+- 단계 이름 = 끝난 모습, 할 일 = 결과가 남는 행동. '이번 주 몫'은 자료에 쓰지 않고 앱이 주차 이름 (k/n)으로 계산한다 — `8b902a3`·`d5e5a29`·`ddeaffa`
+- 큰 시험 42걸음 99 → 148단계, 그 밖 75걸음 128 → 186단계. 주 수 합·`studyHours`·걸음 id 그대로(기간 계산 대조 불일치 0)
+- 검사(`scripts/plan-library-validate.js` + `scripts/lib/planPhaseRules.js`): 한 걸음 안 이웃 단계 이름 중복 오류(앱이 속도를 바꿀 때 한 단계로 합쳐진다) · '○회독'은 모든 걸음에서 오류 · 큰 시험 할 일의 주 단위 횟수 오류 · 한 단계짜리 12주 이상 진도 걸음 알림(활동·루틴 대상 제외)
+- 과락·합격 기준은 법령 조문과 함께(`checked`·FACTCHECK). 최소합격인원 문구는 시행령에 그 규정이 있는 2차에만
+- 테스트 `test/planPhaseRules.test.js` — 큰 시험 41걸음을 주 8가지 속도로 돌려도 단계가 합쳐지거나 0주가 되지 않음
+- 남은 것: 소방간부후보생(240201) 간부 갈래에 PSAT 걸음(2028년 제도) — 기간 합이 바뀌어 따로
+
 ### 루틴 리뉴얼 (2026-11-22, API 배포 113 · 앱 운영 v0.1.42)
 - `RoutineSchema` 칸 더하기(모두 선택 — 옛 루틴·옛 앱 그대로): `kind`(target·level·keep) · `projectId` · `measure{label, unit, better, suffix}` · `minMinutes` · `safety`(body·voice·start 목록, 옛 문자열도 받음) · `onCourseDays` · `pauseWeeks` · `endedAt` · `records[{week, date, value}]` — `7e17e8d`
 - 기간 칸은 두지 않는다 — 붙은 루틴은 그 프로젝트가 놓인 주를 따른다. 주 1회 기록은 루틴 안(주차가 열쇠)에 둬 계획과 함께 읽히고 지워진다
