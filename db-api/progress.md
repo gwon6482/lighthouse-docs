@@ -802,6 +802,7 @@ app.options('*', cors());  // OPTIONS preflight 처리
 - **2026-11-15 직업마다 제 갈래만**(`c8b66f2`, 운영): 갈래에 '세부 분야'와 '같은 계획에 묶인 다른 직업의 길'이 섞여 있어 변호사·판사·검사가 세 길을 다 보여 주던 것(같은 꼴 95개 계획). `priority-jobs.json` 에 대표 직업의 `ownTracks`, 함께 덮는 직업의 `covers[].tracks` — 함께 덮는 직업 + `track` 은 그 갈래 하나만, `track` 없으면 통째로(`shared: true`). 응답에 `displayName` 추가. `cp.major-grades`(전공 성적 관리) 삭제. 지금 보편 171개
 - **2026-11-16 진로설계 검토 반영**(`b62589d`, 운영): '지금 고칠 수 있는 것' 12가지
   - 새 필드 — 프로젝트 `course`(학교·수련 과정) · `mayHave`(이미 있을 수 있는 것) · `statedHours`(법정 총 시간, 검사용·안 내줌) / 항목 `during`(앞의 과정 기간 안에 하는 일) · `stepByTrack`(공통 항목의 갈래별 순서) / 계획 `eligibility{lines, checked, tracks?}`(지원 자격) · `reality{kind: career|early, text, via[]}`(먼저 알아 둘 것)
+  - 2026-11-21(API 112 `e0cce6f`): `reality.shortName`(경력직 계획 6개 — '이 직업은 ○○를 거쳐서 가요'의 ○○) · 함께 덮는 직업의 `covers[].reality`(판사: 법조 경력 5년, `checked` 법원조직법 제42조제2항)가 계획의 reality보다 먼저(`shapeReality`). validate: 먼저 거치는 직업이 있는 경력직은 shortName 필수(15자 이하). 직업 관문 판사 글 10년→5년
   - 응답: `plan.eligibility`·`plan.reality`, 항목 `during`, 프로젝트 `course`·`mayHave`, `totals.*.courseWeeks`. `totals.*.weeks` 는 과정 중 걸음을 빼고 센다(그 과정이 그 대상에게 들어 있을 때만 — 전공자는 대학 과정을 건너뛰므로 그대로 센다)
   - 자료: 대학·석사 과정 걸음 45자리, 자기소개서·면접을 첫 지원 앞으로(117개 계획), 지원 자격 14개 계획(법령 대조), 시간 맞춤 13개, 현장 채용형 면접 → '현장 채용 지원 준비'(55), 지원·선발 준비 영역 → 자격요건(32). 규칙은 README '규칙', 근거는 FACTCHECK '2026-11-16'
   - 검사 추가: 총 시간 비교(±10%), 대입 원서 뒤 과정 걸음, 첫 지원보다 뒤의 자기소개서·면접, 과정·과정 중·갈래별 순서의 모양
