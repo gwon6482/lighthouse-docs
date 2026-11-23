@@ -149,6 +149,14 @@ GET  /api/reference/career-attributes       ✅ 연동됨 (2026-10-05 a4a180f �
   - 3차(`9c912c0`): 보기 옆 숫자는 모든 탭에서 '이 탭에 넣었을 때 남는 수', '하나만 빼고 맞아요'는 빠진 조건마다 진짜 전체 수와 '더 보기'(`lib/browseQuery.ts` `groupNear`), 칩 지우기·뒤로 버튼 접근성 이름
 - 다음에 볼 것(11-18 QA): 첫 주소 비회원 진입, '바깥 일 빼기', '하나만 빼고 맞아요' 카드 모양, 조건 3개 한도 안내, 로그인 비밀번호 찾기
 
+### 진로백과 '나의 추천 진로' 카드 · 직업 상세 배지 (2026-11-24, 운영 `v0.1.51`)
+- **카드** `encyclopedia/components/page/home/RecommendEntryCard.vue`: 메인 검색 아래. 상태 넷 — 비회원('나와 가까운 직업 찾기' → `/start`) · 검사 전 회원(→ `/self-understanding`) · 검사한 회원(직무 3가지 + 이유 한 줄, 펼치면 대표 직업 3개, '모두 보기' → `browse?group=코드`, '결과에서 보기' → `/self-understanding/result/:id?at=groups`) · 목표를 정한 회원(맨 위 목표 줄 + '다른 길도 살펴보기'). 순위 숫자·점수·연봉은 쓰지 않는다.
+- **자료:** `GET /api/job/recommend-groups/:id`(로그인·본인 검사)와 `GET /api/user/target-career`. 직무 응답은 `encyclopedia/composables/useMyJobGroups.ts`가 '계정 세대:검사 id'로 담아 카드와 직업 상세가 같이 쓴다. 이유 문장은 결과지와 같은 `survey/lib/jobGroupWhy.ts`.
+- **최신 검사 찾기 한 곳:** `survey/lib/latestSurvey.ts` — 탭의 `lh_survey_id`는 내 검사 목록에 있을 때만 쓰고, 없으면 목록의 최신. 카드·배지·분류로 찾기·추천 목록 화면이 함께 쓴다.
+- **계정이 바뀔 때 비우기:** `shared/auth/accountScope.ts` `clearAccountScope()`를 auth 스토어의 `login`·`setAuth`·`applyToken`·`logout`이 부른다. 계정별로 담아 두는 것을 새로 만들면 `onAccountChange()`로 건다.
+- **배지:** `encyclopedia/lib/myJobGroups.ts` `groupForJob` — 최신 검사의 직무 3가지에 든 직업(묶음 구성원 포함)이면 "내 추천 직무 '○○'의 직업이에요". 계정에 저장해 둔 추천 직업 목록은 읽지도 쓰지도 않는다(서버 칸은 남아 있다).
+- 결과지 본문(`SurveyResultBody.vue`, 사본)에는 직무 구역 `id="rr-groups"`와 `scrollToGroups`만 더했다 — 보이는 글·모양은 랜딩 정본과 같다.
+
 ### 가입 핫픽스 — 비밀번호 조건 줄 · 새 버전으로 스스로 바뀌기 (2026-11-24, 운영 `v0.1.49` · API 119)
 - **비밀번호 조건 줄**(`onboarding/components/PasswordRules.vue`): 가입 0단계·비밀번호 다시 정하기에서 `8자 이상 · 영문 포함 · 숫자 포함`을 입력하는 동안 보여 준다. 규칙은 `onboarding/lib/emailCode.ts`의 `passwordChecks`·`passwordError`(8~64자 + 영문 + 숫자, 72바이트) — 서버 `services/emailFlow.js`가 정본. 마지막 단계의 `weak_password`는 0단계로 돌아가 비밀번호 칸에 초점.
 - **새 버전으로 바꾸기**(`shared/router/swUpdate.ts`, 연결 `createRouter.ts`, 등록 `swRegister.ts` — `virtual:pwa-register`): 새 서비스 워커가 넘겨받으면 허락한 이동에서만 그 자리에서 새 문서로 연다.
