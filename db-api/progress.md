@@ -551,7 +551,14 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 
 **reviewDay 필드 (2026-05-28)**: `CareerPlan.reviewDay: String` 추가. 일주일의 끝이자 시작이 되는 요일 ('월'~'일'). create/update 모두 수용.
 
-### 이메일 가입 메일 확인 · 비밀번호 찾기 (2026-11-23, API 배포 115·116)
+### 진로계획 라이브러리 — 공식 안내·응시료 · 직업 고유 걸음 1차 (2026-11-23, API 배포 118)
+- `data/plan-library/resources.json`(기관 10곳, 제휴 칸은 비어 있어야 검사 통과) + 걸음·계획 안 걸음의 `links`·`cost`(`lines`·`of`·`when`·`source`·`at`·다시 확인할 날) — `fabecb2`·`fbfaf86`
+- 응답: `projects[ref].links`·`cost`, `items[].links`·`cost`(항목 값 먼저). 비회원 응답의 가린 걸음에는 싣지 않음. 칸 더하기라 옛 앱 그대로
+- 검사 `scripts/lib/planResources.js`: 링크는 기관 목록의 기관만, 응시료는 기준·출처·확인 날짜 필수, 민간 시험 금지, 감면·지원 문구 금지, 숫자 없는 '회독'도 오류
+- 직업 고유 걸음 1차(IT 3계획 3걸음), '회독' 14곳·HRD-Net 문구 정리
+- 런타임 Node 24(`df0884f` — Dockerfile·work24-refresh·restore-unmapped)
+
+### 이메일 가입 메일 확인 · 비밀번호 찾기 (2026-11-23, API 배포 115·116 · 117에서 모두에게)
 - 경로: `POST /api/auth/email/send-code`·`/email/verify-code`(가입), `/password/forgot`·`/password/check-code`·`/password/reset`(찾기) — `970b29a`·`b1a26c5`
 - 스위치(환경값): `EMAIL_CODE` off·team·on(꺼지면 새 경로 404, 응답 모양 예전 그대로), `MAIL_MODE` log·allowlist·live. on은 live와 함께만(아니면 503), 새 앱이 퍼진 뒤에
 - `email_codes`: 코드·표는 HMAC 해시만, 마지막 발송 1시간 뒤 TTL 삭제, 탈퇴(`userPurge`) 때 삭제. 시도 수·발송 제한은 조건부 update로 원자적
