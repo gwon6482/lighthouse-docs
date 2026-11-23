@@ -149,6 +149,18 @@ GET  /api/reference/career-attributes       ✅ 연동됨 (2026-10-05 a4a180f �
   - 3차(`9c912c0`): 보기 옆 숫자는 모든 탭에서 '이 탭에 넣었을 때 남는 수', '하나만 빼고 맞아요'는 빠진 조건마다 진짜 전체 수와 '더 보기'(`lib/browseQuery.ts` `groupNear`), 칩 지우기·뒤로 버튼 접근성 이름
 - 다음에 볼 것(11-18 QA): 첫 주소 비회원 진입, '바깥 일 빼기', '하나만 빼고 맞아요' 카드 모양, 조건 3개 한도 안내, 로그인 비밀번호 찾기
 
+### 가입 핫픽스 — 비밀번호 조건 줄 · 새 버전으로 스스로 바뀌기 (2026-11-24, 운영 `v0.1.49` · API 119)
+- **비밀번호 조건 줄**(`onboarding/components/PasswordRules.vue`): 가입 0단계·비밀번호 다시 정하기에서 `8자 이상 · 영문 포함 · 숫자 포함`을 입력하는 동안 보여 준다. 규칙은 `onboarding/lib/emailCode.ts`의 `passwordChecks`·`passwordError`(8~64자 + 영문 + 숫자, 72바이트) — 서버 `services/emailFlow.js`가 정본. 마지막 단계의 `weak_password`는 0단계로 돌아가 비밀번호 칸에 초점.
+- **새 버전으로 바꾸기**(`shared/router/swUpdate.ts`, 연결 `createRouter.ts`, 등록 `swRegister.ts` — `virtual:pwa-register`): 새 서비스 워커가 넘겨받으면 허락한 이동에서만 그 자리에서 새 문서로 연다.
+  - 허락한 목적지 `meta.swReloadTo`: `/onboarding/auth` · `/onboarding/signup`(이메일) · `/onboarding/password` · 하단 탭 뿌리(`/career-achievement` · `/career-info` · `/career-encyclopedia` · `/career-achievement/roadmap` · `/career-achievement/records` · `/mypage`)
+  - 막은 출발지 `meta.noSwReload`: 검사 진행·완료, 집중·기록, 주간결산, 일정 조정, 가입·비밀번호·소셜 복귀, 진로설계 전부. **새 입력 화면 라우트를 더하면 이 표시를 붙인다.**
+  - 로그인·가입 화면 앞 기다림 상한 4.5초(서비스 워커 없이 연 화면은 기다리지 않음), 1분 안에 두 번 새로 열지 않음(`lh_sw_reload`), 옛 청크 복구(`chunkReload.ts`)와 기록을 따로 둠.
+  - `public/registerSW.js`를 직접 둔다 — 이미 배포된 옛 index.html이 이 파일을 부른다(플러그인은 `virtual:pwa-register`를 쓰면 만들지 않는다).
+- 배경(옛 앱 화면이 가입을 막은 일)과 확인은 devlog 2026-11-24.
+
+### 쉬어 가는 날 '미리 하기' (2026-11-23 스테이징 `9334600` — 운영 태그 전)
+- 진로달성 홈에서 오늘 할 일이 없는 날, 이번 주 뒤 요일의 진도 프로젝트를 오늘 미리 한다(`career-achievement/lib/pullAhead.ts`). 저장할 때 주간 일정의 그 칸을 오늘로 옮기고 `note`에 `ahead:<원래 날짜>`를 남긴다. 과정·루틴 제외, 프로젝트마다 가장 가까운 요일 하나·3개까지. 일정 저장 실패는 기기에 적어 두었다가 홈을 불러올 때 다시 시도(`lh_ahead_pending_v1`). 하단 탭 배지는 그 주 일정 기준.
+
 ### 준비과정 공식 안내·응시료 (2026-11-23, 운영 `v0.1.48` · API 118)
 - 준비과정 탭 걸음 펼침에 '공식 안내' 묶음(`PreparationResources.vue`): 기관 이름 + 무엇을 보러 가나 ↗(새 창), '응시료 ○원' + 작은 글(기준 · 내는 때 · 해마다 바뀔 수 있어요(확인 날짜)) — `3cc2681`·`3fe83fd`
 - 계획 안 걸음 값(`items[].links`·`cost`)이 프로젝트 값보다 먼저, 빈 목록이면 링크 없음. 합계로 더하지 않음, 제휴 칸은 그리지 않음, 주소는 서버가 준 것만
