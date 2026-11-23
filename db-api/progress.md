@@ -551,6 +551,14 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 
 **reviewDay 필드 (2026-05-28)**: `CareerPlan.reviewDay: String` 추가. 일주일의 끝이자 시작이 되는 요일 ('월'~'일'). create/update 모두 수용.
 
+### 이메일 가입 메일 확인 · 비밀번호 찾기 (2026-11-23, API 배포 115·116)
+- 경로: `POST /api/auth/email/send-code`·`/email/verify-code`(가입), `/password/forgot`·`/password/check-code`·`/password/reset`(찾기) — `970b29a`·`b1a26c5`
+- 스위치(환경값): `EMAIL_CODE` off·team·on(꺼지면 새 경로 404, 응답 모양 예전 그대로), `MAIL_MODE` log·allowlist·live. on은 live와 함께만(아니면 503), 새 앱이 퍼진 뒤에
+- `email_codes`: 코드·표는 HMAC 해시만, 마지막 발송 1시간 뒤 TTL 삭제, 탈퇴(`userPurge`) 때 삭제. 시도 수·발송 제한은 조건부 update로 원자적
+- User 칸 더하기: `emailVerifiedAt`, `tokenVersion`. 로그인 표에 판(`pv`) — 비밀번호를 바꾸면 다른 기기 401 `token_revoked`, 탈퇴 계정 401 `account_gone`(스위치와 상관없이). 판은 1분 기억, 불일치면 DB 재확인
+- 표 발급은 `services/authToken` 한 곳(이메일·카카오·구글·me 연장). 메일은 `services/mailer`(SES v2 서울, 전용 키, 기록엔 도메인만)
+- 비밀번호 찾기는 가입 여부·종류를 응답으로 드러내지 않는다(없는 메일엔 보내지 않는 가짜 코드 문서)
+
 ### 진로계획 라이브러리 — 긴 단계 분량 기준 (2026-11-22, API 배포 114 · 앱 운영 v0.1.44)
 - 단계 이름 = 끝난 모습, 할 일 = 결과가 남는 행동. '이번 주 몫'은 자료에 쓰지 않고 앱이 주차 이름 (k/n)으로 계산한다 — `8b902a3`·`d5e5a29`·`ddeaffa`
 - 큰 시험 42걸음 99 → 148단계, 그 밖 75걸음 128 → 186단계. 주 수 합·`studyHours`·걸음 id 그대로(기간 계산 대조 불일치 0)
