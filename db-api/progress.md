@@ -551,6 +551,16 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 
 **reviewDay 필드 (2026-05-28)**: `CareerPlan.reviewDay: String` 추가. 일주일의 끝이자 시작이 되는 요일 ('월'~'일'). create/update 모두 수용.
 
+### 검사 결과 소유 고침 (2026-11-25, API 배포 120)
+- **`submittedBy`**(검사 문서, 응답에 내보내지 않음): 로그인해 낸 계정 또는 열람 키로 가져간 계정의 uid. 주인(User의 `surveyResults` 목록)도 열람 키도 없는 검사는 이 본인일 때만 잇는다 — `ensureSurveyOwnership`(`analysis`·`t1-result`·`recommend-groups`)과 연결 API(`POST /api/user/survey-results`) 모두. 예전에는 조회한 사람에게 붙였다.
+- **같은 번호 다시 내기:** 이미 있는 `survey_id`면 409(`code: 'survey_id_taken'`), 같은 계정의 재시도는 저장된 검사를 201로. 새 문서에는 `uniqueSurveyId: true`를 적고 부분 유일 색인 `survey_id_unique_new`({survey_id, uniqueSurveyId})로 겹침을 막는다(표시 칸이 없는 옛 문서는 대상 밖). 폼이 주는 번호 끝에 무작위 꼬리(`crypto.randomBytes(4)`).
+- **추천 경로 세 곳**(`GET /api/job/recommend/:survey_id`·`/recommend-t2/:survey_id`·`/:jobCode/match`)에 로그인 + 주인 확인(잇지는 않음). 비회원 검사는 이 길로 조회할 수 없다.
+- 제출은 토큰이 유효하고(`authToken.checkToken`) 계정이 실제로 있을 때만 회원 제출로 본다. 탈퇴(`purgeUser`)·단계 리셋은 `submittedBy`로 남은 문서도 지운다. `GET /api/survey/statistics` 응답에서 `last_survey_id`를 뺐다.
+- 응답 모양은 그대로(401·403·409만 늘어남). 배경·운영 자료 확인은 devlog 2026-11-25.
+
+### 요청 본문 한도 2MB (2026-11-25, API 배포 121)
+- `server.js`의 `express.json`·`urlencoded` 한도를 기본 100KB에서 2MB로. 긴 진로계획(주차별 커리큘럼을 편 프로젝트 목록·타임라인) 저장이 413으로 실패하던 문제. 한도를 다시 줄이려면 앱이 타임라인 저장에 프로젝트 사본을 싣지 않게 고친 뒤에.
+
 ### 가입 핫픽스 — 새 비밀번호 규칙 · 옛 화면 가입 안내 글 (2026-11-24, API 배포 119)
 - **새 비밀번호 규칙:** 8~64자 + 영문 1자 이상 + 숫자 1자 이상(`services/emailFlow.js` `passwordError` — 정본, 앱 `onboarding/lib/emailCode.ts`에 사본). 가입(`register`)과 비밀번호 다시 정하기(`resetPassword`)에만 쓴다. 이미 쓰는 비밀번호로 하는 로그인은 그대로다. 오류는 `code: 'weak_password'`와 빠진 조건을 적은 글.
 - 비밀번호 검사는 `EMAIL_CODE` 스위치와 관계없이 모든 이메일 가입에 돈다(예전엔 메일 확인 블록 안에만 있었다).
