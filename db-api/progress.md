@@ -551,6 +551,13 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 
 **reviewDay 필드 (2026-05-28)**: `CareerPlan.reviewDay: String` 추가. 일주일의 끝이자 시작이 되는 요일 ('월'~'일'). create/update 모두 수용.
 
+### 프로젝트 날짜 칸 · 모바일 작업 메모함 API (2026-11-25, API 배포 122)
+- **프로젝트 `dateStart`·`dateEnd`**(`models/CareerPlan.js` ProjectSchema — 계획의 `startDate`·`endDate`와 다른 칸). 날짜로 정한 프로젝트의 시작일·마감일('YYYY-MM-DD', 과정은 끝나는 날).
+  - 검증은 `careerPlanController.projectSettings` 한 곳(추가·일괄·수정이 같이 씀): 둘이 함께 오고, 달력에 있는 날짜이고, 마감 ≥ 시작일 때만 남긴다. 하나만 오거나 틀리면 버린다(수정이면 저장된 짝은 그대로). 수정에서 둘 다 `''`이면 지운다. 보내지 않으면 건드리지 않는다(옛 앱과 같이 돈다).
+  - `updateProject`에서 날짜가 바뀌면 이번 주부터 주간 일정을 다시 만든다(`resetUpcomingSchedules`). 주 수·자리 계산은 앱이 한다 — 서버는 프로젝트 기간을 다시 계산하지 않는다.
+- **모바일 작업 메모함**(`/api/memo`, 팀 내부 도구 — `routes/memo.js`·`controllers/memoController.js`·`middleware/memoKeyAuth.js`, 자료는 관리용 DB). 설정(키·계정)이 없으면 길 전체가 503 `not_configured`로 닫힌다. `/api/admin` 키 사슬과는 따로다.
+- 배포 워크플로: 배포 명령의 응답을 기록에 찍지 않는다(상태 한 단어만).
+
 ### 검사 결과 소유 고침 (2026-11-25, API 배포 120)
 - **`submittedBy`**(검사 문서, 응답에 내보내지 않음): 로그인해 낸 계정 또는 열람 키로 가져간 계정의 uid. 주인(User의 `surveyResults` 목록)도 열람 키도 없는 검사는 이 본인일 때만 잇는다 — `ensureSurveyOwnership`(`analysis`·`t1-result`·`recommend-groups`)과 연결 API(`POST /api/user/survey-results`) 모두. 예전에는 조회한 사람에게 붙였다.
 - **같은 번호 다시 내기:** 이미 있는 `survey_id`면 409(`code: 'survey_id_taken'`), 같은 계정의 재시도는 저장된 검사를 201로. 새 문서에는 `uniqueSurveyId: true`를 적고 부분 유일 색인 `survey_id_unique_new`({survey_id, uniqueSurveyId})로 겹침을 막는다(표시 칸이 없는 옛 문서는 대상 밖). 폼이 주는 번호 끝에 무작위 꼬리(`crypto.randomBytes(4)`).

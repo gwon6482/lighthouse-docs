@@ -149,6 +149,20 @@ GET  /api/reference/career-attributes       ✅ 연동됨 (2026-10-05 a4a180f �
   - 3차(`9c912c0`): 보기 옆 숫자는 모든 탭에서 '이 탭에 넣었을 때 남는 수', '하나만 빼고 맞아요'는 빠진 조건마다 진짜 전체 수와 '더 보기'(`lib/browseQuery.ts` `groupNear`), 칩 지우기·뒤로 버튼 접근성 이름
 - 다음에 볼 것(11-18 QA): 첫 주소 비회원 진입, '바깥 일 빼기', '하나만 빼고 맞아요' 카드 모양, 조건 3개 한도 안내, 로그인 비밀번호 찾기
 
+### 프로젝트를 시작일 + 마감일로 만들기 (2026-11-25, **스테이징** main `32e65dd` · API 배포 122 — 운영 태그 전)
+- 새 프로젝트 화면 '주 수로 / 날짜로'(`CareerDesignProjectWritePage.vue`). 날짜로 정하면 프로젝트에 `dateStart`·`dateEnd`가 실리고, 주 수는 날짜가 걸친 계획 주로 센다(`career-design/lib/projectDates.ts` `spanOfDates`·`datedFixed`). 주 경계는 계획 시작 요일부터 7일이라 같은 날짜도 시작 요일에 따라 6주·7주가 된다.
+- 배치 두 벌(`usePlanTimeline.autoSchedule` · `usePlanPace` 다시 놓기)이 날짜 걸음을 시험일과 같은 고정 자리로 받는다. 과정에 딸린 걸음도 날짜가 있으면 고정. 날짜로 정한 무거운 과정(주 15시간 이상)의 기간은 다른 걸음이 건너뛴다.
+- 오늘 할 일은 첫 주·마지막 주의 날짜 밖 요일을 뺀다 — 타임라인 자리가 날짜와 맞을 때만(`datesMatchSlot`). 어긋나 있으면 타임라인대로 보인다.
+- 다시 맞추기(`composables/useDatedAlign.ts`): 시작 요일을 고를 때, 계획 시작일이 오늘로 옮겨질 때, 수정 흐름에서 날짜를 바꾼 걸음. 시작일이 옮겨져 마감이 지난 걸음은 날짜를 지워 주 수 걸음으로 바꾸고 한 줄로 알린다.
+- 직접 쓴 주차별 할 일(예시 계획의 단계 꼴이라도 줄을 하나라도 고쳤으면 포함 — `isPlainPhases`)은 주 수가 줄어도 지우지 않고 남는 주로 옮긴다. 입력 화면에서는 줄어들 때 묻는다.
+- '주 수로' 되돌리면 `''` 두 칸을 보내 서버가 날짜를 지운다. 타임라인에서 손으로 옮기면 '날짜를 지우고 옮길까요?'를 묻는다.
+- **배포 순서: API 먼저.** 앱이 먼저 나가면 날짜가 조용히 버려진다.
+
+### 계획 없는 계정의 진로달성 홈 · 긴 프로젝트 놓기 · 다시 검사 (2026-11-25, 운영 `v0.1.53`)
+- 진로달성 홈(`CareerAchievementPage.vue`)에 진행 중인 계획이 없으면 계획 전 홈(`/main/before`)으로 보낸다. 하단 메뉴는 진행 중인 계획이 있을 때만 나오므로, 예전의 '진로계획 만들러 가기'만 있는 화면에서는 로그아웃·탈퇴 길이 없었다. 계획을 못 읽었을 때만 홈에 남아 '다시 불러오기' + '내 계정'(`shared/stores/achievement.ts` `loadFailed`, `career-achievement/lib/planBoard.ts` `noPlanView`).
+- 일정 조정에서 지금 배치보다 긴 프로젝트를 놓을 수 있다(`usePlanTimeline.canStartAt` — 시작 주만 본다).
+- 같은 탭에서 다시 검사하면 새 폼·새 번호·첫 쪽에서 시작한다(`useSurvey.startNewIfFinished`, `survey/lib/surveySubmit.ts`). 계정이 바뀌면 쓰다 만 검사를 비운다.
+
 ### 진로백과 '나의 추천 진로' 카드 · 직업 상세 배지 (2026-11-24, 운영 `v0.1.51`)
 - **카드** `encyclopedia/components/page/home/RecommendEntryCard.vue`: 메인 검색 아래. 상태 넷 — 비회원('나와 가까운 직업 찾기' → `/start`) · 검사 전 회원(→ `/self-understanding`) · 검사한 회원(직무 3가지 + 이유 한 줄, 펼치면 대표 직업 3개, '모두 보기' → `browse?group=코드`, '결과에서 보기' → `/self-understanding/result/:id?at=groups`) · 목표를 정한 회원(맨 위 목표 줄 + '다른 길도 살펴보기'). 순위 숫자·점수·연봉은 쓰지 않는다.
 - **자료:** `GET /api/job/recommend-groups/:id`(로그인·본인 검사)와 `GET /api/user/target-career`. 직무 응답은 `encyclopedia/composables/useMyJobGroups.ts`가 '계정 세대:검사 id'로 담아 카드와 직업 상세가 같이 쓴다. 이유 문장은 결과지와 같은 `survey/lib/jobGroupWhy.ts`.
