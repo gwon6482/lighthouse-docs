@@ -555,7 +555,7 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 - **프로젝트 `dateStart`·`dateEnd`**(`models/CareerPlan.js` ProjectSchema — 계획의 `startDate`·`endDate`와 다른 칸). 날짜로 정한 프로젝트의 시작일·마감일('YYYY-MM-DD', 과정은 끝나는 날).
   - 검증은 `careerPlanController.projectSettings` 한 곳(추가·일괄·수정이 같이 씀): 둘이 함께 오고, 달력에 있는 날짜이고, 마감 ≥ 시작일 때만 남긴다. 하나만 오거나 틀리면 버린다(수정이면 저장된 짝은 그대로). 수정에서 둘 다 `''`이면 지운다. 보내지 않으면 건드리지 않는다(옛 앱과 같이 돈다).
   - `updateProject`에서 날짜가 바뀌면 이번 주부터 주간 일정을 다시 만든다(`resetUpcomingSchedules`). 주 수·자리 계산은 앱이 한다 — 서버는 프로젝트 기간을 다시 계산하지 않는다.
-- **모바일 작업 메모함**(`/api/memo`, 팀 내부 도구 — `routes/memo.js`·`controllers/memoController.js`·`middleware/memoKeyAuth.js`, 자료는 관리용 DB). 설정(키·계정)이 없으면 길 전체가 503 `not_configured`로 닫힌다. `/api/admin` 키 사슬과는 따로다.
+- **모바일 작업 메모함**(`/api/memo`, 팀 내부 도구 — `routes/memo.js`·`controllers/memoController.js`·`middleware/memoKeyAuth.js`, 자료는 관리용 DB). 설정(키·계정)이 없으면 길 전체가 503 `not_configured`로 닫힌다. **2026-11-25 밤 API 배포 123(설정만)으로 열림** — 키 없는 요청 401. `/api/admin` 키 사슬과는 따로다.
 - 배포 워크플로: 배포 명령의 응답을 기록에 찍지 않는다(상태 한 단어만).
 
 ### 검사 결과 소유 고침 (2026-11-25, API 배포 120)
