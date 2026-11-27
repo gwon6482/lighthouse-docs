@@ -552,7 +552,7 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 **reviewDay 필드 (2026-05-28)**: `CareerPlan.reviewDay: String` 추가. 일주일의 끝이자 시작이 되는 요일 ('월'~'일'). create/update 모두 수용.
 
 ### 집중모드 넓히기 · 하루 시작 시간 · 달성 홈 서버 (2026-11-27, API 배포 124)
-모두 칸 더하기다 — 옛 앱(v0.1.55)과 함께 돈다. 앱은 스테이징(운영 태그 전).
+모두 칸 더하기다 — 옛 앱(v0.1.55)과 함께 돈다. 앱은 같은 날 운영 `v0.1.56`.
 - **달성 기록 종류 `free`(바로 집중)**: `PUT /api/career-plan/:planId/achievements/:date/free/:itemId` — itemId는 `'f' + 시작 시각(epoch ms)`, `done`은 늘 false(완료 수에 섞이지 않게), `itemName` 40자(비울 수 있음)·`elapsedSec`·`duration`·`doneAt`·`projectId`(그 계획의 프로젝트일 때만)만 받고 사진·난이도·메모는 버린다. 일반 기록(project·routine)의 자유 글은 거절하지 않고 자른다(메모 2000자·이름 200자).
 - **루틴 `focus`**(집중모드로 하기): true면 홈에서 '완료' 대신 '시작'. 없으면 예전처럼 '완료' 한 번.
 - **하루 시작 시각**: `User.settings.dayStart { hour(0~6), from, since }` — 고른 적 없는 계정은 비어 있고 새벽 4시를 쓴다. 바꾸기는 `PUT /api/user/profile` `{ settings: { dayStartHour } }`(0~6 정수가 아니면 400), 다음 하루부터 적용. 서버가 '오늘'이 필요하면 `services/scheduleReset` `userTodayKey(uid)`(= `services/appDay.appDayKey`)를 쓴다 — 서울 달력 자정으로 세지 않는다. 정본은 앱 `shared/utils/appDay.ts`, 서버는 사본(`scripts/check-method-sync.js`로 기본값·고를 수 있는 값을 대조).
