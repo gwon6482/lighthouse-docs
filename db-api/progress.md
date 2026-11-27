@@ -551,6 +551,17 @@ T23 items에 `value_code`, `value_name` 필드 추가됨:
 
 **reviewDay 필드 (2026-05-28)**: `CareerPlan.reviewDay: String` 추가. 일주일의 끝이자 시작이 되는 요일 ('월'~'일'). create/update 모두 수용.
 
+### 집중모드 넓히기 · 하루 시작 시간 · 달성 홈 서버 (2026-11-27, API 배포 124)
+모두 칸 더하기다 — 옛 앱(v0.1.55)과 함께 돈다. 앱은 스테이징(운영 태그 전).
+- **달성 기록 종류 `free`(바로 집중)**: `PUT /api/career-plan/:planId/achievements/:date/free/:itemId` — itemId는 `'f' + 시작 시각(epoch ms)`, `done`은 늘 false(완료 수에 섞이지 않게), `itemName` 40자(비울 수 있음)·`elapsedSec`·`duration`·`doneAt`·`projectId`(그 계획의 프로젝트일 때만)만 받고 사진·난이도·메모는 버린다. 일반 기록(project·routine)의 자유 글은 거절하지 않고 자른다(메모 2000자·이름 200자).
+- **루틴 `focus`**(집중모드로 하기): true면 홈에서 '완료' 대신 '시작'. 없으면 예전처럼 '완료' 한 번.
+- **하루 시작 시각**: `User.settings.dayStart { hour(0~6), from, since }` — 고른 적 없는 계정은 비어 있고 새벽 4시를 쓴다. 바꾸기는 `PUT /api/user/profile` `{ settings: { dayStartHour } }`(0~6 정수가 아니면 400), 다음 하루부터 적용. 서버가 '오늘'이 필요하면 `services/scheduleReset` `userTodayKey(uid)`(= `services/appDay.appDayKey`)를 쓴다 — 서울 달력 자정으로 세지 않는다. 정본은 앱 `shared/utils/appDay.ts`, 서버는 사본(`scripts/check-method-sync.js`로 기본값·고를 수 있는 값을 대조).
+- **프로젝트 `startOn`**(시작일만 정한 걸음, 'YYYY-MM-DD'): 놓인 첫 주에서 이 날 전 요일에는 할 일을 만들지 않는다. `dateStart`·`dateEnd`(날짜로 정한 걸음)와 다른 칸이다.
+- **이번 주 다시 만들기 표시**: 계획이 바뀌면(`resetUpcomingSchedules`) 오늘이 든 주는 지우지 않고 `weekly_schedules.rebuildFrom = 오늘`만 적는다(다음 주부터는 예전처럼 지움). 표시된 주는 목록에서 빠지고, 조회는 `{ schedule: null, rebuild: { from, items } }`로 온다 — 옛 앱은 예전처럼 주 전체를 다시 만들고, 새 앱은 그 날 전 칸을 남기고 그 날부터만 다시 만든다. `POST`(그 주 문서를 갈아 끼움)와 items를 보낸 `PUT`이 표시를 지운다.
+- `POST …/projects`: 앱이 정한 번호(`id`, 100자 이하)가 그 계획에 이미 있으면 409. `PUT …/timeline`: 그 계획에 있는 프로젝트 번호만 저장한다.
+- 지워지는 길: 새 컬렉션 없음 — 모두 탈퇴·계획 영구 삭제·관리자 리셋 범위 안.
+- 옛 앱 + 새 서버에서 알고 있을 것: 서버 새벽 4시 · 옛 앱 자정이라, 계획의 주 첫날 0~4시에 옛 앱으로 계획을 고치면 막 끝난 주에 `rebuildFrom`이 붙어 숨는다(문서는 남는다 — 표시를 지우면 돌아온다).
+
 ### 프로젝트 날짜 칸 · 모바일 작업 메모함 API (2026-11-25, API 배포 122)
 - **프로젝트 `dateStart`·`dateEnd`**(`models/CareerPlan.js` ProjectSchema — 계획의 `startDate`·`endDate`와 다른 칸). 날짜로 정한 프로젝트의 시작일·마감일('YYYY-MM-DD', 과정은 끝나는 날).
   - 검증은 `careerPlanController.projectSettings` 한 곳(추가·일괄·수정이 같이 씀): 둘이 함께 오고, 달력에 있는 날짜이고, 마감 ≥ 시작일 때만 남긴다. 하나만 오거나 틀리면 버린다(수정이면 저장된 짝은 그대로). 수정에서 둘 다 `''`이면 지운다. 보내지 않으면 건드리지 않는다(옛 앱과 같이 돈다).
